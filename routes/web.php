@@ -12,6 +12,7 @@
   */
 
 //  Route::get('/{any}', 'ApplicationController')->where('any', '.*');
+  Route::view('/', 'pages.index',['breadcrumbs' => [['name'=>"User"], ['link'=>"form-new",'name'=>"申請簽核"]]]);
   //  User
   Route::view('/form-new', 'pages.customer.form-new',['breadcrumbs' => [['name'=>"User"], ['link'=>"form-new",'name'=>"申請簽核"]]]);
   Route::view('/form-list', 'pages.customer.form-list',['breadcrumbs' => [['name'=>"User"], ['link'=>"form-list",'name'=>"簽核狀態"]]]);
@@ -26,3 +27,6 @@
   Route::view('/form-allAction', 'pages.customer.form-allAction',['breadcrumbs' => [['name'=>"Executor"], ['link'=>"form-new",'name'=>"所有已執行簽核"]]]);
 
 
+  Auth::routes();
+
+  Route::post('/login/validate', 'Auth\LoginController@validate_api');
