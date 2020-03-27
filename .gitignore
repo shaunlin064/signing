@@ -1,6 +1,17 @@
 /node_modules
+/public/js
+/public/data
+/public/css
+/public/vendors
 /public/hot
 /public/storage
+/public/images
+/public/fonts
+/public/*js
+/public/favicon.ico
+/public/index.php
+/public/mix-manifest.json
+/public/robots.txt
 /storage/*.key
 /vendor
 .env
@@ -10,4 +21,5 @@ Homestead.json
 Homestead.yaml
 npm-debug.log
 yarn-error.log
-/.idea/*
+/vuexy-shell-scripts
+.idea/*
