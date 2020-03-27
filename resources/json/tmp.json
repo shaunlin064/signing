@@ -1,0 +1,56 @@
+{
+  "url": "",
+  "navheader": "User",
+  "icon": ""
+},
+{
+"name": "申請簽核",
+"url": "app-email",
+"slug": "email",
+"icon": "feather icon-check-square"
+},
+{
+"name": "簽核狀態",
+"url": "app-chat",
+"slug": "chat",
+"icon": "feather icon-list"
+},
+{
+"name": "設定簽名檔",
+"url": "app-todo",
+"slug": "todo",
+"icon": "feather icon-settings"
+},
+{
+"url": "",
+"navheader": "Signinger",
+"icon": ""
+},
+{
+"name": "待審簽核",
+"url": "app-email",
+"icon": "feather icon-check-square"
+},
+{
+"name": "所有簽核",
+"url": "app-todo",
+"slug": "todo",
+"icon": "feather icon-unlock"
+},
+{
+"url": "",
+"navheader": "Signinger",
+"icon": ""
+},
+{
+"name": "待執行簽核",
+"url": "app-email",
+"slug": "email",
+"icon": "feather icon-check-circle"
+},
+{
+"name": "所有已執行簽核",
+"url": "app-todo",
+"slug": "todo",
+"icon": "feather icon-unlock"
+},

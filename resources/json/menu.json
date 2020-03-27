@@ -1,0 +1,76 @@
+{
+  "menu": [
+    {
+      "url": "",
+      "name": "User",
+      "slug": "User",
+      "badge": "2",
+      "badgeClass": "badge badge-warning badge-pill float-right mr-2",
+      "icon": "feather icon-user",
+      "submenu": [
+        {
+          "url": "form-new",
+          "name": "申請簽核",
+          "icon": "feather icon-circle",
+          "i18n": "form.form-new"
+        },
+        {
+          "url": "form-list",
+          "name": "簽核狀態",
+          "icon": "feather icon-circle",
+          "i18n": "nav.dashboard_ecommerce"
+        },
+        {
+          "url": "signature",
+          "name": "設定簽名檔",
+          "icon": "feather icon-circle",
+          "i18n": "nav.dashboard_ecommerce"
+        }
+      ]
+    },
+    {
+      "url": "",
+      "name": "Signinger",
+      "slug": "Signinger",
+      "badge": "2",
+      "badgeClass": "badge badge-warning badge-pill float-right mr-2",
+      "icon": "feather icon-edit",
+      "submenu": [
+        {
+          "url": "form-pending",
+          "name": "待審簽核",
+          "icon": "feather icon-circle",
+          "i18n": "nav.dashboard_analytics"
+        },
+        {
+          "url": "form-all",
+          "name": "所有簽核",
+          "icon": "feather icon-circle",
+          "i18n": "nav.dashboard_ecommerce"
+        }
+      ]
+    },
+    {
+      "url": "",
+      "name": "Executor",
+      "slug": "Executor",
+      "badge": "2",
+      "badgeClass": "badge badge-warning badge-pill float-right mr-2",
+      "icon": "feather icon-zap",
+      "submenu": [
+        {
+          "url": "form-action",
+          "name": "待執行簽核",
+          "icon": "feather icon-circle",
+          "i18n": "nav.dashboard_analytics"
+        },
+        {
+          "url": "form-allAction",
+          "name": "所有已執行簽核",
+          "icon": "feather icon-circle",
+          "i18n": "nav.dashboard_ecommerce"
+        }
+      ]
+    }
+  ]
+}
