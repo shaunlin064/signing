@@ -10,16 +10,16 @@ class FormData extends Model
   protected $table = 'form_data';
 
   protected $fillable = [
-    'form_id',
-    'form_apply_id',
-    'column',
-    'value'
+      'form_id',
+      'form_apply_id',
+      'column',
+      'value'
   ];
 
   /**
    * 申請資料，一對一
    */
   public function apply(){
-    return $this->hasOne('\App\Form_apply','id','form_apply_id');
+      return $this->hasOne('\App\Form_apply','id','form_apply_id');
   }
 }
