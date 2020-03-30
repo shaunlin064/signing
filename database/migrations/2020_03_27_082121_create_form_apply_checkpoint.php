@@ -20,6 +20,7 @@ class CreateFormApplyCheckpoint extends Migration
             $table->unsignedTinyInteger('review_order')->comment('簽核順位');
             $table->unsignedTinyInteger('role')->comment('角色 1:簽核 2:執行');
             $table->unsignedInteger('signed_member_id')->comment('簽署者ID');
+            $table->unsignedInteger('replace_signed_member_id')->nullable()->comment('簽署者ID');
             $table->unsignedTinyInteger('status')->comment('簽核狀態 0:駁回 1:待簽核 2:通過');
             $table->dateTime('signed_at')->nullable()->comment('簽核時間');
             $table->longText('signature')->nullable()->comment('簽名檔');
