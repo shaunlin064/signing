@@ -16,7 +16,7 @@ class FormFlowReplace extends Model
   ];
 
   /**
-   * 表待流程資料，一對一
+   * 表單流程資料，一對一
    */
   public function flow(){
     return $this->hasOne('\App\Form_flow','id','form_flow_id');
