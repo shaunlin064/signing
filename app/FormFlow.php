@@ -18,4 +18,11 @@ class FormFlow extends Model
       'replace',
       'role'
   ];
+
+    /**
+     * 代簽列表，一對多
+     */
+    public function replace(){
+        return $this->hasMany('\App\FormFlowReplace','form_flow_id','id');
+    }
 }

@@ -20,6 +20,6 @@ class FormData extends Model
    * 申請資料，一對一
    */
   public function apply(){
-      return $this->hasOne('\App\Form_apply','id','form_apply_id');
+      return $this->hasOne('\App\FormApply','id','form_apply_id');
   }
 }
