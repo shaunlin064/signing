@@ -2,7 +2,7 @@
 	File Name: editor-quill.js
 	Description: Quill is a modern rich text editor built for compatibility and extensibility.
 	----------------------------------------------------------------------------------------
-	Item name: Vuexy  - Vuejs, HTML & Laravel Admin Dashboard Template
+
 	Author: PIXINVENT
 	Author URL: http://www.themeforest.net/user/pixinvent
 ==========================================================================================*/

@@ -33,10 +33,8 @@ $configData = Helper::applClasses();
     <div class="app-content content">
         <div class="content-wrapper">
             <div class="content-body">
-
                 {{-- Include Startkit Content --}}
                 @yield('content')
-
             </div>
         </div>
     </div>

@@ -4,6 +4,7 @@
     {{-- Include Sidebar --}}
     @include('panels.sidebar')
 
+    <div id='app'>
     <!-- BEGIN: Content-->
     <div class="app-content content">
         <!-- BEGIN: Header-->
@@ -46,7 +47,7 @@
 
     </div>
     <!-- End: Content-->
-
+    </div>
     @if($configData['blankPage'] == false && isset($configData['blankPage']))
     @include('pages/customizer')
 

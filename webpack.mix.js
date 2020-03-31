@@ -23,14 +23,14 @@ const path = require('path')
  */
 
 function mixAssetsDir(query, cb) {
-  (glob.sync('resources/' + query) || []).forEach(f => {
-    f = f.replace(/[\\\/]+/g, '/');
-    cb(f, f.replace('resources', 'public'));
-  });
+    (glob.sync('resources/' + query) || []).forEach(f => {
+        f = f.replace(/[\\\/]+/g, '/');
+        cb(f, f.replace('resources', 'public'));
+    });
 }
 
 const sassOptions = {
-  precision: 5
+    precision: 5
 };
 
 // plugins Core stylesheets
@@ -62,24 +62,25 @@ mix.copyDirectory('resources/fonts', 'public/fonts');
 
 
 mix.js('resources/js/core/app-menu.js', 'public/js/core')
-  .js('resources/js/core/app.js', 'public/js/core')
-  .sass('resources/sass/bootstrap.scss', 'public/css')
-  .sass('resources/sass/bootstrap-extended.scss', 'public/css')
-  .sass('resources/sass/colors.scss', 'public/css')
-  .sass('resources/sass/components.scss', 'public/css')
-  .sass('resources/sass/custom-rtl.scss', 'public/css')
-  .sass('resources/sass/custom-laravel.scss', 'public/css');
+    .js('resources/js/core/app.js', 'public/js/core')
+    .js('resources/js/app.js', 'public/js')
+    .sass('resources/sass/bootstrap.scss', 'public/css')
+    .sass('resources/sass/bootstrap-extended.scss', 'public/css')
+    .sass('resources/sass/colors.scss', 'public/css')
+    .sass('resources/sass/components.scss', 'public/css')
+    .sass('resources/sass/custom-rtl.scss', 'public/css')
+    .sass('resources/sass/custom-laravel.scss', 'public/css');
 
 mix.then(() => {
-  if (process.env.MIX_CONTENT_DIRECTION === "rtl") {
-    let command = `node ${path.resolve('node_modules/rtlcss/bin/rtlcss.js')} -d -e ".css" ./public/css/ ./public/css/`;
-    exec(command, function (err, stdout, stderr) {
-      if (err !== null) {
-        console.log(err);
-      }
-    });
-    // exec('./node_modules/rtlcss/bin/rtlcss.js -d -e ".css" ./public/css/ ./public/css/');
-  }
+    if (process.env.MIX_CONTENT_DIRECTION === "rtl") {
+        let command = `node ${path.resolve('node_modules/rtlcss/bin/rtlcss.js')} -d -e ".css" ./public/css/ ./public/css/`;
+        exec(command, function (err, stdout, stderr) {
+            if (err !== null) {
+                console.log(err);
+            }
+        });
+        // exec('./node_modules/rtlcss/bin/rtlcss.js -d -e ".css" ./public/css/ ./public/css/');
+    }
 });
 
 

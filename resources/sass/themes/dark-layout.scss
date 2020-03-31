@@ -2,7 +2,7 @@
 // 	File Name: dark-layout.scss
 // 	Description: SCSS file for dark layout.
 // 	----------------------------------------------------------------------------------------------
-// 	Item Name: Vuexy  - Vuejs, HTML & Laravel Admin Dashboard Template
+//
 // 	Author: PIXINVENT
 // 	Author URL: http://www.themeforest.net/user/pixinvent
 // ================================================================================================
@@ -179,7 +179,7 @@ body {
       }
     }
 
-    //Text color for Blank page with transparent card 
+    //Text color for Blank page with transparent card
     &.blank-page{
       .card.bg-transparent{
         h1,h2,h3,h4,h5,h6{
@@ -215,7 +215,7 @@ body {
 
     // main menu content
     .main-menu-content {
-      
+
       .navigation > li.open > a{
         background-color: $content-dark-bg;
       }
@@ -570,7 +570,7 @@ body {
         border-color: $theme-dark-border-color;
       }
     }
-    
+
     .search-bar{
       .form-control {
         background-color: $dark-card-color;
