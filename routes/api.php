@@ -32,3 +32,47 @@ Route::group([
 
 });
 
+
+/**
+ * 表單流程設定相關 ========================================================
+ */
+Route::post('/form/flow/list',
+    [
+        'as' => 'api.form.flow.list' ,
+        'uses' => 'API\FormController@flowList'
+    ]);
+Route::post('/form/flow/get',
+    [
+        'as' => 'api.form.flow.get' ,
+        'uses' => 'API\FormController@flowGet'
+    ]);
+Route::post('/form/flow/add',
+    [
+        'as' => 'api.form.flow.add' ,
+        'uses' => 'API\FormController@flowAdd'
+    ]);
+Route::post('/form/flow/edit',
+    [
+        'as' => 'api.form.flow.edit' ,
+        'uses' => 'API\FormController@flowEdit'
+    ]);
+Route::post('/form/flow/delete',
+    [
+        'as' => 'api.form.flow.delete' ,
+        'uses' => 'API\FormController@flowDelete'
+    ]);
+
+/**
+ * ===================================================================
+ */
+
+
+/**
+ * 表單申請
+ */
+Route::post('/form/apply',
+  [
+    'as' => 'api.form.apply' ,
+    'uses' => 'API\FormController@apply'
+  ]);
+
