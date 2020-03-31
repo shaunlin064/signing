@@ -3,21 +3,23 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class FormFlow extends Model
 {
     //
-  protected $table = 'form_flow';
+    use SoftDeletes;
+    protected $table = 'form_flow';
 
-  protected $fillable = [
-      'form_id',
-      'review_order',
-      'review_type',
-      'reviewer_id',
-      'overwrite',
-      'replace',
-      'role'
-  ];
+    protected $fillable = [
+        'form_id',
+        'review_order',
+        'review_type',
+        'reviewer_id',
+        'overwrite',
+        'replace',
+        'role'
+    ];
 
     /**
      * 代簽列表，一對多
