@@ -15,6 +15,7 @@ class FormApplyCheckpoint extends Model
         'role',
         'signed_member_id',
         'replace_signed_member_id',
+        'overwrite',
         'status',
         'signed_at',
         'signature',
