@@ -288,11 +288,57 @@ class FormController extends Controller
         return self::$message;
     }
 
+    public function applyFail(Request $request){
+
+        DB::beginTransaction();
+        try {
+            //檢查申請表是否已經有人簽核
+            $FormApplyCheckpoint = FormApplyCheckpoint::where('form_apply_id',$request->get('id'))
+                ->whereNotNull('signed_at')
+                ->first();
+
+            if($FormApplyCheckpoint == NULL){
+                $FormApply = FormApply::findOrFail($request->get('id'));
+                if($FormApply->fail_at == NULL){
+                    $FormApply->fail_at = date('Y-m-d H:i:s');
+                    $FormApply->save();
+                }
+                else{
+                    self::$message['status_string'] = '作廢失敗';
+                    self::$message['message'] = '表單錯誤或資料已經作廢';
+
+                    return self::$message;
+                }
+            }
+            else{
+                self::$message['status_string'] = '作廢失敗';
+                self::$message['message'] = '表單錯誤或已有簽核紀錄無法作廢';
+
+                return self::$message;
+            }
+
+
+            self::$message['status'] = 1;
+            self::$message['status_string'] = '作廢成功';
+            self::$message['message'] = '';
+            self::$message['data'] = $FormApply;
+            DB::commit();
+
+        }catch (\Exception $ex){
+            DB::rollback();
+            self::$message['status_string'] = '作廢失敗';
+            self::$message['message'] = '資料庫錯誤!'.$ex->getMessage();
+        }
+
+        return self::$message;
+    }
+
     public function applyCheck(Request $request){
 
         DB::beginTransaction();
         try {
 
+            $now = date('Y-m-d H:i:s');
             //檢查簽核狀態，確定關卡還沒簽
             $checkPoint = FormApplyCheckpoint::where('status',1)
                 ->whereNull('signed_at')
@@ -301,10 +347,11 @@ class FormController extends Controller
 
             if($checkPoint != NULL){
 
-                //檢查overwrite
-                $overwriteCount = FormApplyCheckpoint::where('id','<',$request->get('id'))
+                //檢查有沒有比我前面的人卡關
+                $overwriteCount = FormApplyCheckpoint::where('review_order','<',$checkPoint->review_order)
+                    ->where('form_apply_id',$checkPoint->form_apply_id)
                     ->whereNull('signed_at')
-                    ->where('overwrite',0)
+                    ->where('overwrite',1)
                     ->count();
 
                 //檢查是否為可為代簽人
@@ -313,7 +360,7 @@ class FormController extends Controller
                 if($overwriteCount == 0 && (in_array($request->get('member_id'),$replace_members) || $checkPoint->signed_member_id == $request->get('member_id'))){
                     //沒有人卡關 人員在代簽名單中 人員為簽署者 則可簽
 
-                    $checkPoint->signed_at = date('Y-m-d H:i:s');
+                    $checkPoint->signed_at = $now;
                     $checkPoint->signature = $request->get('signature');
                     $checkPoint->remark = $request->get('remark');
 
@@ -323,7 +370,55 @@ class FormController extends Controller
 
                     $checkPoint->status = $request->get('status');
 
-                    $checkPoint->save();
+                    //比我前面且不卡關的人全部代簽掉
+                    $FormApplyCheckBefore = FormApplyCheckpoint::where('review_order','<',$checkPoint->review_order)
+                        ->where('form_apply_id',$checkPoint->form_apply_id)
+                        ->whereNull('signed_at')
+                        ->where('overwrite',0)
+                        ->get();
+                    foreach($FormApplyCheckBefore as $k=>$v){
+                        $v->signed_at = $now;
+                        $v->signature = $request->get('signature');
+                        $v->status = $request->get('status');
+                        $v->replace_signed_member_id = $request->get('member_id');
+                        $v->save();
+                    }
+
+                    //變更申請表now next 以及簽核狀態
+                    if($request->get('status') != 0){
+                        $checkPoint->apply->status = 2;
+                    }
+                    else{
+                        $checkPoint->apply->status = 0;
+                    }
+                    $FormApplyCheckpointNext = FormApplyCheckpoint::where('form_apply_id',$checkPoint->form_apply_id)
+                        ->where('review_order','>',$checkPoint->review_order)
+                        ->where('status',1)
+                        ->whereNull('signed_at')
+                        ->orderBy('review_order','ASC')
+                        ->first();
+
+                    if($FormApplyCheckpointNext == NULL){
+                        //沒有下一關，代表簽核結束
+                        $checkPoint->apply->now = NULL;
+                        $checkPoint->apply->next = NULL;
+                        if($request->get('status') != 0){//審核結束並通過
+                            $checkPoint->apply->status = 3;
+                        }
+                    }
+                    else{
+                        $FormApplyCheckpointNextNext = FormApplyCheckpoint::where('form_apply_id',$checkPoint->form_apply_id)
+                            ->where('review_order','>',$FormApplyCheckpointNext->review_order)
+                            ->where('status',1)
+                            ->whereNull('signed_at')
+                            ->orderBy('review_order','ASC')
+                            ->first();
+
+                        $checkPoint->apply->now = $FormApplyCheckpointNext->id;
+                        $checkPoint->apply->next = ($FormApplyCheckpointNextNext == NULL) ? NULL : $FormApplyCheckpointNextNext->id;
+                    }
+
+                    $checkPoint->push();
 
                 }else{
                     //條件錯誤 不可簽

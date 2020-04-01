@@ -76,6 +76,12 @@ Route::post('/form/apply',
     'uses' => 'API\FormController@apply'
   ]);
 
+Route::post('/form/apply/fail',
+    [
+        'as' => 'api.form.apply.fail' ,
+        'uses' => 'API\FormController@applyFail'
+    ]);
+
 Route::post('/form/apply/check',
     [
         'as' => 'api.form.apply.check' ,
