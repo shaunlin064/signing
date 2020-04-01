@@ -68,11 +68,21 @@ Route::post('/form/flow/delete',
 
 
 /**
- * 表單申請
+ * 表單申請 審核相關 =====================================================
  */
 Route::post('/form/apply',
   [
     'as' => 'api.form.apply' ,
     'uses' => 'API\FormController@apply'
   ]);
+
+Route::post('/form/apply/check',
+    [
+        'as' => 'api.form.apply.check' ,
+        'uses' => 'API\FormController@applyCheck'
+    ]);
+
+/**
+ * ===================================================================
+ */
 

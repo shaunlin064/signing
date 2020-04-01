@@ -24,7 +24,7 @@ class FormFlow extends Model
     /**
      * 代簽列表，一對多
      */
-    public function replace(){
+    public function replaceMember(){
         return $this->hasMany('\App\FormFlowReplace','form_flow_id','id');
     }
 }
