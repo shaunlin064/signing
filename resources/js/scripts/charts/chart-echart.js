@@ -2,9 +2,8 @@
     File Name: chart-echart.js
     Description: echarts examples
     ----------------------------------------------------------------------------------------
-    Item name: Vuexy  - Vuejs, HTML & Laravel Admin Dashboard Template
-    Author: PIXINVENT
-    Author URL: http://www.themeforest.net/user/pixinvent
+
+
 ==========================================================================================*/
 
 $(window).on("load", function(){

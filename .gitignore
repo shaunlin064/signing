@@ -22,3 +22,5 @@ yarn-error.log
 /vuexy-shell-scripts
 .idea/*
 /resources/views/pages/tmp/
+composer.lock
+package-lock.json

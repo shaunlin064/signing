@@ -2,9 +2,8 @@
     File Name: 3-columns-left-sidebar.js
     Description: Invoices list datables configurations
     ----------------------------------------------------------------------------------------
-    Item name: Vuexy  - Vuejs, HTML & Laravel Admin Dashboard Template
-    Author: Pixinvent
-    Author URL: hhttp://www.themeforest.net/user/pixinvent
+
+
 ==========================================================================================*/
 
 $(document).ready(function() {

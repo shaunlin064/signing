@@ -21,7 +21,6 @@
 @section('content')
   {{-- Start --}}
   <section id="form-list">
-
   </section>
   <!-- end -->
 @endsection

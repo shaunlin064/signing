@@ -2,9 +2,8 @@
     File Name: picker-date-time.js
     Description: Pick a date/time Picker, Date Range Picker JS
     ----------------------------------------------------------------------------------------
-    Item name: Vuexy  - Vuejs, HTML & Laravel Admin Dashboard Template
-    Author: Pixinvent
-    Author URL: hhttp://www.themeforest.net/user/pixinvent
+
+
 ==========================================================================================*/
 (function(window, document, $) {
     'use strict';
@@ -23,9 +22,9 @@
         min: [2019,3,20],
         max: [2019,5,28]
     });
-    
+
     // Disabled Dates & Weeks
-    
+
     $('.pickadate-disable').pickadate({
         disable: [
             1,
@@ -68,7 +67,7 @@
         firstDay: 1
     });
 
-    
+
 
     /*******    Pick-a-time Picker  *****/
     // Basic time
@@ -125,7 +124,7 @@
         ]
     });
 
-    
+
     // Close on a user action
     $('.pickatime-close-action').pickatime({
         closeOnSelect: false,

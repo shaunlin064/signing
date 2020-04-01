@@ -2,9 +2,8 @@
     File Name: wizard-steps.js
     Description: wizard steps page specific js
     ----------------------------------------------------------------------------------------
-    Item name: Vuexy  - Vuejs, HTML & Laravel Admin Dashboard Template
-    Author: PIXINVENT
-    Author URL: http://www.themeforest.net/user/pixinvent
+
+
 ==========================================================================================*/
 
 // Wizard tabs with numbers setup

@@ -2,9 +2,8 @@
     File Name: user-profile.js
     Description: User Profile jQuery Plugin Intialization
     --------------------------------------------------------------------------------------
-    Item name: Vuexy  - Vuejs, HTML & Laravel Admin Dashboard Template
-    Author: PIXINVENT
-    Author URL: http://www.themeforest.net/user/pixinvent
+
+
 ==========================================================================================*/
 
 

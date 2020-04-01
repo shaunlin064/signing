@@ -2,13 +2,14 @@
   File Name: app.js
   Description: Template related app JS.
   ----------------------------------------------------------------------------------------
-  Item Name: Vuexy  - Vuejs, HTML & Laravel Admin Dashboard Template
-  Author: Pixinvent
-  Author URL: hhttp://www.themeforest.net/user/pixinvent
+
+
 ==========================================================================================*/
+
 
 (function (window, document, $) {
   "use strict";
+
   var $html = $("html");
   var $body = $("body");
   var $danger = "#ea5455";
@@ -925,7 +926,12 @@
     }
   });
 
+
   // Waves Effect
   Waves.init();
   Waves.attach(".btn", ["waves-light"]);
+
+
+
 })(window, document, jQuery);
+

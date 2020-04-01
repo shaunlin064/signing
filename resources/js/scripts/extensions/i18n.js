@@ -2,9 +2,8 @@
     File Name: i18n.js
     Description: Internationalization
     --------------------------------------------------------------------------------------
-    Item name: Vuexy  - Vuejs, HTML & Laravel Admin Dashboard Template
-    Author: PIXINVENT
-    Author URL: http://www.themeforest.net/user/pixinvent
+
+
 ==========================================================================================*/
 
 // For Language Select

@@ -2,9 +2,8 @@
     File Name: context-menu.js
     Description: Context Menu
     --------------------------------------------------------------------------------------
-    Item name: Vuexy  - Vuejs, HTML & Laravel Admin Dashboard Template
-    Author: PIXINVENT
-    Author URL: http://www.themeforest.net/user/pixinvent
+
+
 ==========================================================================================*/
 
 // Basic Context Menu
