@@ -26,7 +26,7 @@ Vue.component('form-new', require('./components/form/form-new.vue').default);
 Vue.component('form-payment', require('./components/form/form-payment').default);
 Vue.component('form-sign', require('./components/form/form-sign').default);
 Vue.component('form-refund', require('./components/form/form-refund').default);
-Vue.component('form-refund-items', require('./components/form/refund/form-refund-items').default);
+Vue.component('form-refund-items', require('./components/form/form-refund-items').default);
 Vue.component('form-social', require('./components/form/form-social').default);
 Vue.component('form-travel_fee', require('./components/form/form-travel_fee').default);
 Vue.component('form-travel_grant', require('./components/form/form-travel_grant').default);

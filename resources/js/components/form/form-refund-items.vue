@@ -10,6 +10,7 @@
             </div>
         </div>
         <div class="col-md-2">
+
             <div class="form-label-group mt-2">
                 <input type="text" class="form-control" :name='"items["+id+"][date]"'
                        placeholder="日期"

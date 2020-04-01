@@ -27,12 +27,11 @@
             </div>
             <div class='col-md-12'>
                 <div class="form-group">
-                    <label for="pay_type">出差人</label>
-                    <select class="custom-select select2 form-control" id="pay_type"
-                            name="pay_type">
-                        <option value="cash">test1</option>
-                        <option value="transfer">test2</option>
-                        <option value="other">test3</option>
+                    <label>出差人</label>
+                    <select class="custom-select select2 form-control"  multiple="multiple"
+                            name="accompany_user_id">
+                        <option value="179">Johnny</option>
+                        <option value="187">Elynn</option>
                     </select>
                 </div>
             </div>
@@ -76,64 +75,18 @@
                 </fieldset>
             </div>
         </div>
-        <div class="row col-md-12 align-items-center mt-2">
-            <div class="card">
+        <div class="row col-md-12 align-items-center border-top-light mt-2">
+            <div class="card mt-1">
                 <h4 class="card-title">出差計畫</h4>
             </div>
         </div>
         <div class="row">
-            <div class="row col-md-12">
-                <div class="col-md-3">
-                    <div class="form-label-group">
-                        <input type="text" id="member" class="form-control"
-                               placeholder="拜訪期間" name="member">
-                        <label for="member">拜訪期間</label>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-label-group">
-                        <input type="text" id="department" class="form-control"
-                               placeholder="洽訪公司"
-                               name="department">
-                        <label for="department">洽訪公司</label>
-                    </div>
-                </div>
-                <div class='col-md-3'>
-                    <div class="form-label-group">
-                        <input type="text" id="name" class="form-control"
-                               placeholder="對象姓名/稱謂" name="name">
-                        <label for="name">對象姓名/稱謂</label>
-                    </div>
-                </div>
-                <div class='col-md-3'>
-                    <div class="form-label-group">
-                        <input type="text" id="department" class="form-control"
-                               placeholder="會議形式"
-                               name="department">
-                        <label for="department">會議形式</label>
-                    </div>
-                </div>
-                <div class='col-md-6'>
-                    <div class="form-label-group">
-                        <input type="text" id="name" class="form-control"
-                               placeholder="負責業務" name="name">
-                        <label for="name">負責業務</label>
-                    </div>
-                </div>
-                <div class='col-md-6'>
-                    <div class="form-label-group">
-                        <input type="text" id="department" class="form-control"
-                               placeholder="洽談內容"
-                               name="department">
-                        <label for="department">洽談內容</label>
-                    </div>
-                </div>
-            </div>
+            <components v-for="item in plan_items" v-bind:is="item.type" :key='item.id' :id='item.id' :action='item.action'></components>
             <div class='row col-md-12 justify-content-end'>
                 <div class='col-md-4 text-right mt-1'>
-                    <button type="button"
+                    <button type="button" @click='addItem'
                             class="btn btn-outline-primary mr-1 mb-1 waves-effect waves-light">
-                        新增
+                        新增計畫
                     </button>
                 </div>
             </div>
@@ -149,9 +102,63 @@
 </template>
 
 <script>
-    export default {
-        name: "form-travel_grant"
-    }
+    import {mapState, mapMutations, mapActions, mapGetters} from 'vuex';
+    Vue.component('form-travel_fee_plan', require('../../components/form/form-travel_fee_plan').default);
+        export default {
+            name: "form-travel_grant",
+            props: {
+
+            },
+            data() {
+                return {
+                    plan_items:[],
+                    count: 0
+                }
+            },
+            computed: {
+                    ...mapState([]),
+            },
+            beforeMount: function () {
+            },
+            mounted: function () {
+                var vue = this;
+                $('.row').on('click','[data-action="deleteItem"]',function(e){
+                    vue.deleteItem(e);
+                });
+            },
+            methods: {
+                addItem(){
+                    this.plan_items.push({
+                        type: 'form-travel_fee_plan',
+                        action: 'new_form',
+                        id: this.count++
+                    });
+                },
+                deleteItem(event){
+                    let id = $(event.currentTarget).data('id');
+
+                    this.plan_items.map((e,v)=>{
+                        if(e['id'] == id){
+                            console.log('get');
+                            this.plan_items.splice(v,1);
+                        }
+                    });
+                },
+            },
+            updated() {
+
+            },
+            watch: {
+             // change_date: {
+                //     immediate: true,    // 这句重要
+                //     handler(val, oldVal) {
+                //         if (oldVal !== undefined) {
+                //             this.getCampaignData(this.user_ids, val);
+                //         }
+                //     }
+                // }
+            }
+        }
 </script>
 
 <style scoped>

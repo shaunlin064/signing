@@ -1,6 +1,6 @@
 <template>
 
-    <form action="#" class="steps-validation wizard-circle" :id='dom_id'>
+    <form action="#" method='GET' class="steps-validation wizard-circle" :id='dom_id'>
         <!-- Step 1 -->
         <h6><i class="step-icon feather icon-home"></i> Step 1</h6>
         <fieldset>
@@ -11,7 +11,8 @@
                             請選擇簽核表單
                         </label>
                         <select class="custom-select select2 form-control" :id="dom_target" :name="dom_target">
-                            <option value="form-payment">請款</option>
+                            <option value >請選擇</option>
+                            <option value="form-payment" >請款</option>
                             <option value="form-sign">用印</option>
                             <option value="form-refund">代墊</option>
                             <option value="form-social">交際送禮</option>
@@ -23,12 +24,12 @@
             </div>
         </fieldset>
         <!-- Step 2 -->
-        <h6><i class="step-icon feather icon-briefcase"></i> Step 2</h6>
+        <h6 v-show='form_type'><i class="step-icon feather icon-briefcase"></i> Step 2</h6>
         <keep-alive>
             <component v-bind:is="form_type"/>
         </keep-alive>
-        <div class='row border-top-light mt-2 justify-content-end'>
-            <button type="submit" class="btn btn-primary mr-1 mb-1 waves-effect waves-light text-right mt-2">送出</button>
+        <div class='row border-top-light mt-2 justify-content-end' v-show='form_type'>
+            <button type="button" class="btn btn-primary mr-1 mb-1 waves-effect waves-light text-right mt-2" @click='submit'>送出</button>
         </div>
     </form>
 </template>
@@ -43,7 +44,7 @@
         props: {},
         data() {
             return {
-                form_type : 'form-refund',
+                form_type : '',
                 dom_id: 'form-new',
                 dom_target: 'form_type'
             }
@@ -72,6 +73,11 @@
                 $('#'+this.dom_target).change((e)=>{
                     this.currentComponent(e);
                 });
+            },
+            submit(){
+                $('select[disabled]').removeAttr("disabled");
+                $('form#'+this.dom_id).submit();
+                // console.log($('input').serializeArray());
             },
         },
         updated() {

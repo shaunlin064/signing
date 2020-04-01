@@ -8,26 +8,26 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="form-label-group">
-                    <input type="text" id="member" class="form-control"
-                           placeholder="申請人" name="member">
-                    <label for="member">申請人</label>
+                    <input type="text" class="form-control"
+                            name="member">
+                    <label>申請人</label>
                 </div>
             </div>
             <div class='col-md-6'>
                 <div class="form-label-group">
-                    <input type="text" id="department" class="form-control"
+                    <input type="text"  class="form-control"
                            placeholder="部門" name="department">
-                    <label for="department">部門</label>
+                    <label>部門</label>
                 </div>
             </div>
             <div class='col-md-12'>
                 <div class="form-label-group">
                     <div class="form-group">
-                        <label for="pay_type88">差旅單</label>
-                        <select class="custom-select select2 form-control"
-                                id="pay_type88" name="pay_type88">
-                            <option value="transfer">20200430日本拜訪</option>
-                            <option value="other">20200410中國拜訪</option>
+                        <label>差旅單</label>
+                        <select class="custom-select select2 form-control" id='form_travel_grant_id'
+                                name="form_travel_grant_id">
+                            <option>請選擇</option>
+                            <option v-for='(item, index) in travel_grant_datas' :value='index'>{{item.name}}</option>
                         </select>
                     </div>
                 </div>
@@ -39,109 +39,18 @@
                     <h4 class="card-title">出差計畫</h4>
                 </div>
             </div>
-            <div class="row col-md-12">
-                <div class="col-md-3">
-                    <div class="form-label-group">
-                        <input type="text" id="member" class="form-control"
-                               placeholder="日期" name="member">
-                        <label for="member">日期</label>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-label-group">
-                        <input type="text" id="department" class="form-control"
-                               placeholder="洽訪公司"
-                               name="department">
-                        <label for="department">洽訪公司</label>
-                    </div>
-                </div>
-                <div class='col-md-3'>
-                    <div class="form-label-group">
-                        <input type="text" id="name" class="form-control"
-                               placeholder="對象姓名/稱謂" name="name">
-                        <label for="name">對象姓名/稱謂</label>
-                    </div>
-                </div>
-                <div class='col-md-3'>
-                    <div class="form-label-group">
-                        <input type="text" id="department" class="form-control"
-                               placeholder="會議形式"
-                               name="department">
-                        <label for="department">會議形式</label>
-                    </div>
-                </div>
-                <div class='col-md-6'>
-                    <div class="form-label-group">
-                        <input type="text" id="name" class="form-control"
-                               placeholder="負責業務" name="name">
-                        <label for="name">負責業務</label>
-                    </div>
-                </div>
-                <div class='col-md-6'>
-                    <div class="form-label-group">
-                        <input type="text" id="department" class="form-control"
-                               placeholder="洽談內容"
-                               name="department">
-                        <label for="department">洽談內容</label>
-                    </div>
-                </div>
-                <div class='row col-md-12 border-top-light'>
-                    <div class="row col-md-12 mt-2">
-                        <div class='col-md-6'>
-                            <div class="card">
-                                <h5 class="card-title">費用明細</h5>
-                            </div>
-                        </div>
-                        <div class='col-md-6 justify-content-end'>
-                            <div class='text-right mt-1'>
-                                <button type="button"
-                                        class="btn btn-outline-primary mr-1 mb-1 waves-effect waves-light">
-                                    新增
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row col-xl-12 align-items-center">
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label for="pay_type77">類型</label>
-                                <select class="custom-select select2 form-control"
-                                        id="pay_type77" name="pay_type77">
-                                    <option value="transfer">交通</option>
-                                    <option value="other">交際</option>
-                                    <option value="other">漫遊</option>
-                                    <option value="other">其他</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class='col-md-3'>
-                            <div class="form-label-group mt-2">
-                                <input type="text" id="department" class="form-control"
-                                       placeholder="幣別"
-                                       name="department">
-                                <label for="department">幣別</label>
-                            </div>
-                        </div>
-                        <div class='col-md-3'>
-                            <div class="form-label-group mt-2">
-                                <input type="text" id="department" class="form-control"
-                                       placeholder="應付費用"
-                                       name="department">
-                                <label for="department">應付費用</label>
-                            </div>
-                        </div>
-                        <!--delete-->
-                        <div class='col-md-auto mt-2'>
-                            <button type="button"
-                                    class="btn btn-icon btn-danger mr-1 mb-1 waves-effect waves-light">
-                                <i class="feather icon-x"></i></button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class='row col-md-12 justify-content-end border-top-light'>
+            <components v-for="item in plan_items" v-bind:is="item.type" :key='item.id'
+                        :id='item.id'
+                        :date='item.date'
+                        :customer_name='item.customer_name'
+                        :customer_company='item.customer_company'
+                        :meet_type='item.meet_type'
+                        :agenda='item.agenda'
+                        :charge_user='item.charge_user'
+            ></components>
+            <div class='row col-md-12 justify-content-end border-top-light' v-show='plan_items[0]'>
                 <div class='col-md-4 text-right mt-1'>
-                    <button type="button"
+                    <button type="button" @click='addItem'
                             class="btn btn-outline-primary mr-1 mb-1 waves-effect waves-light">
                         新增計畫
                     </button>
@@ -159,9 +68,141 @@
 </template>
 
 <script>
-    export default {
-        name: "form-travel_fee"
-    }
+    import {mapState, mapMutations, mapActions, mapGetters} from 'vuex';
+    Vue.component('form-travel_fee_plan', require('../../components/form/form-travel_fee_plan').default);
+        export default {
+            name: "form-travel_fee",
+            props: {
+
+            },
+            data() {
+                return {
+                    travel_grant_datas:[],
+                    plan_items:[],
+                    count: 0
+                }
+            },
+            computed: {
+                ...mapState([]),
+            },
+            beforeMount: function () {
+            },
+            mounted: function () {
+                this.initial();
+            },
+            methods: {
+                initial(){
+                  $('#form_travel_grant_id').change((e,v)=>{
+                      let targetDom = e.currentTarget;
+                      this.plan_items = [];
+                      this.count = 0;
+                      this.getFormTravelGrantPlans(targetDom);
+                  });
+                    this.getTraveGrantData();
+
+                },
+                addItem(){
+                    this.plan_items.push({
+                        type: 'form-travel_fee_plan',
+                        action: 'edit_form',
+                        id: this.count++
+                    });
+                    this.initial();
+                },
+                getTraveGrantData(){
+                    let fackData = [
+                        {
+                            id: 1,
+                            member: 'test',
+                            department: 'test',
+                            name: '日本出差-part1',
+                            plans: [{
+                                id: 1,
+                                date: '2020/04/01',
+                                customer_name:'Noda Nobuyoshi',
+                                customer_company: '日本總部',
+                                meet_type: '公司開會',
+                                agenda: '討論明年計畫',
+                                charge_user: 187,
+                            },{
+                                id: 2,
+                                date: '2020/04/01',
+                                customer_name:'Noda Nobuyoshi',
+                                customer_company: '日本總部',
+                                meet_type: '餐敘',
+                                agenda: '還沒講完,中午吃飯繼續講',
+                                charge_user: 187,
+                            },{
+                                id: 3,
+                                date: '2020/04/01',
+                                customer_name:'Noda Nobuyoshi',
+                                customer_company: '日本總部',
+                                meet_type: '餐敘',
+                                agenda: '還沒講完,下午茶繼續講',
+                                charge_user: 187,
+                            },
+                            ]
+                        },{
+                            id: 2,
+                            member: 'test',
+                            department: 'test',
+                            name: '日本出差-part2',
+                            plans: [{
+                                id: 1,
+                                date: '2020/04/02',
+                                customer_name:'Noda Nobuyoshi',
+                                customer_company: '日本總部',
+                                meet_type: '公司開會',
+                                agenda: '換人來講明年計畫',
+                                charge_user: 179,
+                            },{
+                                id: 2,
+                                date: '2020/04/02',
+                                customer_name:'Noda Nobuyoshi',
+                                customer_company: '日本總部',
+                                meet_type: '餐敘',
+                                agenda: '還沒講完,中午吃飯繼續講',
+                                charge_user: 179,
+                            },{
+                                id: 3,
+                                date: '2020/04/02',
+                                customer_name:'Noda Nobuyoshi',
+                                customer_company: '日本總部',
+                                meet_type: '餐敘',
+                                agenda: '還沒講完,下午茶繼續講',
+                                charge_user: 179,
+                            },
+                            ]
+                        }
+                    ];
+                  this.travel_grant_datas = fackData;
+                },
+                getFormTravelGrantPlans(targetDom){
+                    let index = targetDom.value;
+                    let data = this.travel_grant_datas[index]['plans'];
+                    let vue = this;
+                    data.map((e,v)=>{
+                        e.type ='form-travel_fee_plan';
+                        e.action = 'edit_form';
+                        vue.plan_items.push(e);
+                        vue.count = parseInt(e.id) + 1;
+                    });
+                },
+            },
+            updated() {
+                // console.log('view updated')
+            },
+            watch: {
+             // change_date: {
+                //     immediate: true,    // 这句重要
+                //     handler(val, oldVal) {
+                //         if (oldVal !== undefined) {
+                //             this.getCampaignData(this.user_ids, val);
+                //         }
+                //     }
+                // }
+            }
+        }
 </script>
 
 <style scoped>
