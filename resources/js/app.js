@@ -8,12 +8,8 @@ require('bootstrap');
 
 window.Vue = require('vue');
 import Vuex from 'vuex';
-import VueFormWizard from 'vue-form-wizard'
-import 'vue-form-wizard/dist/vue-form-wizard.min.css'
-
 
 Vue.use(Vuex);
-Vue.use(VueFormWizard);
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -30,6 +26,7 @@ Vue.component('form-new', require('./components/form/form-new.vue').default);
 Vue.component('form-payment', require('./components/form/form-payment').default);
 Vue.component('form-sign', require('./components/form/form-sign').default);
 Vue.component('form-refund', require('./components/form/form-refund').default);
+Vue.component('form-refund-items', require('./components/form/refund/form-refund-items').default);
 Vue.component('form-social', require('./components/form/form-social').default);
 Vue.component('form-travel_fee', require('./components/form/form-travel_fee').default);
 Vue.component('form-travel_grant', require('./components/form/form-travel_grant').default);

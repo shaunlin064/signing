@@ -43,7 +43,7 @@
         props: {},
         data() {
             return {
-                form_type : 'form-payment',
+                form_type : 'form-refund',
                 dom_id: 'form-new',
                 dom_target: 'form_type'
             }
