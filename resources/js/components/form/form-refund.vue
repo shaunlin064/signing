@@ -27,204 +27,22 @@
                     <h4 class="card-title">項目</h4>
                 </div>
             </div>
-            <div class="row col-md-12">
-                <div class="col-md-2">
-                    <div class="form-group">
-                        <label for="pay_type4">類型</label>
-                        <select class="custom-select select2 form-control"
-                                id="pay_typ4e" name="pay_type4">
-                            <option value="cash" selected>乘車</option>
-                            <option value="transfer">案件</option>
-                            <option value="other">交際</option>
-                            <option value="other">其他</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="form-label-group mt-2">
-                        <input type="text" id="department" class="form-control"
-                               placeholder="日期"
-                               name="department">
-                        <label for="department">日期</label>
-                    </div>
-                </div>
-                <div class='col-md-2'>
-                    <div class="form-label-group mt-2">
-                        <input type="text" id="name" class="form-control"
-                               placeholder="項目" name="name">
-                        <label for="name">項目</label>
-                    </div>
-                </div>
-                <div class='col-md-2'>
-                    <div class="form-label-group mt-2">
-                        <input type="text" id="department" class="form-control"
-                               placeholder="乘車起始點"
-                               name="department">
-                        <label for="department">乘車起始點</label>
-                    </div>
-                </div>
-                <div class='col-md-2'>
-                    <div class="form-label-group mt-2">
-                        <input type="text" id="name" class="form-control"
-                               placeholder="金額" name="name">
-                        <label for="name">金額</label>
-                    </div>
-                </div>
-                <div class='col-md-auto mt-2'>
-                    <button type="button"
-                            class="btn btn-icon btn-danger mr-1 mb-1 waves-effect waves-light">
-                        <i
-                            class="feather icon-x"></i></button>
-                </div>
-            </div>
-            <div class="row col-md-12">
-                <div class="col-md-2">
-                    <div class="form-group">
-                        <label for="pay_type3">類型</label>
-                        <select class="custom-select select2 form-control"
-                                id="pay_type3" name="pay_type3">
-                            <option value="cash">乘車</option>
-                            <option value="transfer" selected>案件</option>
-                            <option value="other">交際</option>
-                            <option value="other">其他</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="form-label-group mt-2">
-                        <input type="text" id="department" class="form-control"
-                               placeholder="日期"
-                               name="department">
-                        <label for="department">日期</label>
-                    </div>
-                </div>
-                <div class='col-md-2'>
-                    <div class="form-label-group mt-2">
-                        <input type="text" id="name" class="form-control"
-                               placeholder="項目" name="name">
-                        <label for="name">項目</label>
-                    </div>
-                </div>
-                <div class='col-md-2'>
-                    <div class="form-label-group mt-2">
-                        <input type="text" id="department" class="form-control"
-                               placeholder="案件委刊單號"
-                               name="department">
-                        <label for="department">案件委刊單號</label>
-                    </div>
-                </div>
-                <div class='col-md-2'>
-                    <div class="form-label-group mt-2">
-                        <input type="text" id="name" class="form-control"
-                               placeholder="金額" name="name">
-                        <label for="name">金額</label>
-                    </div>
-                </div>
-                <div class='col-md-auto mt-2'>
-                    <button type="button"
-                            class="btn btn-icon btn-danger mr-1 mb-1 waves-effect waves-light">
-                        <i
-                            class="feather icon-x"></i></button>
-                </div>
-            </div>
-            <div class="row col-md-12">
-                <div class="col-md-2">
-                    <div class="form-group">
-                        <label for="pay_type2">類型</label>
-                        <select class="custom-select select2 form-control"
-                                id="pay_type2" name="pay_type2">
-                            <option value="cash">乘車</option>
-                            <option value="transfer">案件</option>
-                            <option value="other" selected>交際</option>
-                            <option value="other">其他</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="form-label-group mt-2">
-                        <input type="text" id="department" class="form-control"
-                               placeholder="日期"
-                               name="department">
-                        <label for="department">日期</label>
-                    </div>
-                </div>
-                <div class='col-md-2'>
-                    <div class="form-label-group mt-2">
-                        <input type="text" id="name" class="form-control"
-                               placeholder="項目" name="name">
-                        <label for="name">項目</label>
-                    </div>
-                </div>
-                <div class='col-md-2'>
-                    <div class="form-label-group mt-2">
-                        <input type="text" id="department" class="form-control"
-                               placeholder="交際送禮單號"
-                               name="department">
-                        <label for="department">交際送禮單號</label>
-                    </div>
-                </div>
-                <div class='col-md-2'>
-                    <div class="form-label-group mt-2">
-                        <input type="text" id="name" class="form-control"
-                               placeholder="金額" name="name">
-                        <label for="name">金額</label>
-                    </div>
-                </div>
-                <div class='col-md-auto mt-2'>
-                    <button type="button"
-                            class="btn btn-icon btn-danger mr-1 mb-1 waves-effect waves-light">
-                        <i
-                            class="feather icon-x"></i></button>
-                </div>
-            </div>
-            <div class="row col-md-12">
-                <div class="col-md-2">
-                    <div class="form-group">
-                        <label for="pay_type">類型</label>
-                        <select class="custom-select select2 form-control"
-                                id="pay_type1" name="pay_type1">
-                            <option value="cash">乘車</option>
-                            <option value="transfer">案件</option>
-                            <option value="other">交際</option>
-                            <option value="other" selected>其他</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="form-label-group mt-2">
-                        <input type="text" id="department" class="form-control"
-                               placeholder="日期"
-                               name="department">
-                        <label for="department">日期</label>
-                    </div>
-                </div>
-                <div class='col-md-2'>
-                    <div class="form-label-group mt-2">
-                        <input type="text" id="name" class="form-control"
-                               placeholder="項目" name="name">
-                        <label for="name">項目</label>
-                    </div>
-                </div>
-                <div class='col-md-2'>
-                    <div class="form-label-group mt-2">
-                        <input type="text" id="name" class="form-control"
-                               placeholder="金額" name="name">
-                        <label for="name">金額</label>
-                    </div>
-                </div>
-                <div class='col-md-auto mt-2'>
-                    <button type="button"
-                            class="btn btn-icon btn-danger mr-1 mb-1 waves-effect waves-light">
-                        <i
-                            class="feather icon-x"></i></button>
-                </div>
-            </div>
+            <component v-for="item in items" v-bind:is="item.type" :key='item.id' :id='item.id' :type='item.form'></component>
             <div class='row col-md-12 justify-content-end border-top-light'>
+
                 <div class='col-md-4 text-right mt-1'>
-                    <button type="button"
-                            class="btn btn-outline-primary mr-1 mb-1 waves-effect waves-light">
-                        新增
-                    </button>
+                    <div class="btn-group dropdown mr-1 mb-1">
+                        <button type="button" class="btn btn-outline-primary dropdown-toggle" @click='openMenu' data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">
+                            新增
+                        </button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" @click='addItem("乘車")'>乘車</a>
+                            <a class="dropdown-item" @click='addItem("案件")'>案件</a>
+                            <a class="dropdown-item" @click='addItem("交際")'>交際</a>
+                            <a class="dropdown-item" @click='addItem("其他")'>其他</a>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class='col-md-12 mt-2'>
@@ -239,9 +57,70 @@
 </template>
 
 <script>
-    export default {
-        name: "form-refund"
-    }
+    import {mapState, mapMutations, mapActions, mapGetters} from 'vuex';
+        export default {
+            name: "form-refund",
+            props: {
+
+            },
+            data() {
+                return {
+                    items: [],
+                    count: 0
+                }
+            },
+            computed: {
+                    ...mapState([]),
+            },
+            beforeMount: function () {
+            },
+            mounted: function () {
+                var vue = this;
+                $('.row').on('click','[data-action="deleteItem"]',function(e){
+                    vue.deleteItem(e);
+                });
+                this.initial();
+            },
+            methods: {
+                initial(){
+                    $(".select2").select2({
+                        dropdownAutoWidth: true,
+                        width: '100%'
+                    });
+                },
+                deleteItem(event){
+                    $(event.currentTarget).parents('.row.col-md-12').remove();
+                },
+                openMenu(event){
+                    let targetDom = $(event.currentTarget);
+                    targetDom.parent('.btn-group').addClass('show');
+                    targetDom.next().addClass('show');
+                },
+                addItem(type){
+
+                    this.items.push({
+                        type: 'form-refund-items',
+                        form:type,
+                        id: this.count++
+                    });
+
+                    this.initial();
+                }
+            },
+            updated() {
+                // console.log('view updated')
+            },
+            watch: {
+             // change_date: {
+                //     immediate: true,    // 这句重要
+                //     handler(val, oldVal) {
+                //         if (oldVal !== undefined) {
+                //             this.getCampaignData(this.user_ids, val);
+                //         }
+                //     }
+                // }
+            }
+        }
 </script>
 
 <style scoped>
