@@ -30,6 +30,9 @@ Vue.component('form-refund-items', require('./components/form/form-refund-items'
 Vue.component('form-social', require('./components/form/form-social').default);
 Vue.component('form-travel_fee', require('./components/form/form-travel_fee').default);
 Vue.component('form-travel_grant', require('./components/form/form-travel_grant').default);
+
+Vue.component('form-list', require('./components/form/form-list').default);
+
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

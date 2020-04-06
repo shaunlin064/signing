@@ -1,7 +1,12 @@
+<?
+    $pageConfigs = [
+        'bodyClass' => "bg-full-screen-image",
+        'blankPage' => true
+    ];
+    ?>
 @isset($pageConfigs)
 {!! Helper::updatePageConfig($pageConfigs) !!}
 @endisset
-
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}"
     data-textdirection="{{ env('MIX_CONTENT_DIRECTION') === 'rtl' ? 'rtl' : 'ltr' }}">

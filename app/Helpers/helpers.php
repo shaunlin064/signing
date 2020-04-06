@@ -17,7 +17,7 @@ class Helper
             'horizontalMenuType' => 'floating',
             'verticalMenuNavbarType' => 'floating',
             'footerType' => 'static', //footer
-            'bodyClass' => '',
+            'bodyClass' => 'bg-full-screen-image',
             'pageHeader' => true,
             'contentLayout' => 'default',
             'blankPage' => false,

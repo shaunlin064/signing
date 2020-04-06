@@ -1,5 +1,5 @@
 <template>
-    <fieldset>
+    <fieldset :id='dom_id'>
         <div class="row col-md-12 align-items-center">
             <div class="card">
                 <h4 class="card-title">交際送禮</h4>
@@ -91,9 +91,39 @@
 </template>
 
 <script>
-    export default {
-        name: "form-social"
-    }
+    import {mapState, mapMutations, mapActions, mapGetters} from 'vuex';
+
+        export default {
+            name: "form-social",
+            props: {
+                dom_id:String
+            },
+            data() {
+                return {}
+            },
+            computed: {
+                    ...mapState([]),
+            },
+            beforeMount: function () {
+            },
+            mounted: function () {
+
+            },
+            methods: {},
+            updated() {
+                // console.log('view updated')
+            },
+            watch: {
+             // change_date: {
+                //     immediate: true,    // 这句重要
+                //     handler(val, oldVal) {
+                //         if (oldVal !== undefined) {
+                //             this.getCampaignData(this.user_ids, val);
+                //         }
+                //     }
+                // }
+            }
+        }
 </script>
 
 <style scoped>

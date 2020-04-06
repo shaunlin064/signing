@@ -8,8 +8,6 @@
 /public/images
 /public/fonts
 /public/*js
-/public/favicon.ico
-/public/mix-manifest.json
 /storage/*.key
 /vendor
 .env

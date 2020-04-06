@@ -26,7 +26,7 @@
         <!-- Step 2 -->
         <h6 v-show='form_type'><i class="step-icon feather icon-briefcase"></i> Step 2</h6>
         <keep-alive>
-            <component v-bind:is="form_type"/>
+            <component v-bind:is="form_type" :dom_id='form_type'/>
         </keep-alive>
         <div class='row border-top-light mt-2 justify-content-end' v-show='form_type'>
             <button type="button" class="btn btn-primary mr-1 mb-1 waves-effect waves-light text-right mt-2" @click='submit'>送出</button>
@@ -45,6 +45,7 @@
         data() {
             return {
                 form_type : '',
+                already_open: [],
                 dom_id: 'form-new',
                 dom_target: 'form_type'
             }
@@ -77,12 +78,14 @@
             submit(){
                 $('select[disabled]').removeAttr("disabled");
                 $('form#'+this.dom_id).submit();
-                // console.log($('input').serializeArray());
             },
         },
         updated() {
-            this.initial()
-            // $("div#file_upload").dropzone({url: "/file/post"});
+            this.initial();
+            if(this.already_open.indexOf(this.form_type) === -1){
+                this.already_open.push(this.form_type);
+                $("#"+this.form_type+" #file_upload").dropzone({url: "/file/post"});
+            }
         },
         watch: {
             // change_date: {
