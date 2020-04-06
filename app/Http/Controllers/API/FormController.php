@@ -10,9 +10,22 @@ use App\FormFlow;
 use App\FormApplyCheckpoint;
 use DB;
 
+/**
+ * Class FormController
+ * 表單流程管理 申請表處理
+ * @package App\Http\Controllers\API
+ */
 class FormController extends Controller
 {
     //
+    /**
+     * @var array
+     * API回傳訊息格式
+     * status : 成功或失敗狀態 0 失敗 1 成功
+     * status_string : 狀態文字
+     * message : API成功或失敗訊息說明
+     * data : API執行成功夾帶資料
+     */
     protected static $message= [
         'status' => 0,
         'status_string' => '',
@@ -20,11 +33,19 @@ class FormController extends Controller
         'data' => []
     ];
 
+    /**
+     * @param Request $request
+     * 表單流程設定列表
+     * 依照page頁碼取額每頁數量或每頁15個列表，回傳data包含pagination資料
+     * @input page: 頁碼
+     * @input item: 每頁數量
+     * @return array
+     */
     public function flowList(Request $request){
 
         try {
             $_GET['page'] = $request->get('page');
-            $pagination = ($request->get('page') != NULL) ? $request->get('page') : 15;
+            $pagination = ($request->get('item') != NULL) ? $request->get('item') : 15;
             $FormFlow = FormFlow::paginate($pagination);
 
 
@@ -42,6 +63,13 @@ class FormController extends Controller
         return self::$message;
     }
 
+    /**
+     * @param Request $request
+     * 取得表單流程設定內容
+     * 依照id取得該flow關卡詳細資料
+     * @input id: 流程設定紀錄ID(form_flow id)
+     * @return array
+     */
     public function flowGet(Request $request){
 
         try {
@@ -61,6 +89,19 @@ class FormController extends Controller
         return self::$message;
     }
 
+    /**
+     * @param Request $request
+     * 表單流程設定新增
+     * 依照資料欄位傳入並寫入資料庫
+     * @input form_id: 表單ID
+     * @input review_order: 簽核順序
+     * @input review_type: 簽核類型 1:指定人 2:指定位階
+     * @input reviewer_id: 指定簽核人ID or 簽核位階 1:一階主管 2:二階主管 3:三階主管
+     * @input overwrite: 是否可被上層簽核取代 0:不可 1:可
+     * @input replace: 是否有代簽 0:不可 1:可
+     * @input role: 角色 1:簽核 2:執行
+     * @return array
+     */
     public function flowAdd(Request $request){
 
         DB::beginTransaction();
@@ -113,6 +154,20 @@ class FormController extends Controller
         return self::$message;
     }
 
+    /**
+     * @param Request $request
+     * 表單流程設定編輯
+     * 依照資料欄位傳入併更新資料庫
+     * @input id: 編輯流程設定ID(form_flow id)
+     * @input form_id: 表單ID
+     * @input review_order: 簽核順序
+     * @input review_type: 簽核類型 1:指定人 2:指定位階
+     * @input reviewer_id: 指定簽核人ID or 簽核位階 1:一階主管 2:二階主管 3:三階主管
+     * @input overwrite: 是否可被上層簽核取代 0:不可 1:可
+     * @input replace: 是否有代簽 0:不可 1:可
+     * @input role: 角色 1:簽核 2:執行
+     * @return array
+     */
     public function flowEdit(Request $request){
 
         DB::beginTransaction();
@@ -166,6 +221,13 @@ class FormController extends Controller
         return self::$message;
     }
 
+    /**
+     * @param Request $request
+     * 表單流程設定刪除
+     * 依照id確認資料是否存在，存在則移除該筆資料，並且一並移除設定好的代簽資料
+     * @input id: 編輯流程設定ID(form_flow id)
+     * @return array
+     */
     public function flowDelete(Request $request){
 
         DB::beginTransaction();
@@ -201,6 +263,15 @@ class FormController extends Controller
         return self::$message;
     }
 
+    /**
+     * @param Request $request
+     * 簽核表單送出申請
+     * 依照取得表單流程找出該關卡簽核人寫入資料庫
+     * @input form_id :表單ID
+     * @input apply_member_id : 送審人員ID
+     * @input 表單其他欄位name
+     * @return array
+     */
     public function apply(Request $request){
 
         DB::beginTransaction();
@@ -288,6 +359,13 @@ class FormController extends Controller
         return self::$message;
     }
 
+    /**
+     * @param Request $request
+     * 表單申請作廢
+     * 依照id判斷該表單是否已經有人簽核，若無人簽核可作廢
+     * @input id : 表單申請ID
+     * @return array
+     */
     public function applyFail(Request $request){
 
         DB::beginTransaction();
@@ -333,6 +411,17 @@ class FormController extends Controller
         return self::$message;
     }
 
+    /**
+     * @param Request $request
+     * 表單簽核
+     * 檢查簽核關卡後寫入簽核資料，並更新表單目前狀態
+     * @input id : 簽核ID
+     * @input member_id : 簽核人員ID
+     * @input signature : 簽名檔
+     * @input remark : 備註
+     * @input status : 簽核狀態 0:駁回 2:通過
+     * @return array
+     */
     public function applyCheck(Request $request){
 
         DB::beginTransaction();
