@@ -99,12 +99,19 @@ Route::post('/form/apply/check',
  */
 
 /**
- * 登入系統 =====================================================
+ * 系統處理相關 =====================================================
  */
+//系統登入
 Route::post('/system/login',
     [
         'as' => 'api.system.login' ,
         'uses' => 'API\SystemController@login'
+    ]);
+//檔案上傳
+Route::post('/system/upload',
+    [
+        'as' => 'api.system.upload' ,
+        'uses' => 'API\SystemController@upload'
     ]);
 
 /**

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Storage;
 
 /**
  * Class SystemController
@@ -64,6 +65,40 @@ class SystemController extends Controller
     }
 
     /**
+     * @param Request $request
+     * 執行檔案上傳儲存
+     * 依照指定路徑儲存檔案，並回傳詳細資料與檔案URL
+     * @input file : 要上傳的檔案
+     * @input dir : 儲存資料夾
+     * @return array
+     */
+    public function upload(Request $request){
+        try {
+            $item = $request->file('file');
+            $path = $item->store($request->get('dir'));
+            $size = Storage::size($path);
+            $info = pathinfo($path);
+            $tmp = [
+                'id' => $info['filename'],
+                'name' => $item->getClientOriginalName(),
+                'ext' => $info['extension'],
+                'dir' => $info['dirname'],
+                'file_size' => $size
+            ];
+            self::$message['status'] =1;
+            self::$message['status_string'] = "上傳成功";
+            self::$message['data']['url'] = Storage::url($info['dirname'].'/'.$info['basename']);
+            self::$message['data']['file'] = $tmp;
+        }catch(\Exception $ex){
+            self::$message['message'] = $ex->getMessage();
+        }
+
+        return self::$message;
+    }
+
+
+
+    /**
      * @param $username : 帳號
      * @param $password :md5後的密碼
      * @param $encrypt :加解密的key
@@ -73,7 +108,7 @@ class SystemController extends Controller
      * 驗證成功後再向遠端伺服器取得部門資料
      * @return array
      */
-    public static function remoteLogin($username, $password, $encrypt)
+    protected static function remoteLogin($username, $password, $encrypt)
     {
         try {
             //檢查是否為預設Manager
@@ -268,4 +303,6 @@ class SystemController extends Controller
 
         return $data;
     }
+
+
 }
