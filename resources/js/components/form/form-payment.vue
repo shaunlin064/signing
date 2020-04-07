@@ -1,5 +1,5 @@
 <template>
-    <fieldset>
+    <fieldset :id='dom_id'>
         <div class="row col-md-12 align-items-center">
             <div class="card">
                 <h4 class="card-title">請款單</h4>
@@ -92,8 +92,38 @@
 </template>
 
 <script>
+    import {mapState} from 'vuex';
+
     export default {
-        name: "form-payment"
+        name: "name",
+        props: {
+            dom_id: String
+        },
+        data() {
+            return {}
+        },
+        computed: {
+            ...mapState([]),
+        },
+        beforeMount: function () {
+        },
+        mounted: function () {
+            console.log(this.dom_id);
+        },
+        methods: {},
+        updated() {
+            // console.log('view updated')
+        },
+        watch: {
+            // change_date: {
+            //     immediate: true,    // 这句重要
+            //     handler(val, oldVal) {
+            //         if (oldVal !== undefined) {
+            //             this.getCampaignData(this.user_ids, val);
+            //         }
+            //     }
+            // }
+        }
     }
 </script>
 

@@ -1,5 +1,5 @@
 <template>
-    <fieldset>
+    <fieldset :id='dom_id'>
         <div class="row col-md-12 align-items-center">
             <div class="card">
                 <h4 class="card-title">差旅申請單</h4>
@@ -97,6 +97,14 @@
                     <label for="remark">備註</label>
                 </fieldset>
             </div>
+            <div class="col-md-12 mt-1">
+                <div class="form-group">
+                    <input class="dropzone dropzone-area" type="hidden"/>
+                    <div class="dropzone dropzone-area" id="file_upload">
+                        <div class="dz-message">Drop Files Here To Upload</div>
+                    </div>
+                </div>
+            </div>
         </div>
     </fieldset>
 </template>
@@ -107,7 +115,7 @@
         export default {
             name: "form-travel_grant",
             props: {
-
+                dom_id:String
             },
             data() {
                 return {

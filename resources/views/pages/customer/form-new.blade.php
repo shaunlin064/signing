@@ -4,6 +4,7 @@
 	 * Date: 2020/3/25
 	 * Time: 17:35
 	 */--}}
+
 @extends('layouts/contentLayoutMaster')
 
 @section('title', '申請簽核')
@@ -23,8 +24,7 @@
 
 @section('content')
     {{-- Start --}}
-    <section id="form-new">
-        <section id="validation">
+        <section id="form-new">
             <div class="row">
                 <div class="col-12">
                     <div class="card">
@@ -40,7 +40,6 @@
                 </div>
             </div>
         </section>
-    </section>
     <!-- end -->
 @endsection
 

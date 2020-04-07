@@ -1,5 +1,5 @@
 <template>
-    <fieldset>
+    <fieldset :id='dom_id'>
         <div class="row col-md-12 align-items-center">
             <div class="card">
                 <h4 class="card-title">用印單</h4>
@@ -67,18 +67,18 @@
             </div>
             <div class="col-md-6">
                 <div class="form-label-group">
-                    <input type="text" id="contact_name" class="form-control"
+                    <input type="text" id="contact_phone" class="form-control"
                            placeholder="收件人電話"
-                           name="contact_name">
-                    <label for="contact_name">收件人電話</label>
+                           name="contact_phone">
+                    <label for="contact_phone">收件人電話</label>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="form-label-group">
-                    <input type="text" id="contact_phone" class="form-control"
+                    <input type="text" id="contact_address" class="form-control"
                            placeholder="收件人地址"
                            name="contact_phone">
-                    <label for="contact_phone">收件人地址</label>
+                    <label for="contact_address">收件人地址</label>
                 </div>
             </div>
             <div class='col-md-6'>
@@ -92,7 +92,7 @@
             </div>
             <div class="col-md-12 mt-1">
                 <div class="form-group">
-                    <label for="attachment">附件</label>
+                    <label>附件</label>
                     <input class="dropzone dropzone-area" type="hidden"/>
                     <div class="dropzone dropzone-area" id="file_upload">
                         <div class="dz-message">Drop Files Here To Upload</div>
@@ -104,9 +104,39 @@
 </template>
 
 <script>
-    export default {
-        name: "form-sign"
-    }
+    import {mapState, mapMutations, mapActions, mapGetters} from 'vuex';
+
+        export default {
+            name: "form-sign",
+            props: {
+                dom_id:String
+            },
+            data() {
+                return {}
+            },
+            computed: {
+                    ...mapState([]),
+            },
+            beforeMount: function () {
+            },
+            mounted: function () {
+
+            },
+            methods: {},
+            updated() {
+                // console.log('view updated')
+            },
+            watch: {
+             // change_date: {
+                //     immediate: true,    // 这句重要
+                //     handler(val, oldVal) {
+                //         if (oldVal !== undefined) {
+                //             this.getCampaignData(this.user_ids, val);
+                //         }
+                //     }
+                // }
+            }
+        }
 </script>
 
 <style scoped>
