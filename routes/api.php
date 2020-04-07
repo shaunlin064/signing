@@ -82,22 +82,22 @@ Route::post('/form/apply',
     'uses' => 'API\FormController@apply'
   ]);
 //申請表單內容
-Route::post('/form/apply/content',
+Route::post('/form/get',
     [
-        'as' => 'api.form.apply.content' ,
-        'uses' => 'API\FormController@applyContent'
+        'as' => 'api.form.get' ,
+        'uses' => 'API\FormController@get'
     ]);
 //申請表單作廢
-Route::post('/form/apply/fail',
+Route::post('/form/fail',
     [
-        'as' => 'api.form.apply.fail' ,
-        'uses' => 'API\FormController@applyFail'
+        'as' => 'api.form.fail' ,
+        'uses' => 'API\FormController@fail'
     ]);
 //申請表單簽核
-Route::post('/form/apply/check',
+Route::post('/form/check',
     [
-        'as' => 'api.form.apply.check' ,
-        'uses' => 'API\FormController@applyCheck'
+        'as' => 'api.form.check' ,
+        'uses' => 'API\FormController@check'
     ]);
 //待簽核列表
 Route::post('/form/check/list',

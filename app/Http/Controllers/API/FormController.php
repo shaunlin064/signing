@@ -18,6 +18,20 @@ use DB;
 class FormController extends Controller
 {
     //
+    /**
+     * @var array
+     * API回傳訊息格式
+     * status : 成功或失敗狀態 0 失敗 1 成功
+     * status_string : 狀態文字
+     * message : API成功或失敗訊息說明
+     * data : API執行成功夾帶資料
+     */
+    protected static $message= [
+        'status' => 0,
+        'status_string' => '',
+        'message' => '',
+        'data' => []
+    ];
 
     /**
      * @param Request $request
@@ -117,12 +131,58 @@ class FormController extends Controller
 
     /**
      * @param Request $request
+     * 取得申請單內容與簽核狀況
+     * 依照申請單ID取得內容與簽核狀況
+     * @input id : 申請單ID
+     * @return array['data'] : 申請單基本資料
+     * @reutrn array['data']['column'] : 申請單填寫欄位資料
+     * @reutrn array['data']['checkPoint'] : 申請單簽核關卡紀錄
+     */
+    public function get(Request $request){
+
+        try {
+            $FormApply = FormApply::findOrFail($request->get('id'));
+
+            $result = $FormApply->toArray();
+            //封裝欄位填寫資料
+            $result['column'] = $FormApply->data->pluck('value','column');
+            //封裝簽核列表
+            $result['checkPoint'] = $FormApply->checkPoint->transform(function($item,$key){
+
+                $item = collect($item)->forget([
+                    'updated_at',
+                    'form_apply_id',
+                    'overwrite',
+                    'replace_members',
+                ]);
+                $item['created_at'] = date('Y-m-d',strtotime($item['created_at']));
+
+                return $item;
+            });
+
+
+            self::$message['status'] = 1;
+            self::$message['status_string'] = '取得成功';
+            self::$message['message'] = '';
+            self::$message['data'] = $result;
+
+        }catch (\Exception $ex){
+
+            self::$message['status_string'] = '取得失敗';
+            self::$message['message'] = '資料庫錯誤!'.$ex->getMessage();
+        }
+
+        return self::$message;
+    }
+
+    /**
+     * @param Request $request
      * 表單申請作廢
      * 依照id判斷該表單是否已經有人簽核，若無人簽核可作廢
      * @input id : 表單申請ID
      * @return array
      */
-    public function applyFail(Request $request){
+    public function fail(Request $request){
 
         DB::beginTransaction();
         try {
@@ -178,7 +238,7 @@ class FormController extends Controller
      * @input status : 簽核狀態 0:駁回 2:通過
      * @return array
      */
-    public function applyCheck(Request $request){
+    public function check(Request $request){
 
         DB::beginTransaction();
         try {

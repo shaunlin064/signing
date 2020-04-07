@@ -23,7 +23,7 @@ class FormApply extends Model
      * 簽核關卡資料，一對多
      */
     public function checkPoint(){
-        return $this->hasMany('\App\FormApplyCheckpoint','form_apply_id','id');
+        return $this->hasMany('\App\FormApplyCheckpoint','form_apply_id','id')->orderBy('review_order','ASC');
     }
 
     /**
