@@ -29,4 +29,11 @@ class FormApplyCheckpoint extends Model
     public function apply(){
         return $this->hasOne('\App\FormApply','id','form_apply_id');
     }
+
+    /**
+     * 填表資料，一對一
+     */
+    public function applyData(){
+        return $this->hasMany('\App\FormData','form_apply_id','form_apply_id');
+    }
 }

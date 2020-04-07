@@ -541,4 +541,76 @@ class FormController extends Controller
 
         return self::$message;
     }
+
+    /**
+     * @param Request $request
+     * 待簽核列表資料
+     * 依照member_id找出該簽核者在關卡中可簽或可代簽的資料
+     * @input member_id : 簽核者ID
+     * @return array['data'][0]['id'] : 關卡ID
+     * @return array['data'][0]['form_id'] : 表單ID
+     * @return array['data'][0]['column'] : 填表資料
+     * @return array['data'][0]['apply_member_id'] : 申請人ID
+     * @return array['data'][0]['apply_at'] : 申請日期
+     * @return array['data'][0]['status'] : 狀態 0:駁回 1:暫存中 2:簽核中 3:通過
+     * @return array['data'][0]['can_check'] : 可以簽核或不行 0 不行(代表前面有人卡關) 1 可簽
+     * @return array['data'][0]['is_replace'] : 是否為代簽 0 否 1 是
+     */
+    public function checkList(Request $request){
+
+        $result = [];
+        try {
+            //找出所有未簽資料
+            $checkList = FormApplyCheckpoint::where('status', 1)
+                ->whereNull('signed_at')
+                ->where('role', 1)
+                ->get();
+
+            foreach ($checkList as $k => $v) {
+                //判斷是主簽或代簽人才加入列表
+                $replace_members = json_decode($v->replace_members, true);
+                if ($v->signed_member_id == $request->get('member_id') || in_array($request->get('member_id'), $replace_members)) {
+                    $item = [
+                        'id' => $v->id,
+                        'form_id' => $v->apply->form_id,
+                        'column' => $v->applyData,
+                        'apply_member_id' => $v->apply->apply_member_id,
+                        'apply_at' => $v->apply->created_at->format('Y-m-d'),
+                        'status' => $v->apply->status,
+                        'can_check' => 0,
+                        'is_replace' => 0
+                    ];
+
+                    //檢查有沒有比我前面的人卡關
+                    $overwriteCount = FormApplyCheckpoint::where('review_order', '<', $v->review_order)
+                        ->where('form_apply_id', $v->form_apply_id)
+                        ->whereNull('signed_at')
+                        ->where('overwrite', 1)
+                        ->count();
+                    if ($overwriteCount == 0) {
+                        $item['can_check'] = 1;
+                    }
+
+                    if (in_array($request->get('member_id'), $replace_members)) {
+                        $item['is_replace'] = 1;
+                    }
+
+                    array_push($result, $item);
+                }
+            }
+
+            self::$message['status'] = 1;
+            self::$message['status_string'] = '取得成功';
+            self::$message['message'] = '';
+            self::$message['data'] = $result;
+
+        }catch (\Exception $ex){
+            DB::rollback();
+            self::$message['status_string'] = '取得失敗';
+            self::$message['message'] = '資料庫錯誤!'.$ex->getMessage();
+        }
+
+        return self::$message;
+
+    }
 }

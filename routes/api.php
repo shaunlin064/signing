@@ -93,6 +93,12 @@ Route::post('/form/apply/check',
         'as' => 'api.form.apply.check' ,
         'uses' => 'API\FormController@applyCheck'
     ]);
+//待簽核列表
+Route::post('/form/check/list',
+    [
+        'as' => 'api.form.check.list' ,
+        'uses' => 'API\FormController@checkList'
+    ]);
 
 /**
  * ===================================================================
