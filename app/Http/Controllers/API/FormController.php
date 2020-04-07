@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\FormApply;
 use App\FormFlow;
 use App\FormApplyCheckpoint;
+use App\SystemMessage;
 use DB;
 
 /**
@@ -97,6 +98,15 @@ class FormController extends Controller
                         'overwrite' => $v->overwrite,
                         'replace_members' => json_encode($replace_signed_member_id),
                         'status' => 1
+                    ]);
+
+                    //寫入通知訊息
+                    SystemMessage::create([
+                        'member_id' => $signed_member_id,
+                        'title' => '系統訊息',
+                        'content' => '您有一則待簽核資料，請儘速處理',
+                        'url' => '#',
+                        'send_by' => 0
                     ]);
                 }
 
