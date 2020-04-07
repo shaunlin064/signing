@@ -65,7 +65,7 @@ class FormFlowController extends Controller
     public function get(Request $request){
 
         try {
-            $FormFlow = FormFlow::findOrFail($request->get('id'));
+            $FormFlow = FormFlow::findOrFail($request->get('id'))->toArray();
 
             self::$message['status'] = 1;
             self::$message['status_string'] = '取得成功';
