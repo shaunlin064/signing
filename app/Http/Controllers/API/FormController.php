@@ -177,6 +177,71 @@ class FormController extends Controller
 
     /**
      * @param Request $request
+     * 表單申請編輯
+     * 依照id判斷該表單是否已經有人簽核，若無人簽核可編輯
+     * @input id : 表單申請ID
+     * @return array
+     */
+    public function edit(Request $request){
+
+        DB::beginTransaction();
+        try {
+            //檢查申請表是否已經有人簽核
+            $FormApplyCheckpoint = FormApplyCheckpoint::where('form_apply_id',$request->get('id'))
+                ->whereNotNull('signed_at')
+                ->first();
+
+            if($FormApplyCheckpoint == NULL){
+                $FormApply = FormApply::findOrFail($request->get('id'));
+                if($FormApply->fail_at == NULL){
+
+                    //移除原填寫欄位資料
+                    $FormApply->data()->delete();
+                    //重新寫入填單資料
+                    $form = Config('form.'.$FormApply->form_id);
+                    foreach($form['column'] as $k=>$v){
+
+                        $FormApply->data()->create([
+                            'form_id' => $request->get('form_id'),
+                            'column' => $k,
+                            'value' => $request->get($k)
+                        ]);
+                    }
+
+                    $FormApply->push();
+                }
+                else{
+                    self::$message['status_string'] = '編輯失敗';
+                    self::$message['message'] = '表單錯誤或資料已經作廢';
+
+                    return self::$message;
+                }
+            }
+            else{
+                self::$message['status_string'] = '編輯失敗';
+                self::$message['message'] = '表單錯誤或已有簽核紀錄無法作廢';
+
+                return self::$message;
+            }
+
+
+            self::$message['status'] = 1;
+            self::$message['status_string'] = '編輯成功';
+            self::$message['message'] = '';
+            self::$message['data'] = $FormApply;
+            DB::commit();
+
+        }catch (\Exception $ex){
+            DB::rollback();
+            self::$message['status_string'] = '編輯失敗';
+            self::$message['message'] = '資料庫錯誤!'.$ex->getMessage();
+        }
+
+        return self::$message;
+    }
+
+    /**
+     * @param Request $request
      * 表單申請作廢
      * 依照id判斷該表單是否已經有人簽核，若無人簽核可作廢
      * @input id : 表單申請ID

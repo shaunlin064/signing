@@ -87,6 +87,12 @@ Route::post('/form/get',
         'as' => 'api.form.get' ,
         'uses' => 'API\FormController@get'
     ]);
+//申請表單編輯
+Route::post('/form/edit',
+    [
+        'as' => 'api.form.edit' ,
+        'uses' => 'API\FormController@edit'
+    ]);
 //申請表單作廢
 Route::post('/form/fail',
     [
