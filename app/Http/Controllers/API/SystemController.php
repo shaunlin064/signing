@@ -69,7 +69,7 @@ class SystemController extends Controller
     /**
      * @param Request $request
      * 執行檔案上傳儲存
-     * 依照指定路徑儲存檔案，並回傳詳細資料與檔案URL
+     * 依照指定路徑儲存檔案，並回傳詳細資料與檔案URL，支援多檔案上傳
      * @input file : 要上傳的檔案
      * @input dir : 儲存資料夾
      * @return array
@@ -77,20 +77,49 @@ class SystemController extends Controller
     public function upload(Request $request){
         try {
             $item = $request->file('file');
-            $path = $item->store($request->get('dir'));
-            $size = Storage::size($path);
-            $info = pathinfo($path);
-            $tmp = [
-                'id' => $info['filename'],
-                'name' => $item->getClientOriginalName(),
-                'ext' => $info['extension'],
-                'dir' => $info['dirname'],
-                'file_size' => $size
-            ];
+            $dir = $request->get('dir');
+            if(is_array($item) && count($item) > 1){
+                $url = [];
+                $files = [];
+                foreach($item as $k=>$v){
+                    $path = $v->store($dir);
+                    $size = Storage::size($path);
+                    $info = pathinfo($path);
+                    $tmp = [
+                        'id' => $info['filename'],
+                        'name' => $v->getClientOriginalName(),
+                        'ext' => $info['extension'],
+                        'dir' => $info['dirname'],
+                        'file_size' => $size
+                    ];
+
+                    array_push($url,Storage::url($info['dirname'].'/'.$info['basename']));
+                    array_push($files,$tmp);
+                }
+            }
+            else{
+                if(is_array($item)){
+                    $item = $item[0];
+                }
+                $path = $item->store($dir);
+                $size = Storage::size($path);
+                $info = pathinfo($path);
+                $tmp = [
+                    'id' => $info['filename'],
+                    'name' => $item->getClientOriginalName(),
+                    'ext' => $info['extension'],
+                    'dir' => $info['dirname'],
+                    'file_size' => $size
+                ];
+
+                $url = Storage::url($info['dirname'].'/'.$info['basename']);
+                $files = $tmp;
+            }
+
             self::$message['status'] =1;
             self::$message['status_string'] = "上傳成功";
-            self::$message['data']['url'] = Storage::url($info['dirname'].'/'.$info['basename']);
-            self::$message['data']['file'] = $tmp;
+            self::$message['data']['url'] = $url;
+            self::$message['data']['file'] = $files;
         }catch(\Exception $ex){
             self::$message['status_string'] = "上傳失敗";
             self::$message['message'] = $ex->getMessage();
