@@ -428,6 +428,7 @@ class FormController extends Controller
      * 待簽核列表資料
      * 依照member_id找出該簽核者在關卡中可簽或可代簽的資料
      * @input member_id : 簽核者ID
+     * @input role : 簽核者或執行者 1 簽核 2 執行 NULL 不區分
      * @return array['data'][0]['id'] : 關卡ID
      * @return array['data'][0]['form_id'] : 表單ID
      * @return array['data'][0]['column'] : 填表資料
@@ -443,9 +444,11 @@ class FormController extends Controller
         try {
             //找出所有未簽資料
             $checkList = FormApplyCheckpoint::where('status', 1)
-                ->whereNull('signed_at')
-                ->where('role', 1)
-                ->get();
+                ->whereNull('signed_at');
+            if($request->get('role') != NULL){
+                $checkList->where('role', $request->get('role'));
+            }
+            $checkList = $checkList->get();
 
             foreach ($checkList as $k => $v) {
                 //判斷是主簽或代簽人才加入列表
