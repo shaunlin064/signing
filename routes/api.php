@@ -40,31 +40,31 @@ Route::group([
 Route::post('/form/flow/list',
     [
         'as' => 'api.form.flow.list' ,
-        'uses' => 'API\FormController@flowList'
+        'uses' => 'API\FormFlowController@listist'
     ]);
 //取得流程內容
 Route::post('/form/flow/get',
     [
         'as' => 'api.form.flow.get' ,
-        'uses' => 'API\FormController@flowGet'
+        'uses' => 'API\FormFlowController@get'
     ]);
 //新增流程
 Route::post('/form/flow/add',
     [
         'as' => 'api.form.flow.add' ,
-        'uses' => 'API\FormController@flowAdd'
+        'uses' => 'API\FormFlowController@add'
     ]);
 //編輯流程
 Route::post('/form/flow/edit',
     [
         'as' => 'api.form.flow.edit' ,
-        'uses' => 'API\FormController@flowEdit'
+        'uses' => 'API\FormFlowController@edit'
     ]);
 //刪除流程
 Route::post('/form/flow/delete',
     [
         'as' => 'api.form.flow.delete' ,
-        'uses' => 'API\FormController@flowDelete'
+        'uses' => 'API\FormFlowController@delete'
     ]);
 
 /**
@@ -81,6 +81,12 @@ Route::post('/form/apply',
     'as' => 'api.form.apply' ,
     'uses' => 'API\FormController@apply'
   ]);
+//申請表單內容
+Route::post('/form/apply/content',
+    [
+        'as' => 'api.form.apply.content' ,
+        'uses' => 'API\FormController@applyContent'
+    ]);
 //申請表單作廢
 Route::post('/form/apply/fail',
     [
