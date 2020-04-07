@@ -131,6 +131,24 @@ Route::post('/system/upload',
         'as' => 'api.system.upload' ,
         'uses' => 'API\SystemController@upload'
     ]);
+//系統訊息列表
+Route::post('/system/message/list',
+    [
+        'as' => 'api.system.message.list' ,
+        'uses' => 'API\SystemController@messageList'
+    ]);
+//取得系統訊息
+Route::post('/system/message/get',
+    [
+        'as' => 'api.system.message.get' ,
+        'uses' => 'API\SystemController@messageGet'
+    ]);
+//設定系統訊息已讀取
+Route::post('/system/message/setRead',
+    [
+        'as' => 'api.system.message.setRead' ,
+        'uses' => 'API\SystemController@messageSetRead'
+    ]);
 
 /**
  * ===================================================================

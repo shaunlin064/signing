@@ -4,6 +4,8 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\SystemMessage;
+
 use Storage;
 
 /**
@@ -90,13 +92,108 @@ class SystemController extends Controller
             self::$message['data']['url'] = Storage::url($info['dirname'].'/'.$info['basename']);
             self::$message['data']['file'] = $tmp;
         }catch(\Exception $ex){
+            self::$message['status_string'] = "上傳失敗";
             self::$message['message'] = $ex->getMessage();
         }
 
         return self::$message;
     }
 
+    /**
+     * @param Request $request
+     * 取得系統訊息列表
+     * 依照member_id 取得該使用者的通知訊息
+     * @input member_id : 接收者ID
+     * @input take : 取多少筆資料 null : 全部列出
+     * @return array['data'] : SystemMessageArray
+     */
+    public function messageList(Request $request){
+        try {
+            $take = $request->get('take');
+            $message = SystemMessage::where('member_id',$request->get('member_id'))
+                ->orderBy('id','DESC');
+            if($take != null&&  is_numeric($take)){
+                $message->take($take);
+            }
+            $message = $message->get()->toArray();
 
+            self::$message['status'] =1;
+            self::$message['status_string'] = "取得成功";
+            self::$message['data'] = $message;
+
+        }catch(\Exception $ex){
+            self::$message['status_string'] = "取得失敗";
+            self::$message['message'] = $ex->getMessage();
+        }
+
+        return self::$message;
+    }
+
+    /**
+     * @param Request $request
+     * 取得系統訊息內容
+     * 根據ID取得系統訊息內容，接收者必須為member_id
+     * @input id : 訊息ID
+     * @input member_id : 接收者ID
+     * @return array['data'] : SystemMessage
+     */
+    public function messageGet(Request $request){
+        try {
+
+            $message = SystemMessage::where('member_id',$request->get('member_id'))
+                ->where('id',$request->get('id'))
+                ->first()->toArray();
+
+            self::$message['status'] =1;
+            self::$message['status_string'] = "取得成功";
+            self::$message['data'] = $message;
+
+        }catch(\Exception $ex){
+            self::$message['status_string'] = "取得失敗";
+            self::$message['message'] = $ex->getMessage();
+        }
+
+        return self::$message;
+    }
+
+    /**
+     * @param Request $request
+     * 設定訊息為已讀
+     * 依照訊息id設定為已讀
+     * @input id : 訊息ID
+     * @input member_id : 接收者ID
+     * @return array
+     */
+    public function messageSetRead(Request $request){
+
+        try {
+
+            $message = SystemMessage::where('member_id',$request->get('member_id'))
+                ->where('id',$request->get('id'))
+                ->first();
+
+            if($message != null){
+                $message->read_at = date('Y-m-d H:i:s');
+                $message->save();
+
+                self::$message['status'] =1;
+                self::$message['status_string'] = "設定成功";
+                self::$message['data'] = $message;
+            }
+            else{
+                self::$message['status_string'] = "設定失敗";
+                self::$message['data'] = '找不到此訊息';
+            }
+
+
+
+        }catch(\Exception $ex){
+            self::$message['status_string'] = "設定失敗";
+            self::$message['message'] = $ex->getMessage();
+        }
+
+        return self::$message;
+    }
 
     /**
      * @param $username : 帳號
