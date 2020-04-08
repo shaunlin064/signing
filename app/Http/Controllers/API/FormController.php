@@ -82,20 +82,34 @@ class FormController extends Controller
                 foreach($FormFlow as $k=>$v){
                     $signed_member_id = $v->reviewer_id;
                     if($v->review_type == 2){
-                        // TODO 位階須先找出實際簽署者
+                        //位階須先找出實際簽署者
+                        if($v->reviewer_id == 1){
+                            $signed_member_id = $member[$request->get('apply_member_id')]['top_manage'];
+                        }else if($v->reviewer_id == 2){
+                            $signed_member_id = $member[$request->get('apply_member_id')]['sec_manage'];
+                        }else{
+                            $signed_member_id = $member[$request->get('apply_member_id')]['executive'];
+                        }
                     }
 
                     //找到可代簽人員
                     $replace_signed_member_id = [];
                     foreach($v->replaceMember as $k1=>$v1){
                         if($v1->review_type == 2){
-                            // TODO 位階須先找出實際簽署者
+                            //位階須先找出實際簽署者
+                            if($v->reviewer_id == 1){
+                                $replace_id = $member[$request->get('apply_member_id')]['top_manage'];
+                            }else if($v->reviewer_id == 2){
+                                $replace_id = $member[$request->get('apply_member_id')]['sec_manage'];
+                            }else{
+                                $replace_id = $member[$request->get('apply_member_id')]['executive'];
+                            }
+                            array_push($replace_signed_member_id,$replace_id);
                         }
                         else{
                             array_push($replace_signed_member_id,$v1->reviewer_id);
                         }
                     }
-
 
                     $FormApply->checkPoint()->create([
                         'review_order' => $v->review_order,
