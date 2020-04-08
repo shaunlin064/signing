@@ -9,6 +9,7 @@ use App\FormApply;
 use App\FormFlow;
 use App\FormApplyCheckpoint;
 use App\SystemMessage;
+use App\EmailSend;
 use DB;
 
 /**
@@ -107,6 +108,24 @@ class FormController extends Controller
                         'content' => '您有一則待簽核資料，請儘速處理',
                         'url' => '#',
                         'send_by' => 0
+                    ]);
+
+                    //寄出通知信件
+                    $mail_data = [
+                        'name' => 'user',
+                        'form_id' => $request->get('form_id'),
+                        'member' => 'user1',
+                        'created_at' => date('Y-m-d H:i:s')
+                    ];
+
+                    EmailSend::create([
+                        'notify_type' => '簽核通知',
+                        'receiver_email' => 'virtualorz@gmail.com',
+                        'receiver_name' => '小貝',
+                        'template' => 'Email.signing_notify',
+                        'subject' => "傑思 愛德威 - 簽核系統通知",
+                        'content' => json_encode($mail_data),
+                        'status' => 0
                     ]);
                 }
 

@@ -1,4 +1,4 @@
-@extends('Email.layouts.master')
+@extends('Email.Layout.master')
 
 @section('content')
     <div class="block_div">
