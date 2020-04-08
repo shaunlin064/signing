@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\SystemMessage;
 
 use Storage;
+use Cache;
+use Carbon\Carbon;
 
 /**
  * Class SystemController
@@ -57,13 +59,20 @@ class SystemController extends Controller
             }
 
             $message = self::remoteLogin($result[0], $result[1], self::$encrypt);
-            return $message;
+
         }
         else{
             //由帳號密碼登入的狀況
             $message = self::remoteLogin($request->get('account'), $request->get('password'), self::$encrypt);
-            return $message;
         }
+
+        //將登入資訊儲存至快取
+        $expiresAt = Carbon::now()->addMinutes(120);
+        foreach($message['data'] as $k=>$v){
+            Cache::put($k,$v,$expiresAt);
+        }
+
+        return $message;
     }
 
     /**
