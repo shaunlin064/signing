@@ -210,7 +210,7 @@
                                 <div class="col_div ptl_0" style="padding-top:5px;padding-bottom:5px; padding-right: 0px;">
                                     <div class="div_font footer_font_l1">
                                         <div class="div_font footer_font_l2">
-                                            <p class="div_p footer_font_l3"><span style="color: #ffffff; font-size: 12px;"><span style="font-size: 12px; color: #a8bf6f;">Site</span> <a href="{{env('APP_URL')}}" style="color:#fff">查看工單系統</a></span>
+                                            <p class="div_p footer_font_l3"><span style="color: #ffffff; font-size: 12px;"><span style="font-size: 12px; color: #a8bf6f;">Site</span> <a href="{{env('APP_URL')}}" style="color:#fff">查看簽核系統</a></span>
                                                 <br/>
                                             </p>
                                         </div>

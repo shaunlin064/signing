@@ -10,6 +10,7 @@ use App\FormFlow;
 use App\FormApplyCheckpoint;
 use App\SystemMessage;
 use App\EmailSend;
+use Cache;
 use DB;
 
 /**
@@ -48,6 +49,10 @@ class FormController extends Controller
 
         DB::beginTransaction();
         try {
+            //取得快取資料
+            $login_user = Cache::get('login_user');
+            $member = Cache::get('member');
+            $department = Cache::get('department');
 
             //檢查是否已經設定表單簽核流程
             $FormFlow = FormFlow::where('form_id',$request->get('form_id'))
@@ -112,16 +117,16 @@ class FormController extends Controller
 
                     //寄出通知信件
                     $mail_data = [
-                        'name' => 'user',
+                        'name' => $member[$signed_member_id]['name'],
                         'form_id' => $request->get('form_id'),
-                        'member' => 'user1',
+                        'member' => $login_user['name'],
                         'created_at' => date('Y-m-d H:i:s')
                     ];
 
                     EmailSend::create([
                         'notify_type' => '簽核通知',
-                        'receiver_email' => 'virtualorz@gmail.com',
-                        'receiver_name' => '小貝',
+                        'receiver_email' => $member[$signed_member_id]['email'],
+                        'receiver_name' => $member[$signed_member_id]['name'] .' - '. $member[$signed_member_id]['org_name_ch'],
                         'template' => 'Email.signing_notify',
                         'subject' => "傑思 愛德威 - 簽核系統通知",
                         'content' => json_encode($mail_data),
