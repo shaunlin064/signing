@@ -10,7 +10,7 @@ use App\FormFlow;
 use App\FormApplyCheckpoint;
 use App\SystemMessage;
 use App\EmailSend;
-use Cache;
+//use Cache;
 use DB;
 
 /**
@@ -50,9 +50,9 @@ class FormController extends Controller
         DB::beginTransaction();
         try {
             //取得快取資料
-            $login_user = Cache::get('login_user');
-            $member = Cache::get('member');
-            $department = Cache::get('department');
+            //$login_user = Cache::get('login_user');
+            //$member = Cache::get('member');
+            //$department = Cache::get('department');
 
             //檢查是否已經設定表單簽核流程
             $FormFlow = FormFlow::where('form_id',$request->get('form_id'))
@@ -83,13 +83,13 @@ class FormController extends Controller
                     $signed_member_id = $v->reviewer_id;
                     if($v->review_type == 2){
                         //位階須先找出實際簽署者
-                        if($v->reviewer_id == 1){
+                        /*if($v->reviewer_id == 1){
                             $signed_member_id = $member[$request->get('apply_member_id')]['top_manage'];
                         }else if($v->reviewer_id == 2){
                             $signed_member_id = $member[$request->get('apply_member_id')]['sec_manage'];
                         }else{
                             $signed_member_id = $member[$request->get('apply_member_id')]['executive'];
-                        }
+                        }*/
                     }
 
                     //找到可代簽人員
@@ -97,14 +97,14 @@ class FormController extends Controller
                     foreach($v->replaceMember as $k1=>$v1){
                         if($v1->review_type == 2){
                             //位階須先找出實際簽署者
-                            if($v->reviewer_id == 1){
+                            /*if($v->reviewer_id == 1){
                                 $replace_id = $member[$request->get('apply_member_id')]['top_manage'];
                             }else if($v->reviewer_id == 2){
                                 $replace_id = $member[$request->get('apply_member_id')]['sec_manage'];
                             }else{
                                 $replace_id = $member[$request->get('apply_member_id')]['executive'];
                             }
-                            array_push($replace_signed_member_id,$replace_id);
+                            array_push($replace_signed_member_id,$replace_id);*/
                         }
                         else{
                             array_push($replace_signed_member_id,$v1->reviewer_id);
@@ -130,7 +130,7 @@ class FormController extends Controller
                     ]);
 
                     //寄出通知信件
-                    $mail_data = [
+                    /*$mail_data = [
                         'name' => $member[$signed_member_id]['name'],
                         'form_id' => $request->get('form_id'),
                         'member' => $login_user['name'],
@@ -145,7 +145,7 @@ class FormController extends Controller
                         'subject' => "傑思 愛德威 - 簽核系統通知",
                         'content' => json_encode($mail_data),
                         'status' => 0
-                    ]);
+                    ]);*/
                 }
 
                 //設定目前關卡狀態
