@@ -7,8 +7,7 @@ use Illuminate\Http\Request;
 use App\SystemMessage;
 
 use Storage;
-//use Cache;
-use Carbon\Carbon;
+use Route;
 
 /**
  * Class SystemController
@@ -66,11 +65,11 @@ class SystemController extends Controller
             $message = self::remoteLogin($request->get('account'), $request->get('password'), self::$encrypt);
         }
 
-        //將登入資訊儲存至快取
-        /*$expiresAt = Carbon::now()->addMinutes(120);
-        foreach($message['data'] as $k=>$v){
-            Cache::put($k,$v,$expiresAt);
-        }*/
+        //將登入資訊儲存至session
+        $request->replace(['value'=>$message['data']]);
+        $api_request = Request::create('session/put', 'POST');
+        $api_request = $api_request->replace($request->input());
+        $response = Route::dispatch($api_request)->getOriginalContent();
 
         return $message;
     }
