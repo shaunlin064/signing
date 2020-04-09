@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="{{ asset(mix('css/themes/semi-dark-layout.css')) }}">
 {{-- {!! Helper::applClasses() !!} --}}
 @php
-$configData = Helper::applClasses();
+    $configData = Helper::applClasses();
 @endphp
 
 {{-- Layout Styles works when don't use customizer --}}
@@ -25,7 +25,7 @@ $configData = Helper::applClasses();
 @endif --}}
 {{-- Page Styles --}}
 @if($configData['mainLayoutType'] === 'horizontal')
-<link rel="stylesheet" href="{{ asset(mix('css/core/menu/menu-types/horizontal-menu.css')) }}">
+    <link rel="stylesheet" href="{{ asset(mix('css/core/menu/menu-types/horizontal-menu.css')) }}">
 @endif
 <link rel="stylesheet" href="{{ asset(mix('css/core/menu/menu-types/vertical-menu.css')) }}">
 <link rel="stylesheet" href="{{ asset(mix('css/core/colors/palette-gradient.css')) }}">
@@ -35,5 +35,5 @@ $configData = Helper::applClasses();
 <link rel="stylesheet" href="{{ asset(mix('css/custom-laravel.css')) }}">
 {{-- Custom RTL Styles --}}
 @if($configData['direction'] === 'rtl' && isset($configData['direction']))
-<link rel="stylesheet" href="{{ asset(mix('css/custom-rtl.css')) }}">
+    <link rel="stylesheet" href="{{ asset(mix('css/custom-rtl.css')) }}">
 @endif

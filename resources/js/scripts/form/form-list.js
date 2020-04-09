@@ -17,7 +17,8 @@ $(document).ready(function() {
             field: "form_type",
             editable: false,
             sortable: true,
-            filter: true
+            filter: true,
+            width:150
         },
 
         // {
@@ -32,7 +33,8 @@ $(document).ready(function() {
             field: "member",
             editable: false,
             sortable: true,
-            filter: true
+            filter: true,
+            width:150
         },
         {
             headerName: "名稱",
@@ -59,9 +61,10 @@ $(document).ready(function() {
         {
             headerName: "Action",
             field: "action",
-            editable: false,
-            sortable: true,
-            filter: true
+            cellRenderer: ageCellRendererFunc
+            // editable: false,
+            // sortable: true,
+            // filter: true
         }
     ];
 
@@ -81,7 +84,17 @@ $(document).ready(function() {
 
     /*** DEFINED TABLE VARIABLE ***/
     var gridTable = document.getElementById("myGrid");
+    function ageCellRendererFunc(params) {
+        // params.$scope.ageClicked = ageClicked;
+        //return '<button ng-click="ageClicked(data.age)" ng-bind="data.age"></button>';
 
+        // let status = params.data.action;
+        let template;
+
+        template = `<a type="button" target='_blank' href="/form-edit?id=${params.data.id}" class="btn btn-primary mr-1  waves-effect waves-light">檢視</a>`;
+
+        return template;
+    }
     /*** GET TABLE DATA FROM URL ***/
 
     agGrid

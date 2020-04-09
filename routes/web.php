@@ -35,6 +35,9 @@
     Route::view('/form-allAction', 'pages.customer.form-allAction',
                 [ 'breadcrumbs' => [ [ 'name' => "Executor" ], [ 'link' => "form-new", 'name' => "所有已執行簽核" ] ] ]);
 
+//    form Edit
+    Route::view('/form-edit', 'pages.customer.form-edit',
+                [ 'breadcrumbs' => [ [ 'name' => "User" ], [ 'link' => "form-edit", 'name' => "簽核檢視" ] ] ]);
     // Route Authentication Pages
     Route::view('/login',  'pages.auth-login');
 

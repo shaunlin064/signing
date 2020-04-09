@@ -35,11 +35,11 @@
                             id="filter-text-box"
                             placeholder="Search...."
                         />
-                        <div class="btn-export">
-                            <button class="btn btn-primary ag-grid-export-btn">
-                                Export as CSV
-                            </button>
-                        </div>
+<!--                        <div class="btn-export">-->
+<!--                            <button class="btn btn-primary ag-grid-export-btn">-->
+<!--                                Export as CSV-->
+<!--                            </button>-->
+<!--                        </div>-->
                     </div>
                 </div>
             </div>
@@ -60,12 +60,12 @@
                 return {}
             },
             computed: {
-                    ...mapState([]),
+                    ...mapState(['login_user','member','department']),
             },
             beforeMount: function () {
             },
             mounted: function () {
-
+                console.log(sessionStorage);
             },
             methods: {
                 openMenu(event){

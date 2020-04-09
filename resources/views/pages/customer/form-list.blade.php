@@ -42,5 +42,5 @@
 @endsection
 @section('page-script')
     {{-- Page js files --}}
-    <script src="{{ asset(mix('js/scripts/form/form-list.js')) }}"></script>
+    <script src="{{ asset(mix('js/scripts/form/form-list.js')).'?v='.time() }}"></script>
 @endsection
