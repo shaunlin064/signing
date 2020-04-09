@@ -14,7 +14,6 @@
      */
     protected $commands = [
       //
-        \App\Console\Commands\SendEmails::class,
     ];
 
     /**
