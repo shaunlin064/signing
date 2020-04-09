@@ -65,7 +65,6 @@
             beforeMount: function () {
             },
             mounted: function () {
-                console.log(sessionStorage);
             },
             methods: {
                 openMenu(event){

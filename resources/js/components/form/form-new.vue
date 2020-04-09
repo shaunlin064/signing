@@ -26,7 +26,7 @@
         <!-- Step 2 -->
         <h6 v-show='form_type'><i class="step-icon feather icon-briefcase"></i> Step 2</h6>
         <keep-alive>
-            <component v-bind:is="form_type" :dom_id='form_type'/>
+            <component v-bind:is="form_type" :dom_id='form_type' :form_action='"new"'/>
         </keep-alive>
         <div class='row border-top-light mt-2 justify-content-end' v-show='form_type'>
             <button type="button" class="btn btn-primary mr-1 mb-1 waves-effect waves-light text-right mt-2" @click='submit'>送出</button>
@@ -37,21 +37,23 @@
 <script>
     import {mapState, mapMutations, mapActions, mapGetters} from 'vuex';
     export default {
-        name: "name",
+        name: "form_new",
         components: {
             // Payment, Sign
         },
-        props: {},
+        props: {
+            form_config:Object,
+        },
         data() {
             return {
                 form_type : '',
                 already_open: [],
                 dom_id: 'form-new',
-                dom_target: 'form_type'
+                dom_target: 'form_type',
             }
         },
         computed: {
-            ...mapState([]),
+            ...mapState(['form_submit_data','login_user', 'member', 'department']),
 
         },
         beforeMount: function () {
@@ -64,7 +66,35 @@
         },
         methods: {
             currentComponent(event) {
-                this.form_type = event.target.value;
+                let formConfig = this.form_config;
+                let form_type = event.target.value;
+                let vue = this;
+                let token = $('input[name="_token"]').val();
+                /*get formConfig*/
+                let selectFormConfig = {};
+                Object.keys(formConfig).forEach(key=>{
+                    if(formConfig[key]['html_name'] === form_type){
+                        selectFormConfig = formConfig[key];
+                    }
+                });
+                vue.form_type = event.target.value;
+                /*set default*/
+                if(eval(`this.form_submit_data['${vue.form_type}']`) === undefined){
+                    eval(`this.form_submit_data['${vue.form_type}'] = {};`);
+                    let column = selectFormConfig.column;
+
+                    eval(`vue.form_submit_data['${vue.form_type}']['_token'] = '${token}';`);
+                    eval(`vue.form_submit_data['${vue.form_type}']['form_id'] = '${selectFormConfig['id']}';`);
+                    eval(`vue.form_submit_data['${vue.form_type}']['column'] = {};`);
+                    Object.keys(column).forEach(key=>{
+                        eval(`vue.form_submit_data['${vue.form_type}']['column']['${key}'] = '';`);
+                    });
+                    eval(`vue.form_submit_data['${vue.form_type}']['apply_member_id'] = '${vue.login_user.id}';`);
+                    eval(`vue.form_submit_data['${vue.form_type}']['column']['apply_member_id'] = '${vue.login_user.id}';`);
+                    eval(`vue.form_submit_data['${vue.form_type}']['apply_department_id'] = '${vue.login_user.department_id}';`);
+                    eval(`vue.form_submit_data['${vue.form_type}']['column']['apply_department_id'] = '${vue.login_user.department_id}';`);
+                }
+
             },
             initial(){
                 $(".select2").select2({
@@ -77,7 +107,25 @@
             },
             submit(){
                 $('select[disabled]').removeAttr("disabled");
-                $('form#'+this.dom_id).submit();
+                // $('form#'+this.dom_id).submit();
+                /*TODO::form submit error*/
+                let data = eval(`this.form_submit_data['${this.form_type}']`);
+                if(data['column']['apply_attachment'] === ''){
+                    delete data.column.apply_attachment;
+                }
+                console.log(data['column']);
+                data['column'] = JSON.stringify(data['column']);
+                console.log(data);
+
+                axios.post('api/form/apply', data)
+                    .then(function (response) {
+                        console.log(response);
+
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+
             },
         },
         updated() {

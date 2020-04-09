@@ -1,12 +1,12 @@
 {{--	/**
 	 * Created by PhpStorm.
 	 * User: shaun
-	 * Date: 2020/3/25
+	 * Date: 2020/4/6
 	 * Time: 17:35
 	 */--}}
 @extends('layouts/contentLayoutMaster')
 
-@section('title', '申請簽核')
+@section('title', '簽核檢視')
 
 @section('vendor-style')
     <!-- vendor css files -->
@@ -23,22 +23,22 @@
 
 @section('content')
     {{-- Start --}}
-        <section id="form-new">
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h4 class="card-title"></h4>
-                        </div>
-                        <div class="card-content">
-                            <div class="card-body">
-                                <form-new :form_config='{{ json_encode(config('form')) }}'></form-new>
-                            </div>
+    <section id="form-new">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title"></h4>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-body">
+                            <form-edit :id='{{$_GET['id']}}'></form-edit>
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
     <!-- end -->
 @endsection
 
