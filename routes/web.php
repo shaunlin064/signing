@@ -44,3 +44,15 @@
 //    Auth::routes();
 
 //    Route::post('/login/validate', 'Auth\LoginController@validate_api');
+
+    //Session Handle
+    Route::post('/session/put',
+        [
+            'as' => 'session.put' ,
+            'uses' => 'SessionController@put'
+        ]);
+    Route::post('/session/release',
+        [
+            'as' => 'session.release' ,
+            'uses' => 'SessionController@release'
+        ]);
