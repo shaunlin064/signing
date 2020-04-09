@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\SystemMessage;
 
 use Storage;
-use Cache;
+//use Cache;
 use Carbon\Carbon;
 
 /**
@@ -67,10 +67,10 @@ class SystemController extends Controller
         }
 
         //將登入資訊儲存至快取
-        $expiresAt = Carbon::now()->addMinutes(120);
+        /*$expiresAt = Carbon::now()->addMinutes(120);
         foreach($message['data'] as $k=>$v){
             Cache::put($k,$v,$expiresAt);
-        }
+        }*/
 
         return $message;
     }
