@@ -51,6 +51,11 @@
             'as' => 'session.put' ,
             'uses' => 'SessionController@put'
         ]);
+    Route::post('/session/get',
+        [
+            'as' => 'session.get' ,
+            'uses' => 'SessionController@get'
+        ]);
     Route::post('/session/release',
         [
             'as' => 'session.release' ,
