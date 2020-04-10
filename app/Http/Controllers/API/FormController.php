@@ -586,7 +586,8 @@ class FormController extends Controller
         $result = [];
         try {
             $_GET['page'] = $request->get('page');
-            $list = FormApply::where('apply_member_id',$request->get('member_id'));
+            $list = FormApply::where('apply_member_id',$request->get('member_id'))
+                ->orderBy('id','DESC');
             if($request->get('page') == null){
                 $list = $list->get();
             }
