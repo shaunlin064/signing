@@ -611,7 +611,21 @@ class FormController extends Controller
      * 依照member_id找出該送簽者目前列表
      * @input member_id : 簽核者ID
      * @input page : 頁碼，如果沒有則全部列出
-     * @return array
+     * @return array['data'][0]['id'] : 表單ID
+     * @return array['data'][0]['created_at'] : 申請時間(原始值)
+     * @return array['data'][0]['updated_at'] : 修改時間(原始值)
+     * @return array['data'][0]['form_id'] : 表單類型ID
+     * @return array['data'][0]['apply_member_id'] : 申請人員ID
+     * @return array['data'][0]['status'] : 狀態值
+     * @return array['data'][0]['now'] : 目前關卡ID
+     * @return array['data'][0]['next'] : 下一關卡ID
+     * @return array['data'][0]['fail_at'] : 作廢時間
+     * @return array['data'][0]['created_at_format'] : 申請時間(格式化值)
+     * @return array['data'][0]['form_type'] : 表單類型名稱
+     * @return array['data'][0]['status_string'] : 狀態文字值
+     * @return array['data'][0]['department'] : 申請者部門名稱
+     * @return array['data'][0]['member'] : 申請者姓名
+     * @return array['data'][0]['apply_subject'] : 表單主旨
      */
     public function userList(Request $request){
 
