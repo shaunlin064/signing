@@ -279,7 +279,7 @@ class FormController extends Controller
                         $FormApply->data()->create([
                             'form_id' => $request->get('form_id'),
                             'column' => $k,
-                            'value' => $request->get($k)
+                            'value' => ($request->get($k) == '') ? null : $request->get($k)
                         ]);
                     }
 
@@ -407,7 +407,7 @@ class FormController extends Controller
 
                     $checkPoint->signed_at = $now;
                     $checkPoint->signature = $request->get('signature');
-                    $checkPoint->remark = $request->get('remark');
+                    $checkPoint->remark = ($request->get('remark') == null) ? '' : $request->get('remark');
 
                     if(in_array($request->get('member_id'),$replace_members)){
                         $checkPoint->replace_signed_member_id = $request->get('member_id');
