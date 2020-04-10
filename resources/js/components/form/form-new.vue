@@ -83,16 +83,13 @@
                     eval(`this.form_submit_data['${vue.form_type}'] = {};`);
                     let column = selectFormConfig.column;
 
-                    eval(`vue.form_submit_data['${vue.form_type}']['_token'] = '${token}';`);
                     eval(`vue.form_submit_data['${vue.form_type}']['form_id'] = '${selectFormConfig['id']}';`);
-                    eval(`vue.form_submit_data['${vue.form_type}']['column'] = {};`);
                     Object.keys(column).forEach(key=>{
-                        eval(`vue.form_submit_data['${vue.form_type}']['column']['${key}'] = '';`);
+                        /*TODO::set fake default 之後待討論驗證與形態問題*/
+                        eval(`vue.form_submit_data['${vue.form_type}']['${key}'] = '1';`);
                     });
                     eval(`vue.form_submit_data['${vue.form_type}']['apply_member_id'] = '${vue.login_user.id}';`);
-                    eval(`vue.form_submit_data['${vue.form_type}']['column']['apply_member_id'] = '${vue.login_user.id}';`);
                     eval(`vue.form_submit_data['${vue.form_type}']['apply_department_id'] = '${vue.login_user.department_id}';`);
-                    eval(`vue.form_submit_data['${vue.form_type}']['column']['apply_department_id'] = '${vue.login_user.department_id}';`);
                 }
 
             },
@@ -110,12 +107,10 @@
                 // $('form#'+this.dom_id).submit();
                 /*TODO::form submit error*/
                 let data = eval(`this.form_submit_data['${this.form_type}']`);
-                if(data['column']['apply_attachment'] === ''){
-                    delete data.column.apply_attachment;
+                if(data['apply_attachment'] === ''){
+                    // delete data.column.apply_attachment;
+                    data['apply_attachment'] = '0';
                 }
-                console.log(data['column']);
-                data['column'] = JSON.stringify(data['column']);
-                console.log(data);
 
                 axios.post('api/form/apply', data)
                     .then(function (response) {
