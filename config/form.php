@@ -45,18 +45,18 @@
         2 => [
             'id'        => 2,
             'name'      => '用印申請',
-            'html_name' => '',
+            'html_name' => 'form-sign',
             'column'    => [
                 'apply_member_id'   => [
                     'name' => '申請人'
                 ],
-                'date'              => [
-                    'name' => '日期'
+                'apply_subject'       => [
+                    'name'    => '項目'
                 ],
-                'item'              => [
-                    'name' => '項目'
+                'apply_department_id' => [
+                    'name'    => '請款單位'
                 ],
-                'form'              => [
+                'form_stamp_type'    => [
                     'name' => '用印形式'
                 ],
                 'deploy'            => [
@@ -73,6 +73,9 @@
                 ],
                 'recipient_address' => [
                     'name' => '收件人地址'
+                ],
+                'remark'              => [
+                    'name'    => '備註'
                 ]
             ]
         ],

@@ -68,6 +68,7 @@
             currentComponent(event) {
                 let formConfig = this.form_config;
                 let form_type = event.target.value;
+                console.log(form_type);
                 let vue = this;
                 let token = $('input[name="_token"]').val();
                 /*get formConfig*/
@@ -84,9 +85,15 @@
                     let column = selectFormConfig.column;
 
                     eval(`vue.form_submit_data['${vue.form_type}']['form_id'] = '${selectFormConfig['id']}';`);
-                    Object.keys(column).forEach(key=>{
+                    Object.keys(column).forEach(columnName=>{
                         /*TODO::set fake default 之後待討論驗證與形態問題*/
-                        eval(`vue.form_submit_data['${vue.form_type}']['${key}'] = '1';`);
+                        eval(`vue.form_submit_data['${vue.form_type}']['${columnName}'] = '1';`);
+
+                        /*default Array*/
+                        if($.inArray(columnName,['form_stamp_type']) != -1){
+                            eval(`vue.form_submit_data['${vue.form_type}']['${columnName}'] = [];`);
+                        };
+
                     });
                     eval(`vue.form_submit_data['${vue.form_type}']['apply_member_id'] = '${vue.login_user.id}';`);
                     eval(`vue.form_submit_data['${vue.form_type}']['apply_department_id'] = '${vue.login_user.department_id}';`);
@@ -107,10 +114,19 @@
                 // $('form#'+this.dom_id).submit();
                 /*TODO::form submit error*/
                 let data = eval(`this.form_submit_data['${this.form_type}']`);
-                if(data['apply_attachment'] === ''){
-                    // delete data.column.apply_attachment;
-                    data['apply_attachment'] = '0';
-                }
+
+                /*Array need to Json*/
+                Object.keys(data).forEach(columnName=> {
+                    if ($.inArray(columnName, ['form_stamp_type']) != -1) {
+                        data[columnName] = JSON.stringify(data[columnName]);
+                    }
+                });
+
+                console.log(data);
+                // if(data['apply_attachment'] === ''){
+                //     // delete data.column.apply_attachment;
+                //     data['apply_attachment'] = '0';
+                // }
 
                 axios.post('api/form/apply', data)
                     .then(function (response) {
