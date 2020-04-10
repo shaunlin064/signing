@@ -10,9 +10,10 @@ use App\FormFlow;
 use App\FormApplyCheckpoint;
 use App\SystemMessage;
 use App\EmailSend;
-//use Cache;
+
 use DB;
 use Route;
+use Validator;
 
 /**
  * Class FormController
@@ -48,12 +49,32 @@ class FormController extends Controller
      */
     public function apply(Request $request){
 
+        $validator = Validator::make($request->all(),[
+            'form_id' =>'required',
+            'apply_member_id' => 'required',
+        ]);
+        if($validator->fails()){
+            $error = $validator->errors()->toArray();
+            $error = reset($error);
+
+            self::$message['status'] = 0;
+            self::$message['status_string'] = '驗證錯誤';
+            self::$message['message'] = $error[0];
+
+            return self::$message;
+        }
+
         DB::beginTransaction();
         try {
-            //取得快取資料
-            //$login_user = Cache::get('login_user');
-            //$member = Cache::get('member');
-            //$department = Cache::get('department');
+
+            //確認form_id有在定義中
+            if(!array_key_exists($request->get('form_id'),Config('form'))){
+                self::$message['status'] = 0;
+                self::$message['status_string'] = '驗證錯誤';
+                self::$message['message'] = '表單不存在，請洽管理員';
+
+                return self::$message;
+            }
 
             /*$request->replace(['key'=>'login_user']);
             $api_request = Request::create('session/get', 'POST');
@@ -80,7 +101,7 @@ class FormController extends Controller
                     $FormApply->data()->create([
                         'form_id' => $request->get('form_id'),
                         'column' => $k,
-                        'value' => $request->get($k)
+                        'value' => ($request->get($k) == '') ? null : $request->get($k)
                     ]);
                 }
 
