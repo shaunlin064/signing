@@ -74,6 +74,13 @@ class SystemController extends Controller
         return $message;
     }
 
+    public function logout(Request $request){
+        //操作session
+        $api_request = Request::create('session/release', 'POST');
+        $api_request = $api_request->replace($request->input());
+        $response = Route::dispatch($api_request)->getOriginalContent();
+    }
+
     /**
      * @param Request $request
      * 執行檔案上傳儲存

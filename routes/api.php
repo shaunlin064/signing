@@ -111,6 +111,12 @@ Route::post('/form/check/list',
         'as' => 'api.form.check.list' ,
         'uses' => 'API\FormController@checkList'
     ]);
+//送簽列表
+Route::post('/form/user/list',
+    [
+        'as' => 'api.form.user.list' ,
+        'uses' => 'API\FormController@userList'
+    ]);
 
 /**
  * ===================================================================
@@ -124,6 +130,12 @@ Route::post('/system/login',
     [
         'as' => 'api.system.login' ,
         'uses' => 'API\SystemController@login'
+    ]);
+//系統登出
+Route::post('/system/logout',
+    [
+        'as' => 'api.system.logout' ,
+        'uses' => 'API\SystemController@logout'
     ]);
 //檔案上傳
 Route::post('/system/upload',
