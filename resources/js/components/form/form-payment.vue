@@ -9,8 +9,7 @@
             <div class='row col-md-12'>
                 <div class="col-md-6">
                     <div class="form-label-group">
-                        <input type="text" id="department" class="form-control" placeholder="部門" :value='department_name' disabled
-                               >
+                        <input type="text" id="department" class="form-control" placeholder="部門" :value='department_name' disabled>
                         <label for="department">部門</label>
                     </div>
                 </div>
@@ -128,7 +127,6 @@
                         this.form_submit_data[this.dom_id]["pay_type"] = e.target.value;
                     });
                 }
-
             }
         },
         updated() {
