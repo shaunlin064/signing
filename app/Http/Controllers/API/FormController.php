@@ -579,14 +579,7 @@ class FormController extends Controller
      * 依照member_id找出該送簽者目前列表
      * @input member_id : 簽核者ID
      * @input page : 頁碼，如果沒有則全部列出
-     * @return array['data'][0]['id'] : 關卡ID
-     * @return array['data'][0]['form_id'] : 表單ID
-     * @return array['data'][0]['column'] : 填表資料
-     * @return array['data'][0]['apply_member_id'] : 申請人ID
-     * @return array['data'][0]['apply_at'] : 申請日期
-     * @return array['data'][0]['status'] : 狀態 0:駁回 1:暫存中 2:簽核中 3:通過
-     * @return array['data'][0]['can_check'] : 可以簽核或不行 0 不行(代表前面有人卡關) 1 可簽
-     * @return array['data'][0]['is_replace'] : 是否為代簽 0 否 1 是
+     * @return array
      */
     public function userList(Request $request){
 
