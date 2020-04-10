@@ -55,10 +55,10 @@ class FormController extends Controller
             //$member = Cache::get('member');
             //$department = Cache::get('department');
 
-            $request->replace(['key'=>'login_user']);
+            /*$request->replace(['key'=>'login_user']);
             $api_request = Request::create('session/get', 'POST');
             $api_request = $api_request->replace($request->input());
-            $response = Route::dispatch($api_request)->getOriginalContent();
+            $response = Route::dispatch($api_request)->getOriginalContent();*/
 
             //檢查是否已經設定表單簽核流程
             $FormFlow = FormFlow::where('form_id',$request->get('form_id'))
