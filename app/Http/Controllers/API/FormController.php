@@ -506,10 +506,15 @@ class FormController extends Controller
      * @input role : 簽核者或執行者 1 簽核 2 執行 NULL 不區分
      * @return array['data'][0]['id'] : 關卡ID
      * @return array['data'][0]['form_id'] : 表單ID
+     * @return array['data'][0]['form_type'] : 表單名稱
      * @return array['data'][0]['column'] : 填表資料
      * @return array['data'][0]['apply_member_id'] : 申請人ID
      * @return array['data'][0]['apply_at'] : 申請日期
      * @return array['data'][0]['status'] : 狀態 0:駁回 1:暫存中 2:簽核中 3:通過
+     * @return array['data'][0]['status_string'] : 狀態轉換中文顯示
+     * @return array['data'][0]['department'] : 申請人部門
+     * @return array['data'][0]['member'] : 申請人姓名
+     * @return array['data'][0]['apply_subject'] : 表單主旨
      * @return array['data'][0]['can_check'] : 可以簽核或不行 0 不行(代表前面有人卡關) 1 可簽
      * @return array['data'][0]['is_replace'] : 是否為代簽 0 否 1 是
      */
@@ -525,17 +530,44 @@ class FormController extends Controller
             }
             $checkList = $checkList->get();
 
+            $member_id = $request->get('member_id');
+
+            //取得session資料
+            $request->replace(['key'=>'member']);
+            $api_request = Request::create('session/get', 'POST');
+            $api_request = $api_request->replace($request->input());
+            $response = Route::dispatch($api_request)->getOriginalContent();
+            $member = $response;
+
+            $request->replace(['key'=>'department']);
+            $api_request = Request::create('session/get', 'POST');
+            $api_request = $api_request->replace($request->input());
+            $response = Route::dispatch($api_request)->getOriginalContent();
+            $department = $response;
+
+            $status = Config('form_status.apply');
+
+
             foreach ($checkList as $k => $v) {
                 //判斷是主簽或代簽人才加入列表
                 $replace_members = json_decode($v->replace_members, true);
-                if ($v->signed_member_id == $request->get('member_id') || in_array($request->get('member_id'), $replace_members)) {
+                if ($v->signed_member_id == $member_id || in_array($member_id, $replace_members)) {
+
+                    $department_id = (isset($member[$v->apply->apply_member_id])) ? $member[$v->apply->apply_member_id]['department_id'] : null;
+                    $dpartment = (isset($department[$department_id])) ? $department[$department_id]['name'] : '';
+
                     $item = [
                         'id' => $v->id,
                         'form_id' => $v->apply->form_id,
-                        'column' => $v->applyData,
+                        'form_type' => Config('form')[$v->apply->form_id]['name'],
+                        'column' => $v->applyData()->pluck('value','column'),
                         'apply_member_id' => $v->apply->apply_member_id,
                         'apply_at' => $v->apply->created_at->format('Y-m-d'),
                         'status' => $v->apply->status,
+                        'status_string' => $status[$v->apply->status],
+                        'department' => $dpartment,
+                        'member' => (isset($member[$v->apply->apply_member_id])) ? $member[$v->apply->apply_member_id]['name'] : '',
+                        'apply_subject' => $v->apply->data()->where('column','apply_subject')->pluck('value')->get(0),
                         'can_check' => 0,
                         'is_replace' => 0
                     ];
@@ -550,7 +582,7 @@ class FormController extends Controller
                         $item['can_check'] = 1;
                     }
 
-                    if (in_array($request->get('member_id'), $replace_members)) {
+                    if (in_array($member_id, $replace_members)) {
                         $item['is_replace'] = 1;
                     }
 
