@@ -614,7 +614,7 @@ class FormController extends Controller
                 $department_id = (isset($member[$item->apply_member_id])) ? $member[$item->apply_member_id]['department_id'] : null;
                 $dpartment = (isset($department[$department_id])) ? $department[$department_id]['name'] : '';
 
-                $item->created_at->format('Y-m-d');
+                $item->created_at_format = $item->created_at->format('Y-m-d');
                 $item->form_type = Config('form')[$item->form_id]['name'];
                 $item->status_string = $status[$item->status];
                 $item->department = $dpartment;
