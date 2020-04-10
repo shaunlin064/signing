@@ -12,6 +12,7 @@ use App\SystemMessage;
 use App\EmailSend;
 //use Cache;
 use DB;
+use Route;
 
 /**
  * Class FormController
@@ -57,7 +58,7 @@ class FormController extends Controller
             $request->replace(['key'=>'login_user']);
             $api_request = Request::create('session/get', 'POST');
             $api_request = $api_request->replace($request->input());
-            $response = Route::dispatch($api_request)->getOriginalContent(); \Log::error($response);
+            $response = Route::dispatch($api_request)->getOriginalContent();
 
             //檢查是否已經設定表單簽核流程
             $FormFlow = FormFlow::where('form_id',$request->get('form_id'))
