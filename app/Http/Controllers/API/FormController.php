@@ -607,15 +607,22 @@ class FormController extends Controller
             $response = Route::dispatch($api_request)->getOriginalContent();
             $department = $response;
 
-            $status = [0 => '駁回',1=> '暫存中', 2=> '簽核中', 3=> '通過'];
+            $status = Config('form_status.apply');
 
-            foreach($list as $k=>$v){
-                $list[$k]->form_type = Config('form')[$v->form_id]['name'];
-                $list[$k]->status_string = $status[$v->status];
-                $list[$k]->department = $department[$member[$v->apply_member_id]['department_id']]['name'];
-                $list[$k]->member = $member[$v->apply_member_id]['name'];
-                $list[$k]->apply_subject = $v->data()->where('column','apply_subject')->pluck('value')->get(0);
-            }
+            $list->map(function($item)use($member,$department,$status){
+
+                $department_id = (isset($member[$item->apply_member_id])) ? $member[$item->apply_member_id]['department_id'] : null;
+                $dpartment = (isset($department[$department_id])) ? $department[$department_id]['name'] : '';
+
+                $item->created_at->format('Y-m-d');
+                $item->form_type = Config('form')[$item->form_id]['name'];
+                $item->status_string = $status[$item->status];
+                $item->department = $dpartment;
+                $item->member = (isset($member[$item->apply_member_id])) ? $member[$item->apply_member_id]['name'] : '';
+                $item->apply_subject = $item->data()->where('column','apply_subject')->pluck('value')->get(0);
+
+                return $item;
+            });
 
             self::$message['status'] = 1;
             self::$message['status_string'] = '取得成功';
