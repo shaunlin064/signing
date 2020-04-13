@@ -87,7 +87,19 @@
             'name'      => '交際送禮',
             'html_name' => 'form-social',
             'column'    => [
-                'customer'         => [
+                'apply_member_id'     => [
+                    'name' => '申請人'
+                ],
+                'apply_department_id' => [
+                    'name' => '請款單位'
+                ],
+                'apply_subject'       => [
+                    'name' => '項目'
+                ],
+                'customer_company'         => [
+                    'name' => '客戶名稱'
+                ],
+                'customer_name'         => [
                     'name' => '客戶名稱'
                 ],
                 'attend_member'    => [
