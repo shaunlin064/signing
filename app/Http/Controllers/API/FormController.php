@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\API;
 
+use App\FormDataSub;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\FormApply;
 use App\FormFlow;
 use App\FormApplyCheckpoint;
+use App\FormData;
 use App\SystemMessage;
 use App\EmailSend;
 
@@ -231,7 +233,17 @@ class FormController extends Controller
 
             $result = $FormApply->toArray();
             //封裝欄位填寫資料
-            $result['column'] = $FormApply->data->pluck('value','column');
+            $form = Config('form.'.$FormApply->form_id);
+            $columnData = $FormApply->data;
+            $column = $columnData->pluck('value','column');
+            foreach($columnData as $k=>$v){
+                if(isset($form['column'][$v->column]['sub_column'])){
+                    //取得子欄位資料
+                    $subData = FormDataSub::where('form_data_id',$v->id)->pluck('value','column');
+                    $column[$v->column] = $subData;
+                }
+            }
+            $result['column'] = $column;
             //封裝簽核列表
             $result['checkPoint'] = $FormApply->checkPoint->transform(function($item,$key){
 
