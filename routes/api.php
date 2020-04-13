@@ -117,6 +117,12 @@ Route::post('/form/user/list',
         'as' => 'api.form.user.list' ,
         'uses' => 'API\FormController@userList'
     ]);
+//已簽核/已執行列表
+Route::post('/form/all',
+    [
+        'as' => 'api.form.all' ,
+        'uses' => 'API\FormController@all'
+    ]);
 
 /**
  * ===================================================================
