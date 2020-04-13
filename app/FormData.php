@@ -22,4 +22,11 @@ class FormData extends Model
     public function apply(){
         return $this->hasOne('\App\FormApply','id','form_apply_id');
     }
+
+    /**
+     * 子欄位資料，一對多
+     */
+    public function subData(){
+        return $this->hasMany('\App\FormDataSub','form_data_id','id');
+    }
 }

@@ -98,11 +98,22 @@ class FormController extends Controller
                 $form = Config('form.'.$request->get('form_id'));
                 foreach($form['column'] as $k=>$v){
 
-                    $FormApply->data()->create([
+                    //寫入主資料
+                    $MainData = $FormApply->data()->create([
                         'form_id' => $request->get('form_id'),
                         'column' => $k,
-                        'value' => ($request->get($k) == '') ? null : $request->get($k)
+                        'value' => ($request->get($k) == '' || is_array($request->get($k))) ? null : $request->get($k)
                     ]);
+
+                    if(isset($v['sub_column']) && is_array($request->get($k))){
+                        //有子欄位，寫入子資料
+                        foreach($v['sub_column'] as $k1=>$v1){
+                            $MainData->subData()->create([
+                                'column' => $k1,
+                                'value' => ($request->get($k)[$k1] == '') ? null : $request->get($k)[$k1]
+                            ]);
+                        }
+                    }
                 }
 
                 //依照簽核順序寫入關卡資料
