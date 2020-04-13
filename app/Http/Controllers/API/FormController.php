@@ -715,6 +715,8 @@ class FormController extends Controller
      * 取得所有已簽核或已執行列表
      * 依照role取得已簽核或者已執行資料
      * @input page : 頁碼，如果沒有則全部列出
+     * @input role : 簽核者或執行者 1 簽核 2 執行 NULL 不區分
+     * @inpit form_id : 指定表單類型ID，若無則不區分
      * @return array['data'][0]['id'] : 表單ID
      * @return array['data'][0]['created_at'] : 申請時間(原始值)
      * @return array['data'][0]['updated_at'] : 修改時間(原始值)
@@ -735,10 +737,15 @@ class FormController extends Controller
         try {
             $_GET['page'] = $request->get('page');
 
-            $list = FormApply::whereNull('fail_at')
-                ->whereHas('checkPoint',function($query)use($request){
+            $list = FormApply::whereNull('fail_at');
+            if($request->get('form_id') != NULL){
+                $list->where('form_id',$request->get('form_id'));
+            }
+            $list->whereHas('checkPoint',function($query)use($request){
                     $query->whereNotNull('signed_at');
-                    $query->where('role',$request->get('role'));
+                    if($request->get('role') != NULL) {
+                        $query->where('role', $request->get('role'));
+                    }
                     $query->where(function($query1)use($request){
                         $query1->orWhere('signed_member_id',$request->get('member_id'));
                         $query1->orWhere('replace_signed_member_id',$request->get('member_id'));
