@@ -717,6 +717,8 @@ class FormController extends Controller
      * @input page : 頁碼，如果沒有則全部列出
      * @input role : 簽核者或執行者 1 簽核 2 執行 NULL 不區分
      * @inpit form_id : 指定表單類型ID，若無則不區分
+     * @input member_id : 指定簽核人員ID，若無則apply_member_id必填
+     * @input apply_member_id : 指定填單人員ID，與member_id則一
      * @return array['data'][0]['id'] : 表單ID
      * @return array['data'][0]['created_at'] : 申請時間(原始值)
      * @return array['data'][0]['updated_at'] : 修改時間(原始值)
@@ -741,14 +743,19 @@ class FormController extends Controller
             if($request->get('form_id') != NULL){
                 $list->where('form_id',$request->get('form_id'));
             }
+            if($request->get('apply_member_id') != NULL){
+                $list->where('apply_member_id',$request->get('apply_member_id'));
+            }
             $list->whereHas('checkPoint',function($query)use($request){
                     $query->whereNotNull('signed_at');
                     if($request->get('role') != NULL) {
                         $query->where('role', $request->get('role'));
                     }
                     $query->where(function($query1)use($request){
-                        $query1->orWhere('signed_member_id',$request->get('member_id'));
-                        $query1->orWhere('replace_signed_member_id',$request->get('member_id'));
+                        if($request->get('member_id') != NULL){
+                            $query1->orWhere('signed_member_id',$request->get('member_id'));
+                            $query1->orWhere('replace_signed_member_id',$request->get('member_id'));
+                        }
                     });
 
                 })
