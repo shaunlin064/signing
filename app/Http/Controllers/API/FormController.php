@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\API;
 
-use App\FormDataSub;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\FormApply;
 use App\FormFlow;
 use App\FormApplyCheckpoint;
-use App\FormData;
+use App\FormDataSub;
+use App\SuperUser;
 use App\SystemMessage;
 use App\EmailSend;
 
@@ -713,8 +713,12 @@ class FormController extends Controller
     /**
      * @param Request $request
      * 取得所有已簽核或已執行列表
-     * 依照role取得已簽核或者已執行資料
+     * 依照role取得已簽核或者已執行資料，若member_id為super user 則取出所有申請資料，不判斷member_id
      * @input page : 頁碼，如果沒有則全部列出
+     * @input role : 簽核者或執行者 1 簽核 2 執行 NULL 不區分
+     * @inpit form_id : 指定表單類型ID，若無則不區分
+     * @input member_id : 指定簽核人員ID，若無則apply_member_id必填
+     * @input apply_member_id : 指定填單人員ID，與member_id則一
      * @return array['data'][0]['id'] : 表單ID
      * @return array['data'][0]['created_at'] : 申請時間(原始值)
      * @return array['data'][0]['updated_at'] : 修改時間(原始值)
@@ -735,13 +739,33 @@ class FormController extends Controller
         try {
             $_GET['page'] = $request->get('page');
 
-            $list = FormApply::whereNull('fail_at')
-                ->whereHas('checkPoint',function($query)use($request){
+            //判斷member_id是否為super user
+            $is_super_user = false;
+            if($request->get('member_id') != null){
+                $super_user_check = SuperUser::where('member_id',$request->get('member_id'))->count();
+                if($super_user_check != 0){
+                    $is_super_user = true;
+                }
+            }
+
+            //取得Apply List 有收到form_id,apply_member_id,member_id都要增加條件判斷，另外需確認member_id是否為super user
+            $list = FormApply::whereNull('fail_at');
+            if($request->get('form_id') != NULL){
+                $list->where('form_id',$request->get('form_id'));
+            }
+            if($request->get('apply_member_id') != NULL){
+                $list->where('apply_member_id',$request->get('apply_member_id'));
+            }
+            $list->whereHas('checkPoint',function($query)use($request,$is_super_user){
                     $query->whereNotNull('signed_at');
-                    $query->where('role',$request->get('role'));
-                    $query->where(function($query1)use($request){
-                        $query1->orWhere('signed_member_id',$request->get('member_id'));
-                        $query1->orWhere('replace_signed_member_id',$request->get('member_id'));
+                    if($request->get('role') != NULL) {
+                        $query->where('role', $request->get('role'));
+                    }
+                    $query->where(function($query1)use($request,$is_super_user){
+                        if($request->get('member_id') != NULL && $is_super_user == false){
+                            $query1->orWhere('signed_member_id',$request->get('member_id'));
+                            $query1->orWhere('replace_signed_member_id',$request->get('member_id'));
+                        }
                     });
 
                 })
