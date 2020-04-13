@@ -109,11 +109,13 @@ class FormController extends Controller
 
                     if(isset($v['sub_column']) && is_array($request->get($k))){
                         //有子欄位，寫入子資料
-                        foreach($v['sub_column'] as $k1=>$v1){
-                            $MainData->subData()->create([
-                                'column' => $k1,
-                                'value' => ($request->get($k)[$k1] == '') ? null : $request->get($k)[$k1]
-                            ]);
+                        foreach($request->get($k) as $k1=>$v1){
+                            foreach($v['sub_column'] as $k2=>$v2){
+                                $MainData->subData()->create([
+                                    'column' => $k2,
+                                    'value' => ($request->get($k)[$k1][$k2] == '') ? null : $request->get($k)[$k1][$k2]
+                                ]);
+                            }
                         }
                     }
                 }
