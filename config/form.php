@@ -137,7 +137,30 @@
                     'name' => '項目'
                 ],
                 'items'               => [
-                    'name' => '代墊項目'
+                    'name' => '代墊項目',
+                    'sub_column' => [
+                        'type' =>[
+                            'name' => '類型'
+                        ],
+                        'date' =>[
+                            'name' => '日期'
+                        ],
+                        'item' =>[
+                            'name' => '項目'
+                        ],
+                        'get_on_start' =>[
+                            'name' => '乘車起始點'
+                        ],
+                        'campaign_id' =>[
+                            'name' => '委刊編號'
+                        ],
+                        'gift_id' =>[
+                            'name' => '交際送禮單號'
+                        ],
+                        'price' =>[
+                            'name' => '金額'
+                        ],
+                    ]
                 ],
                 'remark'              => [
                     'name' => '備註'
