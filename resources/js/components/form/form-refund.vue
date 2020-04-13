@@ -19,6 +19,13 @@
                     <label for="member">申請人</label>
                 </div>
             </div>
+            <div class="col-md-6">
+                <div class="form-label-group">
+                    <input type="text" id="apply_subject" class="form-control" placeholder="項目" name="apply_subject"
+                           v-model='form_submit_data[dom_id]["apply_subject"]' :disabled='form_action !== "new"'>
+                    <label for="apply_subject">項目</label>
+                </div>
+            </div>
         </div>
         <div class="row justify-content-center border-top-light mt-2">
             <div class="row col-md-12">
