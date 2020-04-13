@@ -30,7 +30,7 @@
         </div>
         <!--delete-->
         <div class='col-md-auto mt-2'>
-            <button type="button" data-action='deleteItem' :data-id='id'
+            <button type="button" data-action='deleteItem_fee' :data-id='id' :data-parent_id='parent_id'
                     class="btn btn-icon btn-danger mr-1 mb-1 waves-effect waves-light">
                 <i class="feather icon-x"></i></button>
         </div>

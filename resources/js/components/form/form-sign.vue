@@ -116,7 +116,6 @@
         name: "form-sign",
         props: {
             dom_id: String,
-            form_data: Object,
             form_action: String
         },
         data() {

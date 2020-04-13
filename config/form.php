@@ -184,23 +184,49 @@
                 'apply_subject'       => [
                     'name' => '項目'
                 ],
-                'form_stamp_type'     => [
-                    'name' => '用印形式'
+                'accompany_user_id'     => [
+                    'name' => '出差人'
                 ],
-                'deploy'              => [
-                    'name' => '寄送方式'
+                'travel_date_start' =>[
+                    'name' => '出差起始日期'
                 ],
-                'recipient_company'   => [
-                    'name' => '收件人公司'
+                'travel_date_end' =>[
+                    'name' => '出差結束日期'
                 ],
-                'recipient_contact'   => [
-                    'name' => '收件人窗口'
+                'travel_location' =>[
+                    'name' => '出差地點'
                 ],
-                'recipient_phone'     => [
-                    'name' => '收件人電話'
+                'travel_stay_location' => [
+                    'name' => '住宿地點'
                 ],
-                'recipient_address'   => [
-                    'name' => '收件人地址'
+                'predict_cost' => [
+                    'name' => '預估費用'
+                ],
+                'travel_remark' => [
+                  'name' => '出差事由詳述'
+                ],
+                'items'=>[
+                    'name' => '出差計畫',
+                    'sub_column' => [
+                        'date' =>[
+                            'name' => '日期'
+                        ],
+                        'customer_name' =>[
+                            'name' => '對象姓名'
+                        ],
+                        'customer_company' =>[
+                            'name' => '洽訪公司'
+                        ],
+                        'meet_type' =>[
+                            'name' => '會議形式'
+                        ],
+                        'agenda' =>[
+                            'name' => '洽談內容'
+                        ],
+                        'charge_user' =>[
+                            'name' => '負責業務'
+                        ],
+                    ]
                 ],
                 'remark'              => [
                     'name' => '備註'
@@ -224,23 +250,22 @@
                 'apply_subject'       => [
                     'name' => '項目'
                 ],
-                'form_stamp_type'     => [
-                    'name' => '用印形式'
+                'form_travel_grant_id'     => [
+                    'name' => '差旅單'
                 ],
-                'deploy'              => [
-                    'name' => '寄送方式'
-                ],
-                'recipient_company'   => [
-                    'name' => '收件人公司'
-                ],
-                'recipient_contact'   => [
-                    'name' => '收件人窗口'
-                ],
-                'recipient_phone'     => [
-                    'name' => '收件人電話'
-                ],
-                'recipient_address'   => [
-                    'name' => '收件人地址'
+                'items'=>[
+                    'name' => '出差計畫',
+                    'sub_column' => [
+                        'cost_type' =>[
+                            'name' => '費用類型'
+                        ],
+                        'currency' =>[
+                            'name' => '幣別'
+                        ],
+                        'fee' =>[
+                            'name' => '費用'
+                        ]
+                    ]
                 ],
                 'remark'              => [
                     'name' => '備註'

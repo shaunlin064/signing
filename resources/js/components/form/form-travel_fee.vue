@@ -8,16 +8,15 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="form-label-group">
-                    <input type="text" class="form-control"
-                            name="member">
-                    <label>申請人</label>
+                    <input type="text" id="department" class="form-control" placeholder="部門" :value='department_name'
+                           disabled>
+                    <label for="department">部門</label>
                 </div>
             </div>
-            <div class='col-md-6'>
+            <div class="col-md-6">
                 <div class="form-label-group">
-                    <input type="text"  class="form-control"
-                           placeholder="部門" name="department">
-                    <label>部門</label>
+                    <input type="text" id="member" class="form-control" placeholder="申請人" :value='member_name' disabled>
+                    <label for="member">申請人</label>
                 </div>
             </div>
             <div class='col-md-12'>
@@ -39,16 +38,11 @@
                     <h4 class="card-title">出差計畫</h4>
                 </div>
             </div>
-            <components v-for="item in plan_items" v-bind:is="item.type" :key='item.id'
-                        :id='item.id'
-                        :date='item.date'
-                        :customer_name='item.customer_name'
-                        :customer_company='item.customer_company'
-                        :meet_type='item.meet_type'
-                        :agenda='item.agenda'
-                        :charge_user='item.charge_user'
+            <components v-for="item in items" v-bind:is="item.component" :key='item.id'
+                        :id='item.id' :dom_id='dom_id' :plan_action='item.plan_action' :form_action='form_action'
+
             ></components>
-            <div class='row col-md-12 justify-content-end border-top-light' v-show='plan_items[0]'>
+            <div class='row col-md-12 justify-content-end border-top-light' v-show='items[0]'>
                 <div class='col-md-4 text-right mt-1'>
                     <button type="button" @click='addItem'
                             class="btn btn-outline-primary mr-1 mb-1 waves-effect waves-light">
@@ -58,8 +52,9 @@
             </div>
             <div class='col-md-12 mt-2'>
                 <fieldset class="form-label-group">
-                              <textarea class="form-control" id="remark" rows="3" placeholder="備註"
-                                        name="remark"></textarea>
+                            <textarea class="form-control" id="remark" rows="3" placeholder="備註"
+                                      name="remark" v-model='form_submit_data[dom_id]["remark"]'
+                                      :disabled='form_action !== "new"'></textarea>
                     <label for="remark">備註</label>
                 </fieldset>
             </div>
@@ -81,17 +76,20 @@
         export default {
             name: "form-travel_fee",
             props: {
-                dom_id:String
+                dom_id:String,
+                form_action: String
             },
             data() {
                 return {
+                    member_name:'',
+                    department_name:'',
                     travel_grant_datas:[],
-                    plan_items:[],
+                    items:[],
                     count: 0
                 }
             },
             computed: {
-                ...mapState([]),
+                ...mapState(['form_submit_data','login_user', 'member', 'department']),
             },
             beforeMount: function () {
             },
@@ -100,9 +98,27 @@
             },
             methods: {
                 initial(){
+                    var vue = this;
+                    $('.row').on('click', '[data-action="deleteItem"]', function (e) {
+                        vue.deleteItem(e);
+                    });
+
+                    if (this.form_action === 'new') {
+                        this.department_name = this.login_user.department;
+                        this.member_name = this.login_user.name;
+                    } else {
+                        this.department_name = getDepartment(this.form_submit_data[this.dom_id]['apply_department_id']);
+                        this.member_name = getMember(this.form_submit_data[this.dom_id]['apply_member_id']);
+                        let itemsData = this.form_submit_data[this.dom_id]['items'];
+
+                        Object.keys(itemsData).forEach(key => {
+                            vue.items.push(itemsData[key]);
+                        })
+                    }
+
                   $('#form_travel_grant_id').change((e,v)=>{
                       let targetDom = e.currentTarget;
-                      this.plan_items = [];
+                      this.items = [];
                       this.count = 0;
                       this.getFormTravelGrantPlans(targetDom);
                   });
@@ -110,12 +126,21 @@
 
                 },
                 addItem(){
-                    this.plan_items.push({
-                        type: 'form-travel_fee_plan',
-                        action: 'edit_form',
-                        id: this.count++
+                    this.count++;
+                    this.items.push({
+                        component: 'form-travel_fee_plan',
+                        plan_action: 'new_plan',
+                        id: this.count
                     });
-                    this.initial();
+                    this.form_submit_data[this.dom_id]["items"][this.count] = {
+                        id: this.count,
+                        date: '',
+                        customer_name: '',
+                        customer_company: '',
+                        meet_type: '',
+                        agenda:'',
+                        charge_user:null,
+                    };
                 },
                 getTraveGrantData(){
                     let fackData = [
@@ -124,8 +149,8 @@
                             member: 'test',
                             department: 'test',
                             name: '日本出差-part1',
-                            plans: [{
-                                id: 1,
+                            items: [{
+                                id: 0,
                                 date: '2020/04/01',
                                 customer_name:'Noda Nobuyoshi',
                                 customer_company: '日本總部',
@@ -133,7 +158,7 @@
                                 agenda: '討論明年計畫',
                                 charge_user: 187,
                             },{
-                                id: 2,
+                                id: 1,
                                 date: '2020/04/01',
                                 customer_name:'Noda Nobuyoshi',
                                 customer_company: '日本總部',
@@ -141,7 +166,7 @@
                                 agenda: '還沒講完,中午吃飯繼續講',
                                 charge_user: 187,
                             },{
-                                id: 3,
+                                id: 2,
                                 date: '2020/04/01',
                                 customer_name:'Noda Nobuyoshi',
                                 customer_company: '日本總部',
@@ -155,8 +180,8 @@
                             member: 'test',
                             department: 'test',
                             name: '日本出差-part2',
-                            plans: [{
-                                id: 1,
+                            items: [{
+                                id: 0,
                                 date: '2020/04/02',
                                 customer_name:'Noda Nobuyoshi',
                                 customer_company: '日本總部',
@@ -164,7 +189,7 @@
                                 agenda: '換人來講明年計畫',
                                 charge_user: 179,
                             },{
-                                id: 2,
+                                id: 1,
                                 date: '2020/04/02',
                                 customer_name:'Noda Nobuyoshi',
                                 customer_company: '日本總部',
@@ -172,7 +197,7 @@
                                 agenda: '還沒講完,中午吃飯繼續講',
                                 charge_user: 179,
                             },{
-                                id: 3,
+                                id: 2,
                                 date: '2020/04/02',
                                 customer_name:'Noda Nobuyoshi',
                                 customer_company: '日本總部',
@@ -183,22 +208,42 @@
                             ]
                         }
                     ];
+                    // this.form_submit_data[this.dom_id]['items'] = fackData;
+
                   this.travel_grant_datas = fackData;
                 },
                 getFormTravelGrantPlans(targetDom){
                     let index = targetDom.value;
-                    let data = this.travel_grant_datas[index]['plans'];
+                    let data =  this.travel_grant_datas[index]['items'];
                     let vue = this;
                     data.map((e,v)=>{
-                        e.type ='form-travel_fee_plan';
-                        e.action = 'edit_form';
-                        vue.plan_items.push(e);
-                        vue.count = parseInt(e.id) + 1;
+
+                        this.form_submit_data[this.dom_id]['items'][e.id] = e;
+                        e.plan_action = 'new_fee';
+                        e.component ='form-travel_fee_plan';
+                        vue.items.push(e);
+
+                        vue.count = parseInt(e.id);
+
+                    });
+                },
+                deleteItem(event) {
+                    let vue = this;
+                    let id = $(event.currentTarget).data('id');
+                    this.items.map((e, k) => {
+                        if (e.id === id) {
+                            this.items.splice(k, 1);
+                            delete vue.form_submit_data[vue.dom_id]["items"][id];
+                        }
                     });
                 },
             },
             updated() {
                 // console.log('view updated')
+                $(".select2").select2({
+                    dropdownAutoWidth: true,
+                    width: '100%'
+                });
             },
             watch: {
              // change_date: {

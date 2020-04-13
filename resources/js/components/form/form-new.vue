@@ -90,7 +90,7 @@
                         eval(`vue.form_submit_data['${vue.form_type}']['${columnName}'] = '1';`);
 
                         /*default Array*/
-                        if($.inArray(columnName,['form_stamp_type']) != -1){
+                        if($.inArray(columnName,['form_stamp_type','accompany_user_id']) != -1){
                             eval(`vue.form_submit_data['${vue.form_type}']['${columnName}'] = [];`);
                         }
                         if($.inArray(columnName,['items']) != -1){
@@ -114,15 +114,14 @@
             submit(){
                 $('select[disabled]').removeAttr("disabled");
                 // $('form#'+this.dom_id).submit();
-                /*TODO::form submit error*/
                 let data = eval(`this.form_submit_data['${this.form_type}']`);
 
                 /*Array need to Json*/
-                Object.keys(data).forEach(columnName=> {
-                    if ($.inArray(columnName, ['form_stamp_type','items']) != -1) {
-                        data[columnName] = JSON.stringify(data[columnName]);
-                    }
-                });
+                // Object.keys(data).forEach(columnName=> {
+                //     if ($.inArray(columnName, ['form_stamp_type','items','accompany_user_id']) != -1) {
+                //         data[columnName] = JSON.stringify(data[columnName]);
+                //     }
+                // });
 
                 console.log(data);
                 // if(data['apply_attachment'] === ''){

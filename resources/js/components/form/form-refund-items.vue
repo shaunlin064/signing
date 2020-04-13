@@ -19,7 +19,7 @@
         </div>
         <div class='col-md-2'>
             <div class="form-label-group mt-2">
-                <input type="text" class="form-control" v-model='form_submit_data[dom_id]["items"][id]["name"]'
+                <input type="text" class="form-control" v-model='form_submit_data[dom_id]["items"][id]["item"]'
                        placeholder="項目" :disabled='form_action !== "new"'>
                 <label>項目</label>
             </div>
@@ -27,7 +27,7 @@
         <div class='col-md-2' v-if='type === "乘車"'>
             <div class="form-label-group mt-2">
                 <input type="text" class="form-control"
-                       placeholder="乘車起始點" v-model='form_submit_data[dom_id]["items"][id]["departure"]' :disabled='form_action !== "new"'
+                       placeholder="乘車起始點" v-model='form_submit_data[dom_id]["items"][id]["get_on_start"]' :disabled='form_action !== "new"'
                        >
                 <label >乘車起始點</label>
             </div>
@@ -35,14 +35,14 @@
         <div class='col-md-2' v-else-if='type === "案件"'>
             <div class="form-label-group mt-2">
                 <input type="text" class="form-control"
-                       placeholder="委刊單號" v-model='form_submit_data[dom_id]["items"][id]["serial_number"]' :disabled='form_action !== "new"'
+                       placeholder="委刊單號" v-model='form_submit_data[dom_id]["items"][id]["campaign_id"]' :disabled='form_action !== "new"'
                 >
                 <label >委刊單號</label>
             </div>
         </div>
         <div class='col-md-2' v-else-if='type === "交際"'>
             <div class="form-label-group mt-2">
-                <input type="text" class="form-control" v-model='form_submit_data[dom_id]["items"][id]["serial_number"]' :disabled='form_action !== "new"'
+                <input type="text" class="form-control" v-model='form_submit_data[dom_id]["items"][id]["gift_id"]' :disabled='form_action !== "new"'
                        placeholder="交際送禮單號">
                 <label >交際送禮單號</label>
             </div>

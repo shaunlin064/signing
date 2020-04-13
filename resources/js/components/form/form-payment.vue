@@ -125,6 +125,9 @@
                     $('#'+this.dom_id+' #pay_type').change((e)=>{
                         this.form_submit_data[this.dom_id]["pay_type"] = e.target.value;
                     });
+                }else{
+                    this.department_name = getDepartment(this.form_submit_data[this.dom_id]['apply_department_id']);
+                    this.member_name = getMember(this.form_submit_data[this.dom_id]['apply_member_id']);
                 }
             }
         },

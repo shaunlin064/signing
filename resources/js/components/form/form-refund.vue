@@ -34,7 +34,7 @@
                 </div>
             </div>
             <component v-for="(item,key) in items" v-bind:is="item.component" :id='item.id' :dom_id='dom_id' :key='item.id'
-                       :type='item.form' :form_action='form_action'></component>
+                       :type='item.type' :form_action='form_action'></component>
             <div class='row col-md-12 justify-content-end border-top-light' v-show='form_action === "new"'>
 
                 <div class='col-md-4 text-right mt-1'>
@@ -118,7 +118,7 @@
                     this.department_name = getDepartment(this.form_submit_data[this.dom_id]['apply_department_id']);
                     this.member_name = getMember(this.form_submit_data[this.dom_id]['apply_member_id']);
                     let itemsData = this.form_submit_data[this.dom_id]['items'];
-                    let vue =this;
+
                     Object.keys(itemsData).forEach(key=>{
                         vue.items.push(itemsData[key]);
                     })
@@ -155,18 +155,20 @@
 
                 this.items.push({
                     component: 'form-refund-items',
-                    form: type,
+                    type: type,
                     id: this.count,
                 });
                 this.form_submit_data[this.dom_id]["items"][this.count] = {
                     component: 'form-refund-items',
-                    form: type,
+                    type: type,
                     id: this.count,
-                    name:'',
+                    item:'',
                     date: '',
-                    departure:'',
-                    serial_number:'',
+                    get_on_start:'',
+                    campaign_id:'',
+                    gift_id:'',
                     price:'',
+
                 };
                 // console.log(this.count);
                 // this.form_submit_data[this.dom_id]["items"].push({
