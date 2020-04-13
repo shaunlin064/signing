@@ -15,8 +15,7 @@
                 </div>
                 <div class="col-md-6">
                     <div class="form-label-group">
-                        <input type="text" id="member" class="form-control" placeholder="申請人" :value='member_name' disabled
-                               >
+                        <input type="text" id="member" class="form-control" placeholder="申請人" :value='member_name' disabled>
                         <label for="member">申請人</label>
                     </div>
                 </div>

@@ -14,8 +14,8 @@
                             <option value >請選擇</option>
                             <option value="form-payment" >請款</option>
                             <option value="form-sign">用印</option>
-                            <option value="form-refund">代墊</option>
                             <option value="form-social">交際送禮</option>
+                            <option value="form-refund">代墊</option>
                             <option value="form-travel_grant">差旅申請</option>
                             <option value="form-travel_fee">差旅費用核銷</option>
                         </select>
@@ -92,8 +92,10 @@
                         /*default Array*/
                         if($.inArray(columnName,['form_stamp_type']) != -1){
                             eval(`vue.form_submit_data['${vue.form_type}']['${columnName}'] = [];`);
-                        };
-
+                        }
+                        if($.inArray(columnName,['items']) != -1){
+                            eval(`vue.form_submit_data['${vue.form_type}']['${columnName}'] = {};`);
+                        }
                     });
                     eval(`vue.form_submit_data['${vue.form_type}']['apply_member_id'] = '${vue.login_user.id}';`);
                     eval(`vue.form_submit_data['${vue.form_type}']['apply_department_id'] = '${vue.login_user.department_id}';`);
@@ -117,7 +119,7 @@
 
                 /*Array need to Json*/
                 Object.keys(data).forEach(columnName=> {
-                    if ($.inArray(columnName, ['form_stamp_type']) != -1) {
+                    if ($.inArray(columnName, ['form_stamp_type','items']) != -1) {
                         data[columnName] = JSON.stringify(data[columnName]);
                     }
                 });
@@ -131,7 +133,6 @@
                 axios.post('api/form/apply', data)
                     .then(function (response) {
                         console.log(response);
-
                     })
                     .catch(function (error) {
                         console.log(error);

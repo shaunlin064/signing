@@ -8,16 +8,15 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="form-label-group">
-                    <input type="text" id="member" class="form-control"
-                           placeholder="申請人" name="member">
-                    <label for="member">申請人</label>
+                    <input type="text" id="department" class="form-control" placeholder="部門" :value='department_name'
+                           disabled>
+                    <label for="department">部門</label>
                 </div>
             </div>
             <div class='col-md-6'>
                 <div class="form-label-group">
-                    <input type="text" id="department" class="form-control"
-                           placeholder="部門" name="department">
-                    <label for="department">部門</label>
+                    <input type="text" id="member" class="form-control" placeholder="申請人" :value='member_name' disabled>
+                    <label for="member">申請人</label>
                 </div>
             </div>
         </div>
@@ -27,12 +26,14 @@
                     <h4 class="card-title">項目</h4>
                 </div>
             </div>
-            <component v-for="item in items" v-bind:is="item.type" :key='item.id' :id='item.id' :type='item.form'></component>
-            <div class='row col-md-12 justify-content-end border-top-light'>
+            <component v-for="(item,key) in items" v-bind:is="item.component" :id='item.id' :dom_id='dom_id' :key='item.id'
+                       :type='item.form' :form_action='form_action'></component>
+            <div class='row col-md-12 justify-content-end border-top-light' v-show='form_action === "new"'>
 
                 <div class='col-md-4 text-right mt-1'>
                     <div class="btn-group dropdown mr-1 mb-1">
-                        <button type="button" class="btn btn-outline-primary dropdown-toggle" @click='openMenu' data-toggle="dropdown"
+                        <button type="button" class="btn btn-outline-primary dropdown-toggle" @click='openMenu'
+                                data-toggle="dropdown"
                                 aria-haspopup="true" aria-expanded="false">
                             新增
                         </button>
@@ -47,7 +48,8 @@
             </div>
             <div class='col-md-12 mt-2'>
                 <fieldset class="form-label-group">
-                              <textarea class="form-control" id="remark" rows="3" placeholder="備註"
+                              <textarea class="form-control" id="remark" rows="1" placeholder="備註"
+                                        v-model='form_submit_data[dom_id]["remark"]' :disabled='form_action !== "new"'
                                         name="remark"></textarea>
                     <label for="remark">備註</label>
                 </fieldset>
@@ -65,70 +67,129 @@
 </template>
 
 <script>
-    import {mapState, mapMutations, mapActions, mapGetters} from 'vuex';
-        export default {
-            name: "form-refund",
-            props: {
-                dom_id:String
-            },
-            data() {
-                return {
-                    items: [],
-                    count: 0
-                }
-            },
-            computed: {
-                    ...mapState([]),
-            },
-            beforeMount: function () {
-            },
-            mounted: function () {
-                var vue = this;
-                $('.row').on('click','[data-action="deleteItem"]',function(e){
+    import {mapState} from 'vuex';
+
+    export default {
+        name: "form-refund",
+        props: {
+            dom_id: String,
+            form_data: Object,
+            form_action: String
+        },
+        data() {
+            return {
+                member_name:'',
+                department_name:'',
+                items: [],
+                count: -1
+            }
+        },
+        computed: {
+            ...mapState(['form_submit_data','login_user', 'member', 'department']),
+        },
+        beforeMount: function () {
+        },
+        mounted: function () {
+            this.initial();
+
+        },
+        methods: {
+            initial() {
+                // $(".select2").select2({
+                //     dropdownAutoWidth: true,
+                //     width: '100%'
+                // });
+                let vue = this;
+                $('.row').on('click', '[data-action="deleteItem"]', function (e) {
                     vue.deleteItem(e);
                 });
-                this.initial();
-            },
-            methods: {
-                initial(){
-                    $(".select2").select2({
-                        dropdownAutoWidth: true,
-                        width: '100%'
-                    });
-                },
-                deleteItem(event){
-                    $(event.currentTarget).parents('.row.col-md-12').remove();
-                },
-                openMenu(event){
-                    let targetDom = $(event.currentTarget);
-                    targetDom.parent('.btn-group').addClass('show');
-                    targetDom.next().addClass('show');
-                },
-                addItem(type){
+                if (this.form_action === 'new') {
+                    this.department_name = this.login_user.department;
+                    this.member_name = this.login_user.name;
+                }else{
 
-                    this.items.push({
-                        type: 'form-refund-items',
-                        form:type,
-                        id: this.count++
-                    });
-
-                    this.initial();
+                    this.department_name = getDepartment(this.form_submit_data[this.dom_id]['apply_department_id']);
+                    this.member_name = getMember(this.form_submit_data[this.dom_id]['apply_member_id']);
+                    let itemsData = this.form_submit_data[this.dom_id]['items'];
+                    let vue =this;
+                    Object.keys(itemsData).forEach(key=>{
+                        vue.items.push(itemsData[key]);
+                    })
                 }
             },
-            updated() {
-                // console.log('view updated')
+            deleteItem(event) {
+                // $(event.currentTarget).parents('.row.col-md-12').remove();
+                let id =$(event.currentTarget).data('id');
+                let vue = this;
+                this.items.map((e,k)=>{
+                    if(e.id === id){
+                        vue.items.splice(k,1);
+                        // vue.form_submit_data[vue.dom_id]["items"].splice(k,1);
+                        delete vue.form_submit_data[vue.dom_id]["items"][id];
+                    }
+
+                });
+
             },
-            watch: {
-             // change_date: {
-                //     immediate: true,    // 这句重要
-                //     handler(val, oldVal) {
-                //         if (oldVal !== undefined) {
-                //             this.getCampaignData(this.user_ids, val);
-                //         }
-                //     }
-                // }
+            openMenu(event) {
+                let targetDom = $(event.currentTarget);
+                targetDom.parent('.btn-group').addClass('show');
+                targetDom.next().addClass('show');
+            },
+            addItem(type) {
+                this.count++;
+                // this.items[`${this.count}`] ={
+                //     component: 'form-refund-items',
+                //     form: type,
+                //     id: this.count,
+                // };
+                // console.log(this.count);
+
+
+                this.items.push({
+                    component: 'form-refund-items',
+                    form: type,
+                    id: this.count,
+                });
+                this.form_submit_data[this.dom_id]["items"][this.count] = {
+                    component: 'form-refund-items',
+                    form: type,
+                    id: this.count,
+                    name:'',
+                    date: '',
+                    departure:'',
+                    serial_number:'',
+                    price:'',
+                };
+                // console.log(this.count);
+                // this.form_submit_data[this.dom_id]["items"].push({
+                //     component: 'form-refund-items',
+                //     form: type,
+                //     id: this.count,
+                //     name:'',
+                //     date: '',
+                //     departure:'',
+                //     serial_number:'',
+                //     price:'',
+                // });
+                console.log(this.count);
+                // this.initial();
             }
+        },
+        updated() {
+            // console.log('view updated')
+        },
+        watch: {
+            // change_date: {
+            //     immediate: true,    // 这句重要
+            //     handler(val, oldVal) {
+            //         if (oldVal !== undefined) {
+            //             this.getCampaignData(this.user_ids, val);
+            //         }
+            //     }
+            // }
         }
+    }
 </script>
 
 <style scoped>
