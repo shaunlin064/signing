@@ -15,7 +15,8 @@
         <div class="col-md-3">
             <div class="form-label-group">
                 <input type="text" class="form-control"
-                       placeholder="日期" v-model='form_submit_data[dom_id]["items"][id]["date"]' :disabled='plan_action !== "new_plan"'>
+                       placeholder="日期" v-model='form_submit_data[dom_id]["items"][id]["date"]'
+                       :disabled='plan_action !== "new_plan"'>
                 <label>日期</label>
             </div>
         </div>
@@ -23,22 +24,27 @@
             <div class="form-label-group">
 
                 <input type="text" class="form-control"
-                       placeholder="洽訪公司" v-model='form_submit_data[dom_id]["items"][id]["customer_company"]' :disabled='plan_action !== "new_plan"'
+                       placeholder="洽訪公司" v-model='form_submit_data[dom_id]["items"][id]["customer_company"]'
+                       :disabled='plan_action !== "new_plan"'
                 >
                 <label>洽訪公司</label>
             </div>
         </div>
         <div class='col-md-3'>
             <div class="form-label-group">
-                <input type="text" class="form-control"  placeholder="對象姓名/稱謂"  v-model='form_submit_data[dom_id]["items"][id]["customer_name"]' :disabled='plan_action !== "new_plan"'
-                       >
+                <input type="text" class="form-control" placeholder="對象姓名/稱謂"
+                       v-model='form_submit_data[dom_id]["items"][id]["customer_name"]'
+                       :disabled='plan_action !== "new_plan"'
+                >
                 <label>對象姓名/稱謂</label>
             </div>
         </div>
         <div class='col-md-3'>
             <div class="form-label-group">
-                <input type="text" class="form-control" placeholder="會議形式" v-model='form_submit_data[dom_id]["items"][id]["meet_type"]' :disabled='plan_action !== "new_plan"'
-                      >
+                <input type="text" class="form-control" placeholder="會議形式"
+                       v-model='form_submit_data[dom_id]["items"][id]["meet_type"]'
+                       :disabled='plan_action !== "new_plan"'
+                >
                 <label>會議形式</label>
             </div>
         </div>
@@ -46,19 +52,24 @@
             <div class="form-group">
                 <label>負責業務</label>
                 <!--TODO:: form submit removeAttr disabled-->
-                <select class="custom-select select2 form-control" :disabled='form_submit_data[dom_id]["items"][id]["charge_user"] !== null'
-                        >
+                <select class="custom-select select2 form-control"
+                        :disabled='form_submit_data[dom_id]["items"][id]["charge_user"] !== null'
+                        :id='"charge_user_"+id'
+                >
                     <option value>請選擇</option>
-                    <option v-for='item in member' :value='item.id' :selected='form_submit_data[dom_id]["items"][id]["charge_user"] == item.id' >{{item.name}}</option>
+                    <option v-for='item in member' :value='item.id'
+                            :selected='form_submit_data[dom_id]["items"][id]["charge_user"] == item.id'>{{item.name}}
+                    </option>
                 </select>
             </div>
         </div>
         <div class='col-md-6'>
             <div class="form-label-group mt-2">
-                <input type="text" class="form-control" v-model='form_submit_data[dom_id]["items"][id]["agenda"]' :disabled='plan_action !== "new_plan"'
+                <input type="text" class="form-control" v-model='form_submit_data[dom_id]["items"][id]["agenda"]'
+                       :disabled='plan_action !== "new_plan"'
                        placeholder="洽談內容"
-                       >
-                <label >洽談內容</label>
+                >
+                <label>洽談內容</label>
             </div>
         </div>
         <div class='row col-md-12' v-if='dom_id === "form-travel_fee"'>
@@ -68,89 +79,116 @@
                         <h5 class="card-title">費用明細</h5>
                     </div>
                 </div>
-                <div class='col-md-6 justify-content-end'>
-                    <div class='text-right mt-1'>
-                        <button type="button" @click='addItem'
-                                class="btn btn-outline-primary mr-1 mb-1 waves-effect waves-light" v-if='form_action==="new"'>
+                <div class='col-md-6 justify-content-end text-right'>
+                    <div class="btn-group dropdown mr-1 mb-1">
+                        <button type="button" class="btn btn-outline-primary dropdown-toggle" @click='openMenu'
+                                data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">
                             新增
                         </button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" @click='addItem("交通")'>交通</a>
+                            <a class="dropdown-item" @click='addItem("交際")'>交際</a>
+                            <a class="dropdown-item" @click='addItem("漫遊")'>漫遊</a>
+                            <a class="dropdown-item" @click='addItem("其他")'>其他</a>
+                        </div>
                     </div>
                 </div>
             </div>
-            <compoenents v-for='item in plan_fee' v-bind:is="item.type" :key='item.id' :id='item.id' :parent_id='item.parent_id'></compoenents>
+            <compoenents v-for='item in plan_fee' v-bind:is="item.type" :key='item.id' :id='item.id' :dom_id='dom_id'
+                         :parent_id='item.parent_id'></compoenents>
         </div>
     </div>
 </template>
 
 <script>
-    import {mapState, mapMutations, mapActions, mapGetters} from 'vuex';
-    Vue.component('form-travel_fee_plan_item',require('../../components/form/form-travel_fee_plan_item').default);
-        export default {
-            name: "form_travel_fee_plan",
-            props: {
-                dom_id:String,
-                plan_action: String,
-                form_action:String,
-                id: Number,
-            },
-            data() {
-                return {
-                    plan_fee:[
+    import {mapState} from 'vuex';
 
-                    ],
-                    count:0
-                }
-            },
-            computed: {
-                ...mapState(['form_submit_data', 'login_user', 'member', 'department']),
-            },
-            beforeMount: function () {
-            },
-            mounted: function () {
-                var vue = this;
-                $('.row').on('click','[data-action="deleteItem_fee"]',function(e){
-                    vue.deleteItem(e);
-                });
-                this.initial();
-            },
-            methods: {
-                initial(){
-                },
-                addItem(){
-                    this.plan_fee.push({
-                        type: 'form-travel_fee_plan_item',
-                        id: this.count++,
-                        parent_id: this.id,
-                    })
-                },
-                deleteItem(target){
-                    let id = $(target.currentTarget).data('id');
-                    let parentId = $(target.currentTarget).data('parent_id');
-                    this.plan_fee.map((e,v)=>{
-                        if(e['id'] == id && e['parent_id'] == parentId){
-                            this.plan_fee.splice(v,1);
-                        }
-                    });
-                }
-            },
-            updated() {
-                $(".select2").select2({
-                    dropdownAutoWidth: true,
-                    width: '100%'
-                });
-
-            },
-            watch: {
-             // change_date: {
-                //     immediate: true,    // 这句重要
-                //     handler(val, oldVal) {
-                //         if (oldVal !== undefined) {
-                //             this.getCampaignData(this.user_ids, val);
-                //         }
-                //     }
-                // }
+    Vue.component('form-travel_fee_plan_item', require('../../components/form/form-travel_fee_plan_item').default);
+    export default {
+        name: "form_travel_fee_plan",
+        props: {
+            dom_id: String,
+            plan_action: String,
+            form_action: String,
+            id: String,
+        },
+        data() {
+            return {
+                plan_fee: [],
+                count: -1
             }
+        },
+        computed: {
+            ...mapState(['form_submit_data', 'login_user', 'member', 'department']),
+        },
+        beforeMount: function () {
+        },
+        mounted: function () {
+            var vue = this;
+            $('.row').on('click', '[data-action="deleteItem_fee"]', function (e) {
+                vue.deleteItem(e);
+            });
+            let chargeUserDom = $('#' + this.dom_id + ' #charge_user_' + this.id);
+            chargeUserDom.change((e, v) => {
+                this.form_submit_data[this.dom_id]["items"][this.id]['charge_user'] = chargeUserDom.val();
+            });
+            this.initial();
+        },
+        methods: {
+            initial() {
+            },
+            openMenu(event) {
+                let targetDom = $(event.currentTarget);
+                targetDom.parent('.btn-group').addClass('show');
+                targetDom.next().addClass('show');
+            },
+            addItem(type) {
+                this.count++;
+                this.plan_fee.push({
+                    type: 'form-travel_fee_plan_item',
+                    id: this.count,
+                    parent_id: parseInt(this.id),
+                });
+                this.form_submit_data[this.dom_id]["items"][this.id]["fee_items"][this.count] = {
+                    component: 'form-travel_fee_plan',
+                    action: 'new_form',
+                    id: this.count.toString(),
+                    type: type,
+                    currency: 'TWD',
+                    fee: null,
+                };
+            },
+            deleteItem(target) {
+                let id = $(target.currentTarget).data('id');
+                let parentId = $(target.currentTarget).data('parent_id');
+                let vue = this;
+                this.plan_fee.map((e, k) => {
+                    if (e['id'] == id && e['parent_id'] == parentId) {
+                        this.plan_fee.splice(k, 1);
+                        delete vue.form_submit_data[vue.dom_id]["items"][parentId]["fee_items"][id];
+                    }
+                });
+            }
+        },
+        updated() {
+            $(".select2").select2({
+                dropdownAutoWidth: true,
+                width: '100%'
+            });
+
+        },
+        watch: {
+            // change_date: {
+            //     immediate: true,    // 这句重要
+            //     handler(val, oldVal) {
+            //         if (oldVal !== undefined) {
+            //             this.getCampaignData(this.user_ids, val);
+            //         }
+            //     }
+            // }
         }
+    }
 </script>
 
 <style scoped>

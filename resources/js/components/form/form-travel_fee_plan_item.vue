@@ -1,35 +1,32 @@
 <template>
     <div class="row col-xl-6 align-items-center">
         <div class="col-md-3">
-            <div class="form-group">
-                <label>類型</label>
-                <select class="custom-select select2 form-control" :name='"plan["+parent_id+"][plan_fee]["+id+"][type]"'
-                         >
-                    <option value="transfer">交通</option>
-                    <option value="other">交際</option>
-                    <option value="other">漫遊</option>
-                    <option value="other">其他</option>
-                </select>
+            <div class="form-label-group">
+                <input type="text" id="type"  name='type' class="form-control"
+                       placeholder="類型"  v-model='form_submit_data[dom_id]["items"][parent_id]["fee_items"][id]["type"]'
+                       disabled>
+                <label for="type">類型</label>
             </div>
         </div>
         <div class='col-md-3'>
-            <div class="form-label-group mt-2">
-                <input type="text" class="form-control" :name='"plan["+parent_id+"][plan_fee]["+id+"][currency]"'
-                       placeholder="幣別"
-                       name="currency">
-                <label >幣別</label>
+            <div class="form-label-group">
+
+                <input type="text" class="form-control" id="currency"
+                       placeholder="幣別" v-model='form_submit_data[dom_id]["items"][parent_id]["fee_items"][id]["currency"]'
+                       disabled>
+                <label for="currency">幣別</label>
             </div>
         </div>
         <div class='col-md-3'>
-            <div class="form-label-group mt-2">
-                <input type="text" class="form-control" :name='"plan["+parent_id+"][plan_fee]["+id+"][fee]"'
+            <div class="form-label-group">
+                <input type="text" class="form-control" id='fee' v-model='form_submit_data[dom_id]["items"][parent_id]["fee_items"][id]["fee"]'
                        placeholder="應付費用"
                        name="fee">
-                <label >應付費用</label>
+                <label for="fee">應付費用</label>
             </div>
         </div>
         <!--delete-->
-        <div class='col-md-auto mt-2'>
+        <div class='col-md-auto'>
             <button type="button" data-action='deleteItem_fee' :data-id='id' :data-parent_id='parent_id'
                     class="btn btn-icon btn-danger mr-1 mb-1 waves-effect waves-light">
                 <i class="feather icon-x"></i></button>
@@ -43,6 +40,7 @@
         export default {
             name: "form-travel_fee_plan_item",
             props: {
+                dom_id:String,
                 parent_id: Number,
                 id: Number,
             },
@@ -52,7 +50,7 @@
                 }
             },
             computed: {
-                ...mapState([]),
+                ...mapState(['form_submit_data', 'login_user', 'member', 'department']),
             },
             beforeMount: function () {
             },

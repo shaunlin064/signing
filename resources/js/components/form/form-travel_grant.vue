@@ -29,7 +29,7 @@
             <div class='col-md-6'>
                 <div class="form-group">
                     <label>出差人</label>
-                    <select class="custom-select select2 form-control" multiple="multiple"
+                    <select class="custom-select select2 form-control" multiple="multiple" id='accompany_user_id'
                             name="accompany_user_id" v-model='form_submit_data[dom_id]["accompany_user_id"]'
                             :disabled='form_action !== "new"'>
                         <option value>請選擇</option>
@@ -164,6 +164,11 @@
                     vue.deleteItem(e);
                 });
 
+                let accompanyUserDom = $('#'+this.dom_id+' #accompany_user_id');
+                accompanyUserDom.change((e,v)=>{
+                    this.form_submit_data[this.dom_id]["accompany_user_id"] = accompanyUserDom.val();
+                });
+
                 if (this.form_action === 'new') {
                     this.department_name = this.login_user.department;
                     this.member_name = this.login_user.name;
@@ -186,14 +191,13 @@
                 this.form_submit_data[this.dom_id]["items"][this.count] = {
                     component: 'form-travel_fee_plan',
                     action: 'new_form',
-                    id: this.count,
-                    name: '',
+                    id: this.count.toString(),
                     date: '',
                     customer_name: '',
                     customer_company: '',
                     meet_type: '',
                     agenda:'',
-                    charge_user:'',
+                    charge_user:null,
                 };
             },
             deleteItem(event) {

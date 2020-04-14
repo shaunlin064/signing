@@ -117,13 +117,17 @@
                 let data = eval(`this.form_submit_data['${this.form_type}']`);
 
                 /*Array need to Json*/
-                // Object.keys(data).forEach(columnName=> {
-                //     if ($.inArray(columnName, ['form_stamp_type','items','accompany_user_id']) != -1) {
-                //         data[columnName] = JSON.stringify(data[columnName]);
-                //     }
-                // });
+                if(data['items'] !== undefined){
+                    let itemsData = data['items'];
+                    Object.keys(itemsData).forEach(key=> {
 
-                console.log(data);
+                        if (itemsData[key]['fee_items'] !== undefined) {
+                            itemsData[key]['fee_items'] = JSON.stringify(itemsData[key]['fee_items']);
+                        }
+                    });
+                    data['items'] = itemsData;
+                }
+
                 // if(data['apply_attachment'] === ''){
                 //     // delete data.column.apply_attachment;
                 //     data['apply_attachment'] = '0';

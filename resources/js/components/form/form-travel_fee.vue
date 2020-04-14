@@ -25,7 +25,7 @@
                         <label>差旅單</label>
                         <select class="custom-select select2 form-control" id='form_travel_grant_id'
                                 name="form_travel_grant_id">
-                            <option>請選擇</option>
+                            <option value>請選擇</option>
                             <option v-for='(item, index) in travel_grant_datas' :value='index'>{{item.name}}</option>
                         </select>
                     </div>
@@ -55,7 +55,7 @@
                             <textarea class="form-control" id="remark" rows="3" placeholder="備註"
                                       name="remark" v-model='form_submit_data[dom_id]["remark"]'
                                       :disabled='form_action !== "new"'></textarea>
-                    <label for="remark">備註</label>
+                    <label for="remark" >備註</label>
                 </fieldset>
             </div>
             <div class="col-md-12 mt-1">
@@ -97,6 +97,19 @@
                 this.initial();
             },
             methods: {
+                remove(targetDom){
+                    this.items = [];
+                    this.form_submit_data[this.dom_id]['items'] = {};
+                    this.count = 0;
+                    let vue = this;
+                    let dom = targetDom;
+
+                    let iTime = setInterval(function(){
+                        vue.getFormTravelGrantPlans(dom);
+                        clearTimeout(iTime);
+                    },300);
+
+                },
                 initial(){
                     var vue = this;
                     $('.row').on('click', '[data-action="deleteItem"]', function (e) {
@@ -116,11 +129,10 @@
                         })
                     }
 
-                  $('#form_travel_grant_id').change((e,v)=>{
+                  $('#'+this.dom_id+' #form_travel_grant_id').change((e,v)=>{
                       let targetDom = e.currentTarget;
-                      this.items = [];
-                      this.count = 0;
-                      this.getFormTravelGrantPlans(targetDom);
+                      this.form_submit_data[this.dom_id]["form_travel_grant_id"] = e.target.value;
+                      this.remove(targetDom);
                   });
                     this.getTraveGrantData();
 
@@ -133,13 +145,14 @@
                         id: this.count
                     });
                     this.form_submit_data[this.dom_id]["items"][this.count] = {
-                        id: this.count,
+                        id: this.count.toString(),
                         date: '',
                         customer_name: '',
                         customer_company: '',
                         meet_type: '',
                         agenda:'',
                         charge_user:null,
+                        fee_items: {}
                     };
                 },
                 getTraveGrantData(){
@@ -214,18 +227,19 @@
                 },
                 getFormTravelGrantPlans(targetDom){
                     let index = targetDom.value;
-                    let data =  this.travel_grant_datas[index]['items'];
-                    let vue = this;
-                    data.map((e,v)=>{
-
-                        this.form_submit_data[this.dom_id]['items'][e.id] = e;
-                        e.plan_action = 'new_fee';
-                        e.component ='form-travel_fee_plan';
-                        vue.items.push(e);
-
-                        vue.count = parseInt(e.id);
-
-                    });
+                    if(index !== ''){
+                        let data =  this.travel_grant_datas[index]['items'];
+                        let vue = this;
+                        data.map((e,v)=>{
+                            e.fee_items = {};
+                            e.id = e.id.toString();
+                            this.form_submit_data[this.dom_id]['items'][e.id] = e;
+                            e.plan_action = 'new_fee';
+                            e.component ='form-travel_fee_plan';
+                            vue.items.push(e);
+                            vue.count = parseInt(e.id);
+                        });
+                    }
                 },
                 deleteItem(event) {
                     let vue = this;
