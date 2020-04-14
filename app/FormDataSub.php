@@ -11,6 +11,7 @@ class FormDataSub extends Model
 
     protected $fillable = [
         'form_data_id',
+        'key',
         'column',
         'value'
     ];

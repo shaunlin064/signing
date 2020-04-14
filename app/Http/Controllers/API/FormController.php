@@ -112,6 +112,7 @@ class FormController extends Controller
                         foreach($request->get($k) as $k1=>$v1){
                             foreach($v['sub_column'] as $k2=>$v2){
                                 $MainData->subData()->create([
+                                    'key' => $k1,
                                     'column' => $k2,
                                     'value' => ($request->get($k)[$k1][$k2] == '') ? null : $request->get($k)[$k1][$k2]
                                 ]);
@@ -241,6 +242,7 @@ class FormController extends Controller
             foreach($columnData as $k=>$v){
                 if(isset($form['column'][$v->column]['sub_column'])){
                     //取得子欄位資料
+                    //$subData = FormDataSub::where('form_data_id',$v->id)->get();return $subData;
                     $subData = FormDataSub::where('form_data_id',$v->id)->pluck('value','column');
                     $column[$v->column] = $subData;
                 }
