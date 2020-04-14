@@ -242,8 +242,13 @@ class FormController extends Controller
             foreach($columnData as $k=>$v){
                 if(isset($form['column'][$v->column]['sub_column'])){
                     //取得子欄位資料
-                    //$subData = FormDataSub::where('form_data_id',$v->id)->get();return $subData;
-                    $subData = FormDataSub::where('form_data_id',$v->id)->pluck('value','column');
+                    $subData = [];
+                    $subDataTemp = FormDataSub::select('key')->where('form_data_id',$v->id)->groupBy('key')->get();
+                    foreach($subDataTemp as $k1=>$v1){
+
+                        $subData[$v1->key] = FormDataSub::where('form_data_id',$v->id)->where('key',$v1->key)->pluck('value','column');
+
+                    }
                     $column[$v->column] = $subData;
                 }
             }
@@ -298,16 +303,33 @@ class FormController extends Controller
                 if($FormApply->fail_at == NULL){
 
                     //移除原填寫欄位資料
+                    foreach($FormApply->data as $k=>$v){
+                        FormDataSub::where('form_data_id',$v->id)->delete();
+                    }
                     $FormApply->data()->delete();
                     //重新寫入填單資料
                     $form = Config('form.'.$FormApply->form_id);
                     foreach($form['column'] as $k=>$v){
 
-                        $FormApply->data()->create([
-                            'form_id' => $request->get('form_id'),
+                        //寫入主資料
+                        $MainData = $FormApply->data()->create([
+                            'form_id' => $FormApply->form_id,
                             'column' => $k,
-                            'value' => ($request->get($k) == '') ? null : $request->get($k)
+                            'value' => ($request->get($k) == '' || is_array($request->get($k))) ? null : $request->get($k)
                         ]);
+
+                        if(isset($v['sub_column']) && is_array($request->get($k))){
+                            //有子欄位，寫入子資料
+                            foreach($request->get($k) as $k1=>$v1){
+                                foreach($v['sub_column'] as $k2=>$v2){
+                                    $MainData->subData()->create([
+                                        'key' => $k1,
+                                        'column' => $k2,
+                                        'value' => ($request->get($k)[$k1][$k2] == '') ? null : $request->get($k)[$k1][$k2]
+                                    ]);
+                                }
+                            }
+                        }
                     }
 
                     $FormApply->push();
