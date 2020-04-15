@@ -67,18 +67,15 @@
         methods: {
             currentComponent(event) {
                 let formConfig = this.form_config;
-                let form_type = event.target.value;
-                console.log(form_type);
                 let vue = this;
-                let token = $('input[name="_token"]').val();
+                vue.form_type = event.target.value;
                 /*get formConfig*/
                 let selectFormConfig = {};
                 Object.keys(formConfig).forEach(key=>{
-                    if(formConfig[key]['html_name'] === form_type){
+                    if(formConfig[key]['html_name'] === vue.form_type){
                         selectFormConfig = formConfig[key];
                     }
                 });
-                vue.form_type = event.target.value;
                 /*set default*/
                 if(eval(`this.form_submit_data['${vue.form_type}']`) === undefined){
                     eval(`this.form_submit_data['${vue.form_type}'] = {};`);
@@ -90,9 +87,10 @@
                         eval(`vue.form_submit_data['${vue.form_type}']['${columnName}'] = '1';`);
 
                         /*default Array*/
-                        if($.inArray(columnName,['form_stamp_type','accompany_user_id']) != -1){
+                        if($.inArray(columnName,['form_stamp_type','accompany_user_id','attend_member']) != -1){
                             eval(`vue.form_submit_data['${vue.form_type}']['${columnName}'] = [];`);
                         }
+                        /*default Object*/
                         if($.inArray(columnName,['items']) != -1){
                             eval(`vue.form_submit_data['${vue.form_type}']['${columnName}'] = {};`);
                         }
@@ -112,11 +110,32 @@
                 });
             },
             submit(){
-                $('select[disabled]').removeAttr("disabled");
-                // $('form#'+this.dom_id).submit();
-                let data = eval(`this.form_submit_data['${this.form_type}']`);
+                let data = this.getPostData();
 
-                /*Array need to Json*/
+                /* some Array need to Json*/
+                data = this.toJson(data);
+
+                /*TODO::post 後續轉跳與錯誤動作*/
+                axios.post('api/form/apply', data)
+                    .then(function (response) {
+                        console.log(response);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+
+            },
+            getPostData(){
+              return   Object.assign({},eval(`this.form_submit_data['${this.form_type}']`));
+            },
+            toJson(data){
+                /* other Array to Json*/
+                Object.keys(data).forEach(columnName=> {
+                    if ($.inArray(columnName, ['form_stamp_type', 'accompany_user_id','attend_member']) != -1) {
+                        data[columnName] = JSON.stringify(data[columnName]);
+                    }
+                });
+                /*travel_fee*/
                 if(data['items'] !== undefined){
                     let itemsData = data['items'];
                     Object.keys(itemsData).forEach(key=> {
@@ -127,20 +146,7 @@
                     });
                     data['items'] = itemsData;
                 }
-
-                // if(data['apply_attachment'] === ''){
-                //     // delete data.column.apply_attachment;
-                //     data['apply_attachment'] = '0';
-                // }
-
-                axios.post('api/form/apply', data)
-                    .then(function (response) {
-                        console.log(response);
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
-
+                return data;
             },
         },
         updated() {

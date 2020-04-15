@@ -20,8 +20,8 @@
         <div class='col-md-2'>
             <div class="form-label-group mt-2">
                 <input type="text" class="form-control" v-model='form_submit_data[dom_id]["items"][id]["item"]'
-                       placeholder="項目" :disabled='form_action !== "new"'>
-                <label>項目</label>
+                       placeholder="名稱" :disabled='form_action !== "new"'>
+                <label>名稱</label>
             </div>
         </div>
         <div class='col-md-2' v-if='type === "乘車"'>

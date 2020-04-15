@@ -21,9 +21,9 @@
             </div>
             <div class="col-md-6">
                 <div class="form-label-group">
-                    <input type="text" id="apply_subject" class="form-control" placeholder="項目" name="apply_subject"
+                    <input type="text" id="apply_subject" class="form-control" placeholder="名稱" name="apply_subject"
                            v-model='form_submit_data[dom_id]["apply_subject"]' :disabled='form_action !== "new"'>
-                    <label for="apply_subject">項目</label>
+                    <label for="apply_subject">名稱</label>
                 </div>
             </div>
             <div class="col-md-6">
@@ -47,7 +47,19 @@
                 </div>
             </div>
             <div class="col-md-6">
-                <div class="form-label-group mt-2">
+                <div class="form-group">
+                    <div class="form-group">
+                        <label>出席人員</label>
+                        <select class="custom-select select2 form-control" multiple="multiple" id='attend_member'
+                                name="attend_member" v-model='form_submit_data[dom_id]["attend_member"]'
+                                :disabled='form_action !== "new"'>
+                            <option v-for='item in member' :value='item.id'>{{item.name}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-label-group">
                     <input type="text" id="customer_company" class="form-control"
                            placeholder="客戶公司名稱" name="customer_company" v-model='form_submit_data[dom_id]["customer_company"]' :disabled='form_action !== "new"'>
                     <label for="customer_company">客戶公司名稱</label>
@@ -115,17 +127,25 @@
             },
             methods: {
                 initial(){
-                    if (this.form_action === 'new') {
-                        this.department_name = this.login_user.department;
-                        this.member_name = this.login_user.name;
+                    let vue = this;
+                    if (vue.form_action === 'new') {
+                        vue.department_name = vue.login_user.department;
+                        vue.member_name = vue.login_user.name;
                     }else{
-                        this.department_name = getDepartment(this.form_submit_data[this.dom_id]['apply_department_id']);
-                        this.member_name = getMember(this.form_submit_data[this.dom_id]['apply_member_id']);
+                        vue.department_name = getDepartment(vue.form_submit_data[vue.dom_id]['apply_department_id']);
+                        vue.member_name = getMember(vue.form_submit_data[vue.dom_id]['apply_member_id']);
                     }
+
+                    ['type','attend_member'].map(k =>{
+                        let targetDom = $(`#${vue.dom_id} #${k}`);
+                        targetDom.change(() => {
+                            vue.form_submit_data[vue.dom_id][k] = targetDom.val();
+                        });
+                    });
                 }
             },
             updated() {
-                // console.log('view updated')
+
             },
             watch: {
              // change_date: {

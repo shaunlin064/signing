@@ -21,9 +21,9 @@
             </div>
             <div class="col-md-6">
                 <div class="form-label-group">
-                    <input type="text" id="apply_subject" class="form-control" placeholder="項目" name="apply_subject"
+                    <input type="text" id="apply_subject" class="form-control" placeholder="名稱" name="apply_subject"
                            v-model='form_submit_data[dom_id]["apply_subject"]' :disabled='form_action !== "new"'>
-                    <label for="apply_subject">項目</label>
+                    <label for="apply_subject">名稱</label>
                 </div>
             </div>
         </div>
@@ -98,14 +98,9 @@
         },
         mounted: function () {
             this.initial();
-
         },
         methods: {
             initial() {
-                // $(".select2").select2({
-                //     dropdownAutoWidth: true,
-                //     width: '100%'
-                // });
                 let vue = this;
                 $('.row').on('click', '[data-action="deleteItem"]', function (e) {
                     vue.deleteItem(e);
@@ -145,13 +140,6 @@
             },
             addItem(type) {
                 this.count++;
-                // this.items[`${this.count}`] ={
-                //     component: 'form-refund-items',
-                //     form: type,
-                //     id: this.count,
-                // };
-                // console.log(this.count);
-
 
                 this.items.push({
                     component: 'form-refund-items',
@@ -161,7 +149,7 @@
                 this.form_submit_data[this.dom_id]["items"][this.count] = {
                     component: 'form-refund-items',
                     type: type,
-                    id: this.count,
+                    id: this.count.toString(),
                     item:'',
                     date: '',
                     get_on_start:'',
@@ -170,23 +158,10 @@
                     price:'',
 
                 };
-                // console.log(this.count);
-                // this.form_submit_data[this.dom_id]["items"].push({
-                //     component: 'form-refund-items',
-                //     form: type,
-                //     id: this.count,
-                //     name:'',
-                //     date: '',
-                //     departure:'',
-                //     serial_number:'',
-                //     price:'',
-                // });
-                console.log(this.count);
-                // this.initial();
             }
         },
         updated() {
-            // console.log('view updated')
+
         },
         watch: {
             // change_date: {

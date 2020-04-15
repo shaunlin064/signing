@@ -111,7 +111,7 @@
             dom_id: String,
             plan_action: String,
             form_action: String,
-            id: String,
+            id: Number,
         },
         data() {
             return {
@@ -125,18 +125,19 @@
         beforeMount: function () {
         },
         mounted: function () {
-            var vue = this;
-            $('.row').on('click', '[data-action="deleteItem_fee"]', function (e) {
-                vue.deleteItem(e);
-            });
-            let chargeUserDom = $('#' + this.dom_id + ' #charge_user_' + this.id);
-            chargeUserDom.change((e, v) => {
-                this.form_submit_data[this.dom_id]["items"][this.id]['charge_user'] = chargeUserDom.val();
-            });
+
             this.initial();
         },
         methods: {
             initial() {
+                var vue = this;
+                $('.row').on('click', '[data-action="deleteItem_fee"]', function (e) {
+                    vue.deleteItem(e);
+                });
+                let chargeUserDom = $('#' + this.dom_id + ' #charge_user_' + this.id);
+                chargeUserDom.change((e, v) => {
+                    this.form_submit_data[this.dom_id]["items"][this.id]['charge_user'] = chargeUserDom.val();
+                });
             },
             openMenu(event) {
                 let targetDom = $(event.currentTarget);

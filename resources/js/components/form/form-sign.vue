@@ -21,9 +21,9 @@
             </div>
             <div class="col-md-6">
                 <div class="form-label-group mt-2">
-                    <input type="text" id="apply_subject" class="form-control" placeholder="項目" name="apply_subject"
+                    <input type="text" id="apply_subject" class="form-control" placeholder="名稱" name="apply_subject"
                            v-model='form_submit_data[dom_id]["apply_subject"]' :disabled='form_action !== "new"'>
-                    <label for="apply_subject">項目</label>
+                    <label for="apply_subject">名稱</label>
                 </div>
             </div>
             <div class="col-md-3">
@@ -149,7 +149,7 @@
             }
         },
         updated() {
-            // console.log('view updated')
+
         },
         watch: {
             // change_date: {

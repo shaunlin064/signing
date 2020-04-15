@@ -21,7 +21,7 @@
             </div>
             <div class='col-md-6 mt-2'>
                 <div class="form-label-group">
-                    <input type="text" id="apply_subject" class="form-control" placeholder="項目" name="apply_subject"
+                    <input type="text" id="apply_subject" class="form-control" placeholder="出差事由" name="apply_subject"
                            v-model='form_submit_data[dom_id]["apply_subject"]' :disabled='form_action !== "new"'>
                     <label for="apply_subject">出差事由</label>
                 </div>
@@ -32,7 +32,6 @@
                     <select class="custom-select select2 form-control" multiple="multiple" id='accompany_user_id'
                             name="accompany_user_id" v-model='form_submit_data[dom_id]["accompany_user_id"]'
                             :disabled='form_action !== "new"'>
-                        <option value>請選擇</option>
                         <option v-for='item in member' :value='item.id'>{{item.name}}</option>
                     </select>
                 </div>
@@ -166,16 +165,16 @@
 
                 let accompanyUserDom = $('#'+this.dom_id+' #accompany_user_id');
                 accompanyUserDom.change((e,v)=>{
-                    this.form_submit_data[this.dom_id]["accompany_user_id"] = accompanyUserDom.val();
+                    vue.form_submit_data[vue.dom_id]["accompany_user_id"] = accompanyUserDom.val();
                 });
 
-                if (this.form_action === 'new') {
-                    this.department_name = this.login_user.department;
-                    this.member_name = this.login_user.name;
+                if (vue.form_action === 'new') {
+                    vue.department_name = vue.login_user.department;
+                    vue.member_name = vue.login_user.name;
                 } else {
-                    this.department_name = getDepartment(this.form_submit_data[this.dom_id]['apply_department_id']);
-                    this.member_name = getMember(this.form_submit_data[this.dom_id]['apply_member_id']);
-                    let itemsData = this.form_submit_data[this.dom_id]['items'];
+                    vue.department_name = getDepartment(vue.form_submit_data[vue.dom_id]['apply_department_id']);
+                    vue.member_name = getMember(vue.form_submit_data[vue.dom_id]['apply_member_id']);
+                    let itemsData = vue.form_submit_data[vue.dom_id]['items'];
 
                     Object.keys(itemsData).forEach(key => {
                         vue.items.push(itemsData[key]);
@@ -189,8 +188,6 @@
                     id: this.count
                 });
                 this.form_submit_data[this.dom_id]["items"][this.count] = {
-                    component: 'form-travel_fee_plan',
-                    action: 'new_form',
                     id: this.count.toString(),
                     date: '',
                     customer_name: '',

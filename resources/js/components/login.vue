@@ -125,7 +125,7 @@
             },
         },
         updated() {
-            // console.log('view updated')
+
         },
         watch: {
             // change_date: {
