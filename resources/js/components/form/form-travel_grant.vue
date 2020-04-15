@@ -216,7 +216,7 @@
         },
         watch: {
             // change_date: {
-            //     immediate: true,    // 这句重要
+            //     immediate: true,
             //     handler(val, oldVal) {
             //         if (oldVal !== undefined) {
             //             this.getCampaignData(this.user_ids, val);

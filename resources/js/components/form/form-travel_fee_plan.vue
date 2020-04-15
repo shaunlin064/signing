@@ -152,8 +152,6 @@
                     parent_id: parseInt(this.id),
                 });
                 this.form_submit_data[this.dom_id]["items"][this.id]["fee_items"][this.count] = {
-                    component: 'form-travel_fee_plan',
-                    action: 'new_form',
                     id: this.count.toString(),
                     type: type,
                     currency: 'TWD',
@@ -181,7 +179,7 @@
         },
         watch: {
             // change_date: {
-            //     immediate: true,    // 这句重要
+            //     immediate: true,
             //     handler(val, oldVal) {
             //         if (oldVal !== undefined) {
             //             this.getCampaignData(this.user_ids, val);
