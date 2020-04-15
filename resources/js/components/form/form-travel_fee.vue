@@ -246,20 +246,25 @@
             },
             getFromData(id) {
                 let vue = this;
-                axios.post('api/form/get', {'id': id})
-                    .then(function (response) {
-                        let result = response.data;
-                        if (result.status !== 1) {
-                            alert(result.message);
-                            return false;
-                        }
-                        vue.form_submit_data[vue.dom_id]["items"] = result.data.column.items;
-                    }).then(() => {
+                if(id === undefined || id === ''){
+                    vue.items = [];
+                    vue.form_submit_data[vue.dom_id]['items'] = {};
+                }else{
+                    axios.post('api/form/get', {'id': id})
+                        .then(function (response) {
+                            let result = response.data;
+                            if (result.status !== 1) {
+                                alert(result.message);
+                                return false;
+                            }
+                            vue.form_submit_data[vue.dom_id]["items"] = result.data.column.items;
+                        }).then(() => {
                         vue.items = [];
                         vue.getFormTravelGrantPlans();
                     }).catch(function (error) {
                         console.log(error);
                     });
+                }
             },
             deleteItem(event) {
                 let vue = this;

@@ -40,13 +40,13 @@
                 <label >委刊單號</label>
             </div>
         </div>
-        <div class='col-md-2' v-else-if='type === "交際"'>
-            <div class="form-label-group mt-2">
-                <input type="text" class="form-control" v-model='form_submit_data[dom_id]["items"][id]["gift_id"]' :disabled='form_action !== "new"'
-                       placeholder="交際送禮單號">
-                <label >交際送禮單號</label>
-            </div>
-        </div>
+<!--        <div class='col-md-2' v-else-if='type === "交際"'>-->
+<!--            <div class="form-label-group mt-2">-->
+<!--                <input type="text" class="form-control" v-model='form_submit_data[dom_id]["items"][id]["gift_id"]' :disabled='form_action !== "new"'-->
+<!--                       placeholder="交際送禮單號">-->
+<!--                <label >交際送禮單號</label>-->
+<!--            </div>-->
+<!--        </div>-->
         <div class='col-md-2'>
             <div class="form-label-group mt-2">
                 <input type="text"  class="form-control"
