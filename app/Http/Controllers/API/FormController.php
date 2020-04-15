@@ -872,12 +872,12 @@ class FormController extends Controller
 
         try {
             //先找到form_grant_id已被用過的清單
-            $used_form_id = FormData::where('column','form_grant_id')->pluck('form_id');
+            $used_form_apply_id = FormData::where('column','form_grant_id')->pluck('form_apply_id');
 
             $list = FormApply::whereNull('fail_at')
                 ->where('form_id',$request->get('form_id'))
                 ->where('apply_member_id',$request->get('apply_member_id'))
-                ->whereNotIn('id',$used_form_id)
+                ->whereNotIn('id',$used_form_apply_id)
                 ->whereNull('now')
                 ->whereNull('next')
                 ->get();
