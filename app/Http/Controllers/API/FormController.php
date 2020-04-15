@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\FormData;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -800,6 +801,86 @@ class FormController extends Controller
             else{
                 $list = $list->paginate();
             }
+
+            //取得session資料
+            $request->replace(['key'=>'member']);
+            $api_request = Request::create('session/get', 'POST');
+            $api_request = $api_request->replace($request->input());
+            $response = Route::dispatch($api_request)->getOriginalContent();
+            $member = $response;
+
+            $request->replace(['key'=>'department']);
+            $api_request = Request::create('session/get', 'POST');
+            $api_request = $api_request->replace($request->input());
+            $response = Route::dispatch($api_request)->getOriginalContent();
+            $department = $response;
+
+            $status = Config('form_status.apply');
+
+            $list->map(function($item)use($member,$department,$status){
+
+                $department_id = (isset($member[$item->apply_member_id])) ? $member[$item->apply_member_id]['department_id'] : null;
+                $dpartment = (isset($department[$department_id])) ? $department[$department_id]['name'] : '';
+
+                $item->created_at_format = $item->created_at->format('Y-m-d');
+                $item->form_type = Config('form')[$item->form_id]['name'];
+                $item->status_string = $status[$item->status];
+                $item->department = $dpartment;
+                $item->member = (isset($member[$item->apply_member_id])) ? $member[$item->apply_member_id]['name'] : '';
+                $item->apply_subject = $item->data()->where('column','apply_subject')->pluck('value')->get(0);
+
+                return $item;
+            });
+
+            self::$message['status'] = 1;
+            self::$message['status_string'] = '取得成功';
+            self::$message['message'] = '';
+            self::$message['data'] = $list;
+
+        }catch (\Exception $ex){
+            DB::rollback();
+            self::$message['status_string'] = '取得失敗';
+            self::$message['message'] = '資料庫錯誤!'.$ex->getMessage();
+        }
+
+        return self::$message;
+    }
+
+    /**
+     * @param Request $request
+     * 取得上方依賴列表
+     * 依照apply_member_id & form_id 取出是form_id類型且為apply_member_id提出且未被使用過的資料
+     * @inpit form_id : 指定表單類型ID，若無則不區分
+     * @input apply_member_id : 指定填單人員ID
+     * @return array['data'][0]['id'] : 表單ID
+     * @return array['data'][0]['created_at'] : 申請時間(原始值)
+     * @return array['data'][0]['updated_at'] : 修改時間(原始值)
+     * @return array['data'][0]['form_id'] : 表單類型ID
+     * @return array['data'][0]['apply_member_id'] : 申請人員ID
+     * @return array['data'][0]['status'] : 狀態值
+     * @return array['data'][0]['now'] : 目前關卡ID
+     * @return array['data'][0]['next'] : 下一關卡ID
+     * @return array['data'][0]['fail_at'] : 作廢時間
+     * @return array['data'][0]['created_at_format'] : 申請時間(格式化值)
+     * @return array['data'][0]['form_type'] : 表單類型名稱
+     * @return array['data'][0]['status_string'] : 狀態文字值
+     * @return array['data'][0]['department'] : 申請者部門名稱
+     * @return array['data'][0]['member'] : 申請者姓名
+     * @return array['data'][0]['apply_subject'] : 表單主旨
+     */
+    public function depend(Request $request){
+
+        try {
+            //先找到form_grant_id已被用過的清單
+            $used_form_id = FormData::where('column','form_grant_id')->pluck('form_id');
+
+            $list = FormApply::whereNull('fail_at')
+                ->where('form_id',$request->get('form_id'))
+                ->where('apply_member_id',$request->get('apply_member_id'))
+                ->whereNotIn('id',$used_form_id)
+                ->whereNull('now')
+                ->whereNull('next')
+                ->get();
 
             //取得session資料
             $request->replace(['key'=>'member']);

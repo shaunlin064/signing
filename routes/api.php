@@ -123,6 +123,12 @@ Route::post('/form/all',
         'as' => 'api.form.all' ,
         'uses' => 'API\FormController@all'
     ]);
+//上層依賴表單
+Route::post('/form/depend',
+    [
+        'as' => 'api.form.depend' ,
+        'uses' => 'API\FormController@depend'
+    ]);
 
 /**
  * ===================================================================
