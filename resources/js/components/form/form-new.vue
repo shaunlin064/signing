@@ -26,10 +26,12 @@
         <!-- Step 2 -->
         <h6 v-show='form_type'><i class="step-icon feather icon-briefcase"></i> Step 2</h6>
         <keep-alive>
-            <component v-bind:is="form_type" :dom_id='form_type' :form_action='"new"'/>
+            <component v-bind:is="form_type" :dom_id='form_type' :form_action='"new"' :can_edit='true'/>
         </keep-alive>
         <div class='row border-top-light mt-2 justify-content-end' v-show='form_type'>
-            <button type="button" class="btn btn-primary mr-1 mb-1 waves-effect waves-light text-right mt-2" @click='submit'>送出</button>
+            <button type="button" class="btn btn-primary mr-1 mb-1 waves-effect waves-light text-right mt-2" @click='submit' :disabled='lodding'>
+                <span role="status" aria-hidden="true" class="spinner-grow spinner-grow-sm" v-show='lodding'></span>
+                送出</button>
         </div>
     </form>
 </template>
@@ -50,6 +52,7 @@
                 already_open: [],
                 dom_id: 'form-new',
                 dom_target: 'form_type',
+                lodding : false,
             }
         },
         computed: {
@@ -110,18 +113,27 @@
                 });
             },
             submit(){
+                this.lodding = true;
                 let data = this.getPostData();
-
+                let vue = this;
                 /* some Array need to Json*/
                 data = this.toJson(data);
 
                 /*TODO::post 後續轉跳與錯誤動作*/
                 axios.post('api/form/apply', data)
                     .then(function (response) {
-                        console.log(response);
+                        let result = response.data;
+                        if(result.status != 1 || result.status_string !== '申請成功'){
+                            alert(result.message + result.status_string);
+                            vue.lodding = false;
+                            return false;
+                        }
+                        javascript:location.href='/form-list';
+
                     })
                     .catch(function (error) {
                         console.log(error);
+                        alert(error);
                     });
 
             },

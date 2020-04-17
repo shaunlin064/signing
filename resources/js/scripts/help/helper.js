@@ -266,18 +266,30 @@ window.MD5 = function(string) {
 
 window.getDepartment = function (id,field = 'name') {
     let name = null;
-    if(sessionStorage != undefined){
-        let data = JSON.parse(sessionStorage.department);
-        name = data[id][field];
+    let data = '';
+
+    if(sessionStorage.department != undefined){
+        data = JSON.parse(sessionStorage.department);
+    }else if(localStorage.department != undefined){
+        data = JSON.parse(localStorage.department);
+    }else{
+        javascript:location.href='/login';
     }
+    name = data[id][field];
     return name;
 }
 
 window.getMember = function (id,field = 'name') {
     let name = null;
-    if(sessionStorage != undefined){
-        let data = JSON.parse(sessionStorage.member);
-        name = data[id][field];
+    let data = '';
+    if(sessionStorage.member != undefined){
+        data = JSON.parse(sessionStorage.member);
+    }else if(localStorage.member != undefined){
+        data = JSON.parse(localStorage.member);
+    }else{
+        javascript:location.href='/login';
     }
+
+    name = data[id][field];
     return name;
 }

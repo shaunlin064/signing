@@ -33,7 +33,7 @@
                     <h4 class="card-title">項目</h4>
                 </div>
             </div>
-            <component v-for="(item,key) in items" v-bind:is="item.component" :id='item.id' :dom_id='dom_id' :key='item.id'
+            <component v-for="(item,key) in items" v-bind:is="item.component" :id='parseInt(item.id)' :dom_id='dom_id' :key='item.id'
                        :type='item.type' :form_action='form_action'></component>
             <div class='row col-md-12 justify-content-end border-top-light' v-show='form_action === "new"'>
 
@@ -105,18 +105,21 @@
                 $('.row').on('click', '[data-action="deleteItem"]', function (e) {
                     vue.deleteItem(e);
                 });
+
+
                 if (this.form_action === 'new') {
                     this.department_name = this.login_user.department;
                     this.member_name = this.login_user.name;
                 }else{
-
                     this.department_name = getDepartment(this.form_submit_data[this.dom_id]['apply_department_id']);
                     this.member_name = getMember(this.form_submit_data[this.dom_id]['apply_member_id']);
                     let itemsData = this.form_submit_data[this.dom_id]['items'];
-
-                    Object.keys(itemsData).forEach(key=>{
-                        vue.items.push(itemsData[key]);
-                    })
+                    Object.keys(itemsData).forEach(key => {
+                        let tmpdata = Object.assign({},itemsData[key]);
+                        tmpdata.component = 'form-refund-items';
+                        vue.items.push(tmpdata);
+                        vue.count = tmpdata.id;
+                    });
                 }
             },
             deleteItem(event) {
@@ -147,14 +150,13 @@
                     id: this.count,
                 });
                 this.form_submit_data[this.dom_id]["items"][this.count] = {
-                    component: 'form-refund-items',
-                    type: type,
                     id: this.count.toString(),
-                    item:'',
+                    type: type,
                     date: '',
+                    name:'',
                     get_on_start:'',
                     campaign_id:'',
-                    gift_id:'',
+                    form_grant_id:'',
                     price:'',
 
                 };

@@ -22,14 +22,14 @@
             <div class="col-md-6">
                 <div class="form-label-group">
                     <input type="text" id="apply_subject" class="form-control" placeholder="名稱" name="apply_subject"
-                           v-model='form_submit_data[dom_id]["apply_subject"]' :disabled='form_action !== "new"'>
+                           v-model='form_submit_data[dom_id]["apply_subject"]' :disabled='can_edit === false'>
                     <label for="apply_subject">名稱</label>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="form-label-group">
                     <input type="text" id="date" class="form-control" placeholder="日期"
-                           name="date" v-model='form_submit_data[dom_id]["date"]' :disabled='form_action !== "new"'>
+                           name="date" v-model='form_submit_data[dom_id]["date"]' :disabled='can_edit === false'>
                     <label for="date">日期</label>
                 </div>
             </div>
@@ -37,7 +37,7 @@
                 <div class="form-group">
                     <label for="type">類型</label>
                     <select class="custom-select select2 form-control" id="type"
-                            name="type" v-model='form_submit_data[dom_id]["type"]' :disabled='form_action !== "new"'>
+                            name="type" v-model='form_submit_data[dom_id]["type"]' :disabled='can_edit === false'>
                         <option value>請選擇</option>
                         <option value="flower">送花</option>
                         <option value="meal">餐敘</option>
@@ -52,7 +52,7 @@
                         <label>出席人員</label>
                         <select class="custom-select select2 form-control" multiple="multiple" id='attend_member'
                                 name="attend_member" v-model='form_submit_data[dom_id]["attend_member"]'
-                                :disabled='form_action !== "new"'>
+                                :disabled='can_edit === false'>
                             <option v-for='item in member' :value='item.id'>{{item.name}}</option>
                         </select>
                     </div>
@@ -61,14 +61,14 @@
             <div class="col-md-6">
                 <div class="form-label-group">
                     <input type="text" id="customer_company" class="form-control"
-                           placeholder="客戶公司名稱" name="customer_company" v-model='form_submit_data[dom_id]["customer_company"]' :disabled='form_action !== "new"'>
+                           placeholder="客戶公司名稱" name="customer_company" v-model='form_submit_data[dom_id]["customer_company"]' :disabled='can_edit === false'>
                     <label for="customer_company">客戶公司名稱</label>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="form-label-group">
                     <input type="text" id="customer_name" class="form-control"
-                           placeholder="對象" name="customer_name" v-model='form_submit_data[dom_id]["customer_name"]' :disabled='form_action !== "new"'>
+                           placeholder="對象" name="customer_name" v-model='form_submit_data[dom_id]["customer_name"]' :disabled='can_edit === false'>
                     <label for="customer_name">對象</label>
                 </div>
             </div>
@@ -76,14 +76,14 @@
                 <div class="form-label-group">
                     <input type="text" id="cost" class="form-control"
                            placeholder="預估費用"
-                           name="cost" v-model='form_submit_data[dom_id]["cost"]' :disabled='form_action !== "new"'>
+                           name="cost" v-model='form_submit_data[dom_id]["cost"]' :disabled='can_edit === false'>
                     <label for="cost">預估費用</label>
                 </div>
             </div>
             <div class="col-md-12">
                 <div class="form-label-group">
                     <fieldset class="form-label-group">
-                            <textarea class="form-control" id="remark" rows="1" placeholder="備註" v-model='form_submit_data[dom_id]["remark"]' :disabled='form_action !== "new"'
+                            <textarea class="form-control" id="remark" rows="1" placeholder="備註" v-model='form_submit_data[dom_id]["remark"]' :disabled='can_edit === false'
                                       name="remark"></textarea>
                         <label for="remark">備註</label>
                     </fieldset>
@@ -109,7 +109,8 @@
             props: {
                 dom_id:String,
                 form_data: Object,
-                form_action: String
+                form_action: String,
+                can_edit: Boolean,
             },
             data() {
                 return {

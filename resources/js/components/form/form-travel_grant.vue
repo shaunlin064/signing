@@ -98,7 +98,7 @@
             </div>
         </div>
         <div class="row">
-            <components v-for="(item,key) in items" v-bind:is="item.component" :key='item.id' :id='item.id'
+            <components v-for="item in items" v-bind:is="item.component" :key='item.id' :id='parseInt(item.id)'
                         :dom_id='dom_id' :plan_action='"new_plan"'></components>
             <div class='row col-md-12 justify-content-end'>
                 <div class='col-md-4 text-right mt-1'>
@@ -177,7 +177,10 @@
                     let itemsData = vue.form_submit_data[vue.dom_id]['items'];
 
                     Object.keys(itemsData).forEach(key => {
-                        vue.items.push(itemsData[key]);
+                        let tmpdata = Object.assign({},itemsData[key]);
+                        tmpdata.component = 'form-travel_fee_plan';
+                        vue.items.push(tmpdata);
+                        vue.count = tmpdata.id;
                     })
                 }
             },

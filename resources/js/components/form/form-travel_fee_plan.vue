@@ -95,7 +95,7 @@
                     </div>
                 </div>
             </div>
-            <compoenents v-for='item in plan_fee' v-bind:is="item.type" :key='item.id' :id='item.id' :dom_id='dom_id'
+            <compoenents v-for='item in plan_fee' v-bind:is="item.component" :key='item.id' :id='parseInt(item.id)' :dom_id='dom_id'
                          :parent_id='item.parent_id'></compoenents>
         </div>
     </div>
@@ -134,10 +134,26 @@
                 $('.row').on('click', '[data-action="deleteItem_fee"]', function (e) {
                     vue.deleteItem(e);
                 });
-                let chargeUserDom = $('#' + this.dom_id + ' #charge_user_' + this.id);
+
+                let chargeUserDom = $('#' + vue.dom_id + ' #charge_user_' + vue.id);
                 chargeUserDom.change((e, v) => {
-                    this.form_submit_data[this.dom_id]["items"][this.id]['charge_user'] = chargeUserDom.val();
+                    vue.form_submit_data[vue.dom_id]["items"][vue.id]['charge_user'] = chargeUserDom.val();
                 });
+
+                if (vue.form_action === 'edit') {
+
+                    let itemsData = vue.form_submit_data[vue.dom_id]['items'][vue.id]['fee_items'];
+
+                    if(itemsData[0] != undefined){
+                        Object.keys(itemsData).forEach(key => {
+                            let tmpdata = Object.assign({},itemsData[key]);
+                            tmpdata.parent_id = parseInt(key);
+                            tmpdata.component = 'form-travel_fee_plan_item';
+                            vue.plan_fee.push(tmpdata);
+                            vue.count = tmpdata.id;
+                        })
+                    }
+                }
             },
             openMenu(event) {
                 let targetDom = $(event.currentTarget);
@@ -147,7 +163,7 @@
             addItem(type) {
                 this.count++;
                 this.plan_fee.push({
-                    type: 'form-travel_fee_plan_item',
+                    component: 'form-travel_fee_plan_item',
                     id: this.count,
                     parent_id: parseInt(this.id),
                 });
