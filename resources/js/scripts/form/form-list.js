@@ -99,8 +99,8 @@ $(document).ready(function() {
 
         return template;
     }
-    let userId = JSON.parse(sessionStorage.login_user).id;
-    console.log(userId);
+    /*TODO:: login data*/
+    let userId = 157;
     /*** GET TABLE DATA FROM URL ***/
     axios.post('api/form/user/list', {
         member_id:userId

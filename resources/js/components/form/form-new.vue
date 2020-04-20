@@ -90,7 +90,7 @@
                         eval(`vue.form_submit_data['${vue.form_type}']['${columnName}'] = '1';`);
 
                         /*default Array*/
-                        if($.inArray(columnName,['form_stamp_type','accompany_user_id','attend_member']) != -1){
+                        if($.inArray(columnName,['form_stamp_type','accompany_user_id','attend_member','apply_attachment']) != -1){
                             eval(`vue.form_submit_data['${vue.form_type}']['${columnName}'] = [];`);
                         }
                         /*default Object*/
@@ -101,7 +101,6 @@
                     eval(`vue.form_submit_data['${vue.form_type}']['apply_member_id'] = '${vue.login_user.id}';`);
                     eval(`vue.form_submit_data['${vue.form_type}']['apply_department_id'] = '${vue.login_user.department_id}';`);
                 }
-
             },
             initial(){
                 $(".select2").select2({
@@ -143,7 +142,7 @@
             toJson(data){
                 /* other Array to Json*/
                 Object.keys(data).forEach(columnName=> {
-                    if ($.inArray(columnName, ['form_stamp_type', 'accompany_user_id','attend_member']) != -1) {
+                    if ($.inArray(columnName, ['form_stamp_type', 'accompany_user_id','attend_member','apply_attachment']) != -1) {
                         data[columnName] = JSON.stringify(data[columnName]);
                     }
                 });
@@ -162,10 +161,55 @@
             },
         },
         updated() {
-            this.initial();
-            if(this.already_open.indexOf(this.form_type) === -1){
-                this.already_open.push(this.form_type);
-                $("#"+this.form_type+" #file_upload").dropzone({url: "/file/post"});
+            let vue = this;
+            vue.initial();
+            /*file upload*/
+            if(vue.already_open.indexOf(vue.form_type) === -1){
+                vue.already_open.push(vue.form_type);
+                $("#"+vue.form_type+" #file_upload").dropzone({
+                    addRemoveLinks: true,
+                    thumbnailWidth: 300,
+                    thumbnailHeight: 300,
+                    url: "/api/system/upload",
+                    init: function() {
+                        let formPostAttachment = vue.form_submit_data[vue.form_type].apply_attachment;
+                        this.on("sending", function(file, xhr, formData) {
+                            formData.append("dir", vue.form_type);
+                            vue.lodding = true;
+                        });
+                        this.on("success", function(file, responseText) {
+                            if(responseText.status != 1 ){
+                                alert(responseText.status_string + responseText.message);
+                                return false;
+                            }
+                            let anchorEl = document.createElement('a');
+                            anchorEl.setAttribute('href',responseText.data.url);
+                            anchorEl.setAttribute('target','_blank');
+                            anchorEl.setAttribute('class','cursor-pointer');
+
+                            anchorEl.innerHTML = "<br>Download";
+                            file.previewTemplate.appendChild(anchorEl);
+                            formPostAttachment.push({
+                                name: file.name,
+                                size: file.size,
+                                type: file.type,
+                                width: file.width,
+                                height: file.height,
+                                url: responseText.data.url
+                            });
+                            vue.lodding = false;
+                        });
+                        this.on("removedfile", function (file) {
+                            vue.form_submit_data[vue.form_type].apply_attachment.map((e,k)=>{
+                                if (e.name === file.name) {
+                                    vue.form_submit_data[vue.form_type].apply_attachment.splice(k,1);
+                                    console.log(vue.form_submit_data[vue.form_type].apply_attachment);
+                                }
+                            });
+                            vue.lodding = false;
+                        });
+                    }
+                });
             }
         },
         watch: {
