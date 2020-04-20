@@ -30,15 +30,16 @@ $(document).ready(function() {
         // },
         {
             headerName: "申請人",
-            field: "member",
+            field: "apply_member_id",
             editable: false,
             sortable: true,
             filter: true,
-            width:150
+            width:150,
+            cellRenderer: ageGetMember
         },
         {
             headerName: "名稱",
-            field: "name",
+            field: "apply_subject",
             editable: false,
             sortable: true,
             filter: true,
@@ -46,14 +47,14 @@ $(document).ready(function() {
         },
         {
             headerName: "狀態",
-            field: "status",
+            field: "status_string",
             editable: false,
             sortable: true,
             filter: true
         },
         {
             headerName: "申請日期",
-            field: "form_date",
+            field: "created_at_format",
             editable: false,
             sortable: true,
             filter: true
@@ -84,6 +85,9 @@ $(document).ready(function() {
 
     /*** DEFINED TABLE VARIABLE ***/
     var gridTable = document.getElementById("myGrid");
+    function ageGetMember(params) {
+        return getMember(params.data.apply_member_id);
+    }
     function ageCellRendererFunc(params) {
         // params.$scope.ageClicked = ageClicked;
         //return '<button ng-click="ageClicked(data.age)" ng-bind="data.age"></button>';
@@ -95,13 +99,26 @@ $(document).ready(function() {
 
         return template;
     }
+    /*TODO:: login data*/
+    let userId = 157;
     /*** GET TABLE DATA FROM URL ***/
-
-    agGrid
-        .simpleHttpRequest({ url: "data/form-data.json" })
-        .then(function(data) {
-            gridOptions.api.setRowData(data);
+    axios.post('api/form/user/list', {
+        member_id:userId
+    })
+        .then(function (response) {
+            gridOptions.rowData = response.data.data;
+            /*** INIT TABLE ***/
+            new agGrid.Grid(gridTable, gridOptions);
+            console.log(response.data.data);
+        })
+        .catch(function (error) {
+            console.log(error);
         });
+    // agGrid
+    //     .simpleHttpRequest({ url: "data/form-data.json" })
+    //     .then(function(data) {
+    //         gridOptions.api.setRowData(data);
+    //     });
 
     /*** FILTER TABLE ***/
     function updateSearchQuery(val) {
@@ -128,8 +145,8 @@ $(document).ready(function() {
         gridOptions.api.exportDataAsCsv();
     });
 
-    /*** INIT TABLE ***/
-    new agGrid.Grid(gridTable, gridOptions);
+    // /*** INIT TABLE ***/
+    // new agGrid.Grid(gridTable, gridOptions);
 
     /*** SET OR REMOVE EMAIL AS PINNED DEPENDING ON DEVICE SIZE ***/
 
@@ -146,3 +163,5 @@ $(document).ready(function() {
     //     }
     // });
 });
+
+

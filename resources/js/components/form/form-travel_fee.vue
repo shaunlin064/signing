@@ -23,12 +23,14 @@
                 <div class="form-label-group">
                     <div class="form-group">
                         <label>差旅單</label>
-                        <select class="custom-select select2 form-control" id='form_travel_grant_id'
-                                name="form_travel_grant_id">
+                        <select class="custom-select select2 form-control" id='form_grant_id' :disabled='form_action=="edit"'
+                                name="form_grant_id">
                             <option value>請選擇</option>
-                            <option v-for='item in travel_grant_datas' :value='item.id'>
+                            <option v-for='item in travel_grant_datas' :value='item.id' :selected='form_submit_data[dom_id]["form_travel_grant_id"]'
+                            >
                                 {{item.apply_subject}}
                             </option>
+
                         </select>
                     </div>
                 </div>
@@ -40,9 +42,8 @@
                     <h4 class="card-title">出差計畫</h4>
                 </div>
             </div>
-            <components v-for="item in items" v-bind:is="item.component" :key='item.id'
-                        :id='item.id' :dom_id='dom_id' :plan_action='item.plan_action' :form_action='form_action'
-
+            <components v-for="item in items" v-bind:is="item.component" :key='parseInt(item.id)'
+                        :id='parseInt(item.id)' :dom_id='dom_id' :plan_action='item.plan_action' :form_action='form_action'
             ></components>
             <div class='row col-md-12 justify-content-end border-top-light' v-show='items[0]'>
                 <div class='col-md-4 text-right mt-1'>
@@ -105,24 +106,27 @@
                 $('.row').on('click', '[data-action="deleteItem"]', function (e) {
                     vue.deleteItem(e);
                 });
-
+                this.getTraveGrantData();
                 if (this.form_action === 'new') {
                     this.department_name = this.login_user.department;
                     this.member_name = this.login_user.name;
+                    $('#' + this.dom_id + ' #form_grant_id').change((e, v) => {
+                        this.getFromData(e.target.value);
+                        this.form_submit_data[this.dom_id]["form_grant_id"] = e.target.value;
+                    });
                 } else {
                     this.department_name = getDepartment(this.form_submit_data[this.dom_id]['apply_department_id']);
                     this.member_name = getMember(this.form_submit_data[this.dom_id]['apply_member_id']);
                     let itemsData = this.form_submit_data[this.dom_id]['items'];
 
                     Object.keys(itemsData).forEach(key => {
-                        vue.items.push(itemsData[key]);
+                        let tmpdata = Object.assign({},itemsData[key]);
+                        tmpdata.component = 'form-travel_fee_plan';
+                        vue.items.push(tmpdata);
+                        vue.count = tmpdata.id;
                     })
                 }
-                this.getTraveGrantData();
-                $('#' + this.dom_id + ' #form_travel_grant_id').change((e, v) => {
-                    this.getFromData(e.target.value);
-                    this.form_submit_data[this.dom_id]["form_travel_grant_id"] = e.target.value;
-                });
+
             },
             addItem() {
                 this.count++;
@@ -143,90 +147,41 @@
                 };
             },
             getTraveGrantData() {
-                let fackData = [
-                    {
-                        id: 1,
-                        member: 'test',
-                        department: 'test',
-                        name: '日本出差-part1',
-                        items: [{
-                            id: 0,
-                            date: '2020/04/01',
-                            customer_name: 'Noda Nobuyoshi',
-                            customer_company: '日本總部',
-                            meet_type: '公司開會',
-                            agenda: '討論明年計畫',
-                            charge_user: 187,
-                        }, {
-                            id: 1,
-                            date: '2020/04/01',
-                            customer_name: 'Noda Nobuyoshi',
-                            customer_company: '日本總部',
-                            meet_type: '餐敘',
-                            agenda: '還沒講完,中午吃飯繼續講',
-                            charge_user: 187,
-                        }, {
-                            id: 2,
-                            date: '2020/04/01',
-                            customer_name: 'Noda Nobuyoshi',
-                            customer_company: '日本總部',
-                            meet_type: '餐敘',
-                            agenda: '還沒講完,下午茶繼續講',
-                            charge_user: 187,
-                        },
-                        ]
-                    }, {
-                        id: 2,
-                        member: 'test',
-                        department: 'test',
-                        name: '日本出差-part2',
-                        items: [{
-                            id: 0,
-                            date: '2020/04/02',
-                            customer_name: 'Noda Nobuyoshi',
-                            customer_company: '日本總部',
-                            meet_type: '公司開會',
-                            agenda: '換人來講明年計畫',
-                            charge_user: 179,
-                        }, {
-                            id: 1,
-                            date: '2020/04/02',
-                            customer_name: 'Noda Nobuyoshi',
-                            customer_company: '日本總部',
-                            meet_type: '餐敘',
-                            agenda: '還沒講完,中午吃飯繼續講',
-                            charge_user: 179,
-                        }, {
-                            id: 2,
-                            date: '2020/04/02',
-                            customer_name: 'Noda Nobuyoshi',
-                            customer_company: '日本總部',
-                            meet_type: '餐敘',
-                            agenda: '還沒講完,下午茶繼續講',
-                            charge_user: 179,
-                        },
-                        ]
-                    }
-                ];
-                // this.form_submit_data[this.dom_id]['items'] = fackData;
                 let vue = this;
                 let data = {
                     form_id: 5,
                     apply_member_id: this.login_user.id
                 };
-                /*TODO:: 確認簽核流程完成 拉回來的資料還需要再做判斷處理*/
-                axios.post('api/form/all', data)
-                    .then(function (response) {
-                        let result = response.data;
-                        if (result.status !== 1) {
-                            alert(result.message);
-                            return false;
-                        }
-                        vue.travel_grant_datas = result.data;
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
+                if(this.form_action == 'new'){
+                    /*TODO:: 確認簽核流程完成 拉回來的資料還需要再做判斷處理*/
+                    axios.post('api/form/depend', data)
+                        .then(function (response) {
+                            let result = response.data;
+                            if (result.status !== 1) {
+                                alert(result.message);
+                                return false;
+                            }
+                            vue.travel_grant_datas = result.data;
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
+                }else{
+                    let id = this.form_submit_data[this.dom_id]['form_travel_grant_id'];
+                    axios.post('api/form/get', {id:id})
+                        .then(function (response) {
+                            let result = response.data;
+                            if (result.status !== 1) {
+                                alert(result.message);
+                                return false;
+                            }
+                            vue.travel_grant_datas = [{id:result.data.id,apply_subject:result.data.column.apply_subject}];
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
+                }
+
             },
             getFormTravelGrantPlans() {
                 let vue = this;

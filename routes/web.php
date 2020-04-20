@@ -11,8 +11,6 @@
     |
     */
 
-
-    //  Route::get('/{any}', 'ApplicationController')->where('any', '.*');
     Route::view('/', 'pages.index',
                 [ 'breadcrumbs' => [ [ 'name' => "User" ], [ 'link' => "form-new", 'name' => "申請簽核" ] ] ]);
     //  User
@@ -38,6 +36,13 @@
 //    form Edit
     Route::view('/form-edit', 'pages.customer.form-edit',
                 [ 'breadcrumbs' => [ [ 'name' => "User" ], [ 'link' => "form-edit", 'name' => "簽核檢視" ] ] ]);
+    /*error*/
+    Route::any('/404', function(){
+        abort(404);
+    });
+    Route::any('/500', function(){
+        abort(500);
+    });
     // Route Authentication Pages
     Route::view('/login',  'pages.auth-login');
 

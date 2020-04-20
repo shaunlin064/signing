@@ -1,16 +1,23 @@
 <template>
     <form action="#" method='GET' class="steps-validation wizard-circle" :id='dom_id'>
         <keep-alive>
-            <component v-bind:is="form_type" :dom_id='form_type' :form_data='form_data'/>
+            <component v-bind:is="form_type" :dom_id='form_type' :form_action='"edit"' :can_edit='can_edit'/>
         </keep-alive>
+        <div class='row border-top-light mt-2 justify-content-end' v-show='form_type'>
+            <button type="button" class="btn btn-primary mr-1 mb-1 waves-effect waves-light text-right mt-2"
+                    @click='submit' :disabled='lodding'>
+                <span role="status" aria-hidden="true" class="spinner-grow spinner-grow-sm" v-show='lodding'></span>
+                送出
+            </button>
+        </div>
     </form>
 </template>
 
 <script>
-    import {mapState, mapMutations, mapActions, mapGetters} from 'vuex';
+    import {mapState} from 'vuex';
 
     export default {
-        name: "name",
+        name: "form-edit",
         components: {
             // Payment, Sign
         },
@@ -21,66 +28,222 @@
             return {
                 form_type: '',
                 dom_id: 'form-edit',
-                form_data: [],
+                init: false,
+                can_edit: false,
+                lodding: false,
+                aaa: [],
             }
         },
         computed: {
-            ...mapState(['login_user','member','department']),
+            ...mapState(['login_user', 'member', 'department', 'form_submit_data']),
         },
         beforeMount: function () {
         },
         mounted: function () {
             $(document).ready(() => {
                 this.initial();
+                this.getAjaxFormData();
             });
         },
         methods: {
-            getFormData() {
+            submit() {
+                this.lodding = true;
+                let vue = this;
+
+                /* some Array need to Json*/
+                let data = this.toJson(vue.getPostData());
+                data.id = vue.id;
+                // /*TODO::post 後續轉跳與錯誤動作*/
+                axios.post('api/form/edit', data)
+                    .then(function (response) {
+                        let result = response.data;
+                        if (result.status != 1 || result.status_string !== '編輯成功') {
+                            alert(result.message + result.status_string);
+                            vue.lodding = false;
+                            return false;
+                        }
+
+                        javascript:location.href = '/form-edit?id=' + vue.id;
+
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                        alert(error);
+                    });
+            },
+            getPostData() {
+                return Object.assign({}, eval(`this.form_submit_data['${this.form_type}']`));
+            },
+            toJson(data) {
+                /* other Array to Json*/
+                Object.keys(data).forEach(columnName => {
+                    if ($.inArray(columnName, ['form_stamp_type', 'accompany_user_id', 'attend_member', 'apply_attachment']) != -1) {
+                        data[columnName] = JSON.stringify(data[columnName]);
+                    }
+                });
+                /*travel_fee*/
+                if (data['items'] !== undefined) {
+                    let itemsData = data['items'];
+                    Object.keys(itemsData).forEach(key => {
+
+                        if (itemsData[key]['fee_items'] !== undefined) {
+                            itemsData[key]['fee_items'] = JSON.stringify(itemsData[key]['fee_items']);
+                        }
+                    });
+                    data['items'] = itemsData;
+                }
+                return data;
+            },
+            getAjaxFormData() {
                 // console.log(this.id);
                 /*ajax get data*/
-                this.form_data = {
-                    department: '資訊工程部',
-                    member: 'shaun',
+                let vue = this;
 
-                };
-                switch (this.id) {
-                    case 1:
-                        this.form_type = 'form-payment';
-                        break;
-                    case 2:
-                        this.form_type = 'form-sign';
-                        break;
-                    case 3:
-                        this.form_type = 'form-refund';
-                        break;
-                    case 4:
-                        this.form_type = 'form-social';
-                        break;
-                    case 5:
-                        this.form_type = 'form-travel_grant';
-                        break;
-                    case 6:
-                        this.form_type = 'form-travel_fee';
-                        break;
-                }
+                axios.post('api/form/get', {
+                    id: vue.id
+                }).then(function (response) {
+                    let result = response.data;
+                    if (result.status !== 1) {
+                        javascript:location.href = '/404';
+                        alert(result.message);
+                        return false;
+                    }
+                    switch (result.data.form_id) {
+                        case 1:
+                            vue.form_type = 'form-payment';
+                            break;
+                        case 2:
+                            vue.form_type = 'form-sign';
+                            break;
+                        case 3:
+                            vue.form_type = 'form-social';
+                            break;
+                        case 4:
+                            vue.form_type = 'form-refund';
+                            break;
+                        case 5:
+                            vue.form_type = 'form-travel_grant';
+                            break;
+                        case 6:
+                            vue.form_type = 'form-travel_fee';
+                            break;
+                    }
+                    if (result.data.status == 1) {
+                        vue.can_edit = true;
+                    }
+                    vue.jsonReverse(result.data.column);
+                }).then(() => {
 
-
+                }).catch(function (error) {
+                    console.log(error);
+                });
 
             },
             initial() {
+
                 $(".select2").select2({
-                    dropdownAutoWidth: true,
+                    dropdownautowidth: true,
                     width: '100%'
                 });
-                this.getFormData();
+
             },
-            submit() {
-                $('select[disabled]').removeAttr("disabled");
-                $('form#' + this.dom_id).submit();
+            jsonReverse(data) {
+                let vue = this;
+                vue.form_submit_data[vue.form_type] = {};
+
+                Object.keys(data).forEach(columnName => {
+                    if ($.inArray(columnName, ['form_stamp_type', 'accompany_user_id', 'attend_member', 'items', 'apply_attachment']) != -1) {
+                        if (columnName == 'items') {
+                            vue.form_submit_data[vue.form_type][columnName] = {};
+                            data[columnName].map((e) => {
+                                vue.form_submit_data[vue.form_type][columnName][e.id] = e;
+                                ['fee_items'].map((k) => {
+                                    if (e[k] != undefined) {
+                                        vue.form_submit_data[vue.form_type][columnName][e.id][k] = JSON.parse(e[k]);
+                                    }
+                                });
+                            });
+                        } else {
+                            vue.form_submit_data[vue.form_type][columnName] = JSON.parse(data[columnName]);
+                        }
+
+                    } else {
+                        vue.form_submit_data[vue.form_type][columnName] = data[columnName];
+                    }
+
+                });
             },
         },
         updated() {
-            this.initial();
+            let vue = this;
+            vue.initial();
+
+            /*file upload*/
+            if (vue.init === false) {
+                $("#" + vue.form_type + " #file_upload").dropzone({
+                    addRemoveLinks: true,
+                    thumbnailWidth: 300,
+                    thumbnailHeight: 300,
+                    maxFilesize: 2,
+                    url: "/api/system/upload",
+                    init: function () {
+                        let formPostAttachment = vue.form_submit_data[vue.form_type].apply_attachment;
+                        let thisDropzone = this;
+                        /*set default images */
+                        $.each(formPostAttachment, function (key, value) {
+                            let mockFile = value;
+
+                            thisDropzone.options.addedfile.call(thisDropzone, mockFile);
+                            thisDropzone.options.thumbnail.call(thisDropzone, mockFile, value.url);
+
+                            /*append download link*/
+                            let anchorEl = document.createElement('a');
+                            anchorEl.setAttribute('href', value.url);
+                            anchorEl.setAttribute('target', '_blank');
+                            anchorEl.setAttribute('class','cursor-pointer');
+                            anchorEl.innerHTML = "<br>Download";
+                            mockFile.previewTemplate.appendChild(anchorEl);
+
+                        });
+
+                        this.on("sending", function (file, xhr, formData) {
+                            formData.append("dir", vue.form_type);
+                            vue.lodding = true;
+                        });
+                        this.on("success", function (file, responseText) {
+                            if (responseText.status != 1) {
+                                alert(responseText.status_string + responseText.message);
+                                return false;
+                            }
+                            let anchorEl = document.createElement('a');
+                            anchorEl.setAttribute('href', responseText.data.url);
+                            anchorEl.setAttribute('target', '_blank');
+                            anchorEl.innerHTML = "<br>Download";
+                            file.previewTemplate.appendChild(anchorEl);
+                            formPostAttachment.push({
+                                name: file.name,
+                                size: file.size,
+                                type: file.type,
+                                width: file.width,
+                                height: file.height,
+                                url: responseText.data.url
+                            });
+
+                            vue.lodding = false;
+                        });
+                        this.on("removedfile", function (file) {
+                            formPostAttachment.map((e, k) => {
+                                if (e.name == file.name) {
+                                    formPostAttachment.splice(k, 1);
+                                }
+                            });
+                            vue.lodding = false;
+                        });
+                    }
+                });
+                vue.init = true;
+            }
+
         },
         watch: {
             // change_date: {

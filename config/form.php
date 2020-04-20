@@ -148,7 +148,7 @@
                         'date'         => [
                             'name' => '日期'
                         ],
-                        'item'         => [
+                        'name'         => [
                             'name' => '項目'
                         ],
                         'get_on_start' => [
@@ -157,7 +157,7 @@
                         'campaign_id'  => [
                             'name' => '委刊編號'
                         ],
-                        'gift_id'      => [
+                        'form_grant_id'      => [
                             'name' => '交際送禮單號'
                         ],
                         'price'        => [
@@ -256,7 +256,7 @@
                 'apply_subject'        => [
                     'name' => '項目'
                 ],
-                'form_travel_grant_id' => [
+                'form_grant_id' => [
                     'name' => '差旅單'
                 ],
                 'items'                => [

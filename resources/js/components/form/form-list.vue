@@ -65,16 +65,16 @@
             beforeMount: function () {
             },
             mounted: function () {
-                console.log(1);
-                axios.post('api/form/user/list', {
-                    member_id:'157'
-                })
-                    .then(function (response) {
-                       console.log(response);
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
+                // console.log(1);
+                // axios.post('api/form/user/list', {
+                //     member_id:'157'
+                // })
+                //     .then(function (response) {
+                //        console.log(response);
+                //     })
+                //     .catch(function (error) {
+                //         console.log(error);
+                //     });
 
             },
             methods: {

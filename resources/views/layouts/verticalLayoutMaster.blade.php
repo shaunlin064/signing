@@ -49,7 +49,7 @@
     <!-- End: Content-->
     </div>
     @if($configData['blankPage'] == false && isset($configData['blankPage']))
-    @include('pages/customizer')
+{{--    @include('pages/customizer')--}}
 
     @endif
 

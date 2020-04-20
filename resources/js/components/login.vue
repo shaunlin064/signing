@@ -85,6 +85,7 @@
                     this.lodding = false;
                     return false;
                 }
+                console.log(this.response.data);
                 if(this.response.data.status != 1 ){
                     alert('密碼錯誤');
                     this.lodding = false;
@@ -105,6 +106,7 @@
                 let password = MD5(this.password);
                 let account = this.account;
                 let vue = this;
+
                 axios.post('api/system/login', {
                     account,
                     password
@@ -115,6 +117,9 @@
                             sessionStorage.setItem('login_user', JSON.stringify(response.data.data.login_user));
                             sessionStorage.setItem('member', JSON.stringify(response.data.data.member));
                             sessionStorage.setItem('department', JSON.stringify(response.data.data.department));
+                            localStorage.setItem('login_user', JSON.stringify(response.data.data.login_user));
+                            localStorage.setItem('member', JSON.stringify(response.data.data.member));
+                            localStorage.setItem('department', JSON.stringify(response.data.data.department));
                             javascript:location.href='/';
                         }
                     })
