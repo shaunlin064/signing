@@ -27,7 +27,7 @@
       <div class="card">
           <div class="card-content">
               <div class="card-body">
-                  <form-list></form-list>
+                  <ag :dom_id='"agrid"' :api_urls='["api/form/user/list"]'></ag>
               </div>
           </div>
       </div>
@@ -42,5 +42,5 @@
 @endsection
 @section('page-script')
     {{-- Page js files --}}
-    <script src="{{ asset(mix('js/scripts/form/form-list.js')).'?v='.time() }}"></script>
+{{--    <script src="{{ asset(mix('js/scripts/form/form-list.js')).'?v='.time() }}"></script>--}}
 @endsection

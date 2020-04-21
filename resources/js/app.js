@@ -54,8 +54,8 @@ Vue.component('form-social', require('./components/form/form-social').default);
 Vue.component('form-travel_fee', require('./components/form/form-travel_fee').default);
 Vue.component('form-travel_grant', require('./components/form/form-travel_grant').default);
 
-Vue.component('form-list', require('./components/form/form-list').default);
-
+// Vue.component('form-list', require('./components/form/form-list').default);
+Vue.component('ag', require('./components/ag').default);
 
 /*login*/
 Vue.component('login', require('./components/login').default);
