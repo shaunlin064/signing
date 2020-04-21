@@ -3,11 +3,11 @@
         <keep-alive>
             <component v-bind:is="form_type" :dom_id='form_type' :form_action='"edit"' :can_edit='can_edit'/>
         </keep-alive>
-        <div class='row border-top-light mt-2 justify-content-end' v-show='form_type'>
+        <div class='row border-top-light mt-2 justify-content-end' v-show='form_type && can_edit'>
             <button type="button" class="btn btn-primary mr-1 mb-1 waves-effect waves-light text-right mt-2"
                     @click='submit' :disabled='lodding'>
                 <span role="status" aria-hidden="true" class="spinner-grow spinner-grow-sm" v-show='lodding'></span>
-                送出
+                <strong>送出</strong>
             </button>
         </div>
     </form>
@@ -30,8 +30,7 @@
                 dom_id: 'form-edit',
                 init: false,
                 can_edit: false,
-                lodding: false,
-                aaa: [],
+                lodding: false
             }
         },
         computed: {
@@ -131,6 +130,7 @@
                     if (result.data.status == 1) {
                         vue.can_edit = true;
                     }
+                    console.log(result.data.status);
                     vue.jsonReverse(result.data.column);
                 }).then(() => {
 

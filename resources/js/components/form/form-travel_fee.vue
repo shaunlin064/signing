@@ -26,11 +26,10 @@
                         <select class="custom-select select2 form-control" id='form_grant_id' :disabled='form_action=="edit"'
                                 name="form_grant_id">
                             <option value>請選擇</option>
-                            <option v-for='item in travel_grant_datas' :value='item.id' :selected='form_submit_data[dom_id]["form_travel_grant_id"]'
+                            <option v-for='item in travel_grant_datas' :value='item.id' :selected='form_submit_data[dom_id]["form_grant_id"]'
                             >
                                 {{item.apply_subject}}
                             </option>
-
                         </select>
                     </div>
                 </div>
@@ -43,10 +42,10 @@
                 </div>
             </div>
             <components v-for="item in items" v-bind:is="item.component" :key='parseInt(item.id)'
-                        :id='parseInt(item.id)' :dom_id='dom_id' :plan_action='item.plan_action' :form_action='form_action'
+                        :id='parseInt(item.id)' :dom_id='dom_id' :plan_action='item.plan_action' :form_action='form_action' :can_edit='can_edit'
             ></components>
             <div class='row col-md-12 justify-content-end border-top-light' v-show='items[0]'>
-                <div class='col-md-4 text-right mt-1'>
+                <div class='col-md-4 text-right mt-1' v-show='can_edit'>
                     <button type="button" @click='addItem'
                             class="btn btn-outline-primary mr-1 mb-1 waves-effect waves-light">
                         新增計畫
@@ -81,7 +80,8 @@
         name: "form-travel_fee",
         props: {
             dom_id: String,
-            form_action: String
+            form_action: String,
+            can_edit: Boolean
         },
         data() {
             return {
@@ -122,6 +122,7 @@
                     Object.keys(itemsData).forEach(key => {
                         let tmpdata = Object.assign({},itemsData[key]);
                         tmpdata.component = 'form-travel_fee_plan';
+                        tmpdata.can_edit = vue.can_edit;
                         vue.items.push(tmpdata);
                         vue.count = tmpdata.id;
                     })
@@ -133,7 +134,8 @@
                 this.items.push({
                     component: 'form-travel_fee_plan',
                     plan_action: 'new_plan',
-                    id: this.count
+                    id: this.count,
+                    can_edit : this.can_edit,
                 });
                 this.form_submit_data[this.dom_id]["items"][this.count] = {
                     id: this.count.toString(),
@@ -167,7 +169,7 @@
                             console.log(error);
                         });
                 }else{
-                    let id = this.form_submit_data[this.dom_id]['form_travel_grant_id'];
+                    let id = this.form_submit_data[this.dom_id]['form_grant_id'];
                     axios.post('api/form/get', {id:id})
                         .then(function (response) {
                             let result = response.data;
