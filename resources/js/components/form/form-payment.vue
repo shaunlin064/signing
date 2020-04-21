@@ -33,7 +33,7 @@
                 </div>
             </div>
             <div class='row col-md-12 p-1'>
-                <div class='col-md-12 border-top-light mb-1'></div>
+                <div class='col-md-12 border-top-light mb-3'></div>
                 <div class="col-md-6">
                     <div class="form-label-group">
                         <input type="text" id="beneficiary" class="form-control" placeholder="受款人" name="beneficiary" v-model='form_submit_data[dom_id]["beneficiary"]' :disabled='can_edit === false'>

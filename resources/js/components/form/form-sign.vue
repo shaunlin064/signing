@@ -50,7 +50,7 @@
             </div>
         </div>
         <div class='row'>
-            <div class='col-md-12 border-top-light mb-1'></div>
+            <div class='col-md-12 border-top-light mb-3'></div>
             <div class="col-md-6">
                 <div class="form-label-group">
                     <input type="text" id="recipient_company" class="form-control"
@@ -86,7 +86,7 @@
                     <label for="recipient_address">收件人地址</label>
                 </div>
             </div>
-            <div class='col-md-6'>
+            <div class='col-md-12'>
                 <div class="form-label-group">
                     <fieldset class="form-label-group">
                             <textarea class="form-control" id="remark" rows="3" placeholder="備註"
