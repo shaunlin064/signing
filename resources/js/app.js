@@ -53,7 +53,7 @@ Vue.component('form-refund-items', require('./components/form/form-refund-items'
 Vue.component('form-social', require('./components/form/form-social').default);
 Vue.component('form-travel_fee', require('./components/form/form-travel_fee').default);
 Vue.component('form-travel_grant', require('./components/form/form-travel_grant').default);
-
+Vue.component('check-point', require('./components/form/check-point').default);
 // Vue.component('form-list', require('./components/form/form-list').default);
 Vue.component('ag', require('./components/ag').default);
 
