@@ -107,7 +107,6 @@
                     vue.deleteItem(e);
                 });
 
-
                 if (this.form_action === 'new') {
                     this.department_name = this.login_user.department;
                     this.member_name = this.login_user.name;
