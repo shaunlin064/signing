@@ -586,7 +586,8 @@ class FormController extends Controller
      * @input member_id : 簽核者ID
      * @input role : 簽核者或執行者 1 簽核 2 執行 NULL 不區分
      * @return array['data'][0]['id'] : 關卡ID
-     * @return array['data'][0]['form_id'] : 表單ID
+     * @return array['data'][0]['form_apply_id'] : 表單送審ID
+     * @return array['data'][0]['form_id'] : 表單類型ID
      * @return array['data'][0]['form_type'] : 表單名稱
      * @return array['data'][0]['column'] : 填表資料
      * @return array['data'][0]['apply_member_id'] : 申請人ID
@@ -639,6 +640,7 @@ class FormController extends Controller
 
                     $item = [
                         'id' => $v->id,
+                        'form_apply_id' => $v->form_apply_id,
                         'form_id' => $v->apply->form_id,
                         'form_type' => Config('form')[$v->apply->form_id]['name'],
                         'column' => $v->applyData()->pluck('value','column'),
