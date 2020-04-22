@@ -232,6 +232,7 @@ class FormController extends Controller
      * @reutrn array['data']['checkPoint'] : 申請單簽核關卡紀錄
      * @return array['data']['check_status']['can_check'] : 可以簽核或不行 0 不行(代表前面有人卡關) 1 可簽
      * @return array['data']['check_status']['is_replace'] : 是否為代簽 0 否 1 是
+     * @return array['data']['check_status']['form_check_point_id'] : 簽核關卡ID
      */
     public function get(Request $request){
 
@@ -262,18 +263,22 @@ class FormController extends Controller
 
             //確認可簽核狀態
             $in_checkpoint = 0;
+            $assign_checkpoint_id = 0;
             $result['check_status']['can_check'] = 0;
             $result['check_status']['is_replace'] = 0;
+            $result['check_status']['form_check_point_id'] = 0;
 
             //檢查有沒有在關卡中
-            $check_point = $FormApply->checkPoint()->where('status',1)->get();
+            $check_point = $FormApply->checkPoint()->where('status',1)->orderBy('review_order','ASC')->get();
             foreach($check_point as $k=>$v){
                 $replace_members = json_decode($v->replace_members, true);
                 if ($v->signed_member_id == $member_id || in_array($member_id, $replace_members)) {
                     $in_checkpoint = $v->review_order;
+                    $assign_checkpoint_id = $v->id;
                     if(in_array($member_id, $replace_members)){
                         $result['check_status']['is_replace'] = 1;
                     }
+                    break;
                 }
             }
 
@@ -284,6 +289,7 @@ class FormController extends Controller
                 ->count();
             if ($overwriteCount == 0 && $in_checkpoint != 0) {
                 $result['check_status']['can_check'] = 1;
+                $result['check_status']['form_check_point_id'] = $assign_checkpoint_id;
             }
 
             //封裝簽核列表
