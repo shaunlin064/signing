@@ -483,7 +483,7 @@ class FormController extends Controller
                 $overwriteCount = FormApplyCheckpoint::where('review_order','<',$checkPoint->review_order)
                     ->where('form_apply_id',$checkPoint->form_apply_id)
                     ->whereNull('signed_at')
-                    ->where('overwrite',1)
+                    ->where('overwrite',0)
                     ->count();
 
                 //檢查是否為可為代簽人
