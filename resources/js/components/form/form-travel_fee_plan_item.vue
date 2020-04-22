@@ -21,7 +21,7 @@
             <div class="form-label-group">
                 <input type="text" class="form-control" id='fee' v-model='form_submit_data[dom_id]["items"][parent_id]["fee_items"][id]["fee"]'
                        placeholder="應付費用"
-                       name="fee">
+                       name="fee" :disabled='can_edit === false'>
                 <label for="fee">應付費用</label>
             </div>
         </div>
@@ -43,6 +43,7 @@
                 dom_id:String,
                 parent_id: Number,
                 id: Number,
+                can_edit: Boolean,
             },
             data() {
                 return {

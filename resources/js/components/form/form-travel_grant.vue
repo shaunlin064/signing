@@ -22,7 +22,7 @@
             <div class='col-md-6 mt-2'>
                 <div class="form-label-group">
                     <input type="text" id="apply_subject" class="form-control" placeholder="出差事由" name="apply_subject"
-                           v-model='form_submit_data[dom_id]["apply_subject"]' :disabled='form_action !== "new"'>
+                           v-model='form_submit_data[dom_id]["apply_subject"]' :disabled='can_edit === false'>
                     <label for="apply_subject">出差事由</label>
                 </div>
             </div>
@@ -31,7 +31,7 @@
                     <label>出差人</label>
                     <select class="custom-select select2 form-control" multiple="multiple" id='accompany_user_id'
                             name="accompany_user_id" v-model='form_submit_data[dom_id]["accompany_user_id"]'
-                            :disabled='form_action !== "new"'>
+                            :disabled='can_edit === false'>
                         <option v-for='item in member' :value='item.id'>{{item.name}}</option>
                     </select>
                 </div>
@@ -41,7 +41,7 @@
                     <input type="text" id="travel_date_start" class="form-control"
                            placeholder="出差起始日期"
                            name="travel_date_start" v-model='form_submit_data[dom_id]["travel_date_start"]'
-                           :disabled='form_action !== "new"'>
+                           :disabled='can_edit === false'>
                     <label for="travel_date_start">出差起始日期</label>
                 </div>
             </div>
@@ -50,7 +50,7 @@
                     <input type="text" id="travel_date_end" class="form-control"
                            placeholder="出差結束日期"
                            name="travel_date_end" v-model='form_submit_data[dom_id]["travel_date_end"]'
-                           :disabled='form_action !== "new"'>
+                           :disabled='can_edit === false'>
                     <label for="travel_date_end">出差結束日期</label>
                 </div>
             </div>
@@ -59,7 +59,7 @@
                     <input type="text" id="travel_location" class="form-control"
                            placeholder="出差地點"
                            name="travel_location" v-model='form_submit_data[dom_id]["travel_location"]'
-                           :disabled='form_action !== "new"'>
+                           :disabled='can_edit === false'>
                     <label for="travel_location">出差地點</label>
                 </div>
             </div>
@@ -68,7 +68,7 @@
                     <input type="text" id="travel_stay_location" class="form-control"
                            placeholder="住宿地點" name="travel_stay_location"
                            v-model='form_submit_data[dom_id]["travel_stay_location"]'
-                           :disabled='form_action !== "new"'>
+                           :disabled='can_edit === false'>
                     <label for="travel_stay_location">住宿地點</label>
                 </div>
             </div>
@@ -78,7 +78,7 @@
                     <input type="text" id="predict_cost" class="form-control"
                            placeholder="預估費用(台幣)"
                            name="predict_cost" v-model='form_submit_data[dom_id]["predict_cost"]'
-                           :disabled='form_action !== "new"'>
+                           :disabled='can_edit === false'>
                     <label for="predict_cost">預估費用(台幣)</label>
                 </div>
             </div>
@@ -86,7 +86,7 @@
                 <fieldset class="form-label-group">
                             <textarea class="form-control" id="travel_remark" rows="1" placeholder="出差事由詳述"
                                       v-model='form_submit_data[dom_id]["travel_remark"]'
-                                      :disabled='form_action !== "new"'
+                                      :disabled='can_edit === false'
                                       name="travel_remark"></textarea>
                     <label for="travel_remark">出差事由詳述</label>
                 </fieldset>
@@ -99,8 +99,8 @@
         </div>
         <div class="row">
             <components v-for="item in items" v-bind:is="item.component" :key='item.id' :id='parseInt(item.id)'
-                        :dom_id='dom_id' :plan_action='"new_plan"'></components>
-            <div class='row col-md-12 justify-content-end'>
+                        :dom_id='dom_id' :plan_action='"new_plan"' :can_edit='can_edit'></components>
+            <div class='row col-md-12 justify-content-end' v-show='can_edit'>
                 <div class='col-md-4 text-right mt-1'>
                     <button type="button" @click='addItem'
                             class="btn btn-outline-primary mr-1 mb-1 waves-effect waves-light">
@@ -111,7 +111,7 @@
             <div class='col-md-12 mt-2'>
                 <fieldset class="form-label-group">
                               <textarea class="form-control" id="remark" rows="3" placeholder="備註"
-                                        v-model='form_submit_data[dom_id]["remark"]' :disabled='form_action !== "new"'
+                                        v-model='form_submit_data[dom_id]["remark"]' :disabled='can_edit === false'
                                         name="remark"></textarea>
                     <label for="remark">備註</label>
                 </fieldset>
@@ -137,7 +137,8 @@
         props: {
             dom_id: String,
             form_data: Object,
-            form_action: String
+            form_action: String,
+            can_edit: Boolean,
         },
         data() {
             return {

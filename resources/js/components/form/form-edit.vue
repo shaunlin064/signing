@@ -3,11 +3,12 @@
         <keep-alive>
             <component v-bind:is="form_type" :dom_id='form_type' :form_action='"edit"' :can_edit='can_edit'/>
         </keep-alive>
-        <div class='row border-top-light mt-2 justify-content-end' v-show='form_type'>
+        <check-point v-show='check_list' :form_id='id' :check_list_props='check_list'></check-point>
+        <div class='row border-top-light mt-2 justify-content-end' v-show='form_type && can_edit'>
             <button type="button" class="btn btn-primary mr-1 mb-1 waves-effect waves-light text-right mt-2"
                     @click='submit' :disabled='lodding'>
                 <span role="status" aria-hidden="true" class="spinner-grow spinner-grow-sm" v-show='lodding'></span>
-                送出
+                <strong>送出</strong>
             </button>
         </div>
     </form>
@@ -27,11 +28,11 @@
         data() {
             return {
                 form_type: '',
+                check_list: null,
                 dom_id: 'form-edit',
                 init: false,
                 can_edit: false,
-                lodding: false,
-                aaa: [],
+                lodding: false
             }
         },
         computed: {
@@ -131,6 +132,7 @@
                     if (result.data.status == 1) {
                         vue.can_edit = true;
                     }
+                    vue.check_list = result.data.checkPoint;
                     vue.jsonReverse(result.data.column);
                 }).then(() => {
 

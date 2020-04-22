@@ -27,7 +27,7 @@
         <div class="card">
             <div class="card-content">
                 <div class="card-body">
-                    <form-list></form-list>
+                    <ag :dom_id='"agrid"' :api_urls='["api/form/all"]'></ag>
                 </div>
             </div>
         </div>
@@ -41,6 +41,5 @@
     <script src="{{ asset(mix('vendors/js/tables/ag-grid/ag-grid-community.min.noStyle.js')) }}"></script>
 @endsection
 @section('page-script')
-    {{-- Page js files --}}
-    <script src="{{ asset(mix('js/scripts/form/form-list.js')) }}"></script>
+
 @endsection

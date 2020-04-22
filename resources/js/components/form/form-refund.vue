@@ -22,7 +22,7 @@
             <div class="col-md-6">
                 <div class="form-label-group">
                     <input type="text" id="apply_subject" class="form-control" placeholder="名稱" name="apply_subject"
-                           v-model='form_submit_data[dom_id]["apply_subject"]' :disabled='form_action !== "new"'>
+                           v-model='form_submit_data[dom_id]["apply_subject"]' :disabled='can_edit === false'>
                     <label for="apply_subject">名稱</label>
                 </div>
             </div>
@@ -34,8 +34,8 @@
                 </div>
             </div>
             <component v-for="(item,key) in items" v-bind:is="item.component" :id='parseInt(item.id)' :dom_id='dom_id' :key='item.id'
-                       :type='item.type' :form_action='form_action'></component>
-            <div class='row col-md-12 justify-content-end border-top-light' v-show='form_action === "new"'>
+                       :type='item.type' :form_action='form_action' :can_edit='can_edit'></component>
+            <div class='row col-md-12 justify-content-end border-top-light' v-show='can_edit'>
 
                 <div class='col-md-4 text-right mt-1'>
                     <div class="btn-group dropdown mr-1 mb-1">
@@ -56,7 +56,7 @@
             <div class='col-md-12 mt-2'>
                 <fieldset class="form-label-group">
                               <textarea class="form-control" id="remark" rows="1" placeholder="備註"
-                                        v-model='form_submit_data[dom_id]["remark"]' :disabled='form_action !== "new"'
+                                        v-model='form_submit_data[dom_id]["remark"]' :disabled='can_edit === false'
                                         name="remark"></textarea>
                     <label for="remark">備註</label>
                 </fieldset>
@@ -81,7 +81,8 @@
         props: {
             dom_id: String,
             form_data: Object,
-            form_action: String
+            form_action: String,
+            can_edit: Boolean,
         },
         data() {
             return {
@@ -106,7 +107,6 @@
                     vue.deleteItem(e);
                 });
 
-
                 if (this.form_action === 'new') {
                     this.department_name = this.login_user.department;
                     this.member_name = this.login_user.name;
@@ -117,6 +117,7 @@
                     Object.keys(itemsData).forEach(key => {
                         let tmpdata = Object.assign({},itemsData[key]);
                         tmpdata.component = 'form-refund-items';
+                        tmpdata.can_edit = vue.can_edit;
                         vue.items.push(tmpdata);
                         vue.count = tmpdata.id;
                     });

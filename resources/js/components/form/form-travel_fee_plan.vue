@@ -5,7 +5,7 @@
                 <label>{{parseInt(id)}}</label>
             </div>
 
-            <div class='col-md-2 text-right' v-if='plan_action === "new_plan"'>
+            <div class='col-md-2 text-right' v-show='can_edit'>
                 <button type="button" data-action='deleteItem' :data-id='id'
                         class="btn btn-icon btn-danger mr-1 mb-1 waves-effect waves-light">
                     <i
@@ -16,7 +16,7 @@
             <div class="form-label-group">
                 <input type="text" class="form-control"
                        placeholder="日期" v-model='form_submit_data[dom_id]["items"][id]["date"]'
-                       :disabled='plan_action !== "new_plan"'>
+                       :disabled='can_edit === false'>
                 <label>日期</label>
             </div>
         </div>
@@ -25,7 +25,7 @@
 
                 <input type="text" class="form-control"
                        placeholder="洽訪公司" v-model='form_submit_data[dom_id]["items"][id]["customer_company"]'
-                       :disabled='plan_action !== "new_plan"'
+                       :disabled='can_edit === false'
                 >
                 <label>洽訪公司</label>
             </div>
@@ -34,7 +34,7 @@
             <div class="form-label-group">
                 <input type="text" class="form-control" placeholder="對象姓名/稱謂"
                        v-model='form_submit_data[dom_id]["items"][id]["customer_name"]'
-                       :disabled='plan_action !== "new_plan"'
+                       :disabled='can_edit === false'
                 >
                 <label>對象姓名/稱謂</label>
             </div>
@@ -43,7 +43,7 @@
             <div class="form-label-group">
                 <input type="text" class="form-control" placeholder="會議形式"
                        v-model='form_submit_data[dom_id]["items"][id]["meet_type"]'
-                       :disabled='plan_action !== "new_plan"'
+                       :disabled='can_edit === false'
                 >
                 <label>會議形式</label>
             </div>
@@ -66,7 +66,7 @@
         <div class='col-md-6'>
             <div class="form-label-group mt-2">
                 <input type="text" class="form-control" v-model='form_submit_data[dom_id]["items"][id]["agenda"]'
-                       :disabled='plan_action !== "new_plan"'
+                       :disabled='can_edit === false'
                        placeholder="洽談內容"
                 >
                 <label>洽談內容</label>
@@ -79,7 +79,7 @@
                         <h5 class="card-title">費用明細</h5>
                     </div>
                 </div>
-                <div class='col-md-6 justify-content-end text-right'>
+                <div class='col-md-6 justify-content-end text-right' v-show='can_edit'>
                     <div class="btn-group dropdown mr-1 mb-1">
                         <button type="button" class="btn btn-outline-primary dropdown-toggle" @click='openMenu'
                                 data-toggle="dropdown"
@@ -96,7 +96,7 @@
                 </div>
             </div>
             <compoenents v-for='item in plan_fee' v-bind:is="item.component" :key='item.id' :id='parseInt(item.id)' :dom_id='dom_id'
-                         :parent_id='item.parent_id'></compoenents>
+                         :parent_id='item.parent_id' :can_edit='can_edit'></compoenents>
         </div>
     </div>
 </template>
@@ -111,6 +111,7 @@
             dom_id: String,
             plan_action: String,
             form_action: String,
+            can_edit:Boolean,
             id: Number,
         },
         data() {
@@ -147,8 +148,9 @@
                     if(itemsData[0] != undefined){
                         Object.keys(itemsData).forEach(key => {
                             let tmpdata = Object.assign({},itemsData[key]);
-                            tmpdata.parent_id = parseInt(key);
+                            tmpdata.parent_id = parseInt(vue.id);
                             tmpdata.component = 'form-travel_fee_plan_item';
+                            tmpdata.can_edit = vue.can_edit;
                             vue.plan_fee.push(tmpdata);
                             vue.count = tmpdata.id;
                         })
