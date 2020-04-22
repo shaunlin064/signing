@@ -226,13 +226,17 @@ class FormController extends Controller
      * 取得申請單內容與簽核狀況
      * 依照申請單ID取得內容與簽核狀況
      * @input id : 申請單ID
+     * @input member_id : 登入人員ID
      * @return array['data'] : 申請單基本資料
      * @reutrn array['data']['column'] : 申請單填寫欄位資料
      * @reutrn array['data']['checkPoint'] : 申請單簽核關卡紀錄
+     * @return array['data']['check_status']['can_check'] : 可以簽核或不行 0 不行(代表前面有人卡關) 1 可簽
+     * @return array['data']['check_status']['is_replace'] : 是否為代簽 0 否 1 是
      */
     public function get(Request $request){
 
         try {
+            $member_id = $request->get('member_id');
             $FormApply = FormApply::findOrFail($request->get('id'));
 
             $result = $FormApply->toArray();
@@ -254,6 +258,34 @@ class FormController extends Controller
                 }
             }
             $result['column'] = $column;
+
+
+            //確認可簽核狀態
+            $in_checkpoint = 0;
+            $result['check_status']['can_check'] = 0;
+            $result['check_status']['is_replace'] = 0;
+
+            //檢查有沒有在關卡中
+            $check_point = $FormApply->checkPoint()->where('status',1)->get();
+            foreach($check_point as $k=>$v){
+                $replace_members = json_decode($v->replace_members, true);
+                if ($v->signed_member_id == $member_id || in_array($member_id, $replace_members)) {
+                    $in_checkpoint = $v->review_order;
+                    if(in_array($member_id, $replace_members)){
+                        $result['check_status']['is_replace'] = 1;
+                    }
+                }
+            }
+
+            //檢查有沒有比我前面的人卡關
+            $overwriteCount = $FormApply->checkPoint()->where('review_order', '<', $in_checkpoint)
+                ->whereNull('signed_at')
+                ->where('overwrite', 0)
+                ->count();
+            if ($overwriteCount == 0 && $in_checkpoint != 0) {
+                $result['check_status']['can_check'] = 1;
+            }
+
             //封裝簽核列表
             $result['checkPoint'] = $FormApply->checkPoint->transform(function($item,$key){
 
@@ -267,7 +299,6 @@ class FormController extends Controller
 
                 return $item;
             });
-
 
             self::$message['status'] = 1;
             self::$message['status_string'] = '取得成功';
@@ -626,7 +657,7 @@ class FormController extends Controller
                     $overwriteCount = FormApplyCheckpoint::where('review_order', '<', $v->review_order)
                         ->where('form_apply_id', $v->form_apply_id)
                         ->whereNull('signed_at')
-                        ->where('overwrite', 1)
+                        ->where('overwrite', 0)
                         ->count();
                     if ($overwriteCount == 0) {
                         $item['can_check'] = 1;
