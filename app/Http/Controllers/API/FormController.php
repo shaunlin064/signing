@@ -506,7 +506,7 @@ class FormController extends Controller
                     $FormApplyCheckBefore = FormApplyCheckpoint::where('review_order','<',$checkPoint->review_order)
                         ->where('form_apply_id',$checkPoint->form_apply_id)
                         ->whereNull('signed_at')
-                        ->where('overwrite',0)
+                        ->where('overwrite',1)
                         ->get();
                     foreach($FormApplyCheckBefore as $k=>$v){
                         $v->signed_at = $now;
