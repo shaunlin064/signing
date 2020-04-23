@@ -57,10 +57,12 @@
             // column_defs : Array
             dom_id: String,
             api_urls: Array,
+            api_parmater_role: Number,
         },
         data() {
             return {
                 btn_csv:false,
+                primary_key: '',
                 config_column: [
                     {
                         headerName: "id",
@@ -68,7 +70,7 @@
                         editable: false,
                         sortable: true,
                         filter: true,
-                        width: 120,
+                        // width: 120,
                     },
                     {
                         headerName: "類型",
@@ -76,7 +78,7 @@
                         editable: false,
                         sortable: true,
                         filter: true,
-                        width: 150
+                        // width: 150
                     },
                     {
                         headerName: "申請人",
@@ -84,7 +86,7 @@
                         editable: false,
                         sortable: true,
                         filter: true,
-                        width: 150,
+                        // width: 150,
                         cellRenderer: this.ageGetMember
                     },
                     {
@@ -93,7 +95,7 @@
                         editable: false,
                         sortable: true,
                         filter: true,
-                        width: 330
+                        // width: 330
                     },
                     {
                         headerName: "狀態",
@@ -125,6 +127,7 @@
                     pivotPanelShow: "always",
                     colResizeDefault: "shift",
                     animateRows: true,
+                    suppressSizeToFit:true,
                     resizable: true
                 }
             }
@@ -139,11 +142,18 @@
         },
         methods: {
             init() {
+                if($.inArray(this.dom_id, ['ag_pending','ag_action']) !== -1){
+                    this.config_column[0]['field'] = 'form_apply_id';
+                    this.primary_key = 'form_apply_id';
+                }else{
+                    this.primary_key = 'id';
+                }
+
                 this.gridOptions.columnDefs = this.config_column;
                 this.getData();
             },
             getLoginUser(){
-                return 157;
+                return this.login_user.id;
             },
             getData() {
                 let userId = this.getLoginUser();
@@ -152,12 +162,14 @@
                 let vue = this;
                 /*** GET TABLE DATA FROM URL ***/
                 axios.post(vue.api_urls[0], {
-                    member_id: userId
+                    member_id: userId,
+                    role: vue.api_parmater_role,
                 })
                 .then(function (response) {
                     vue.gridOptions.rowData = response.data.data;
                     /*** INIT TABLE ***/
                     new agGrid.Grid(gridTable, vue.gridOptions);
+                    vue.gridOptions.api.sizeColumnsToFit();
                 })
                 .catch(function (error) {
                     console.log(error);
@@ -167,10 +179,10 @@
                 return getMember(params.data.apply_member_id);
             },
             ageCellRendererFunc(params) {
+                let id = eval(`params.data.${this.primary_key}`);
 
                 let template;
-
-                template = `<a type='button' target='_blank' href='/form-edit?id=${params.data.id}' class='btn btn-primary mr-1  waves-effect waves-light'>檢視</a>`;
+                template = `<a type='button' target='_blank' href='/form-edit?id=${id}' class='btn btn-primary mr-1  waves-effect waves-light'>檢視</a>`;
 
                 return template;
             },

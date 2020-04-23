@@ -8,19 +8,30 @@
                     <!--                        the card's content.</p>-->
                 </div>
                 <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                    <div class='row'>
+                        <div class='col-sm-2 col-align-c'>簽核人</div>
+                        <div class='col-sm-2 col-align-c'>代簽人</div>
+                        <div class='col-sm-2 d-flex justify-content-center'>簽核狀態</div>
+                        <div class='col-sm-2 col-align-l'>簽核日期</div>
+                        <div class='col-sm-3 col-align-l'>備註</div>
+                    </div>
+                    </li>
                     <li class="list-group-item" v-for='item in check_list' @model='check_list'>
                         <div class='row'>
-                            <div class='col-sm-3 col-align-c'>{{getMember(item.signed_member_id)}}</div>
+                            <div class='col-sm-2 col-align-c'>{{getMember(item.signed_member_id)}}</div>
+                            <div class='col-sm-2 col-align-c'>{{getReplace(item.replace_signed_member_id)}}</div>
                             <div class='col-sm-2 d-flex justify-content-center' v-html='statusBadge(item.status)'>}
                             </div>
-                            <div class='col-sm-7 col-align-l'>{{item.remark}}</div>
+                            <div class='col-sm-2 col-align-l'  v-html='item.signed_at'></div>
+                            <div class='col-12 col-sm-3 col-align-l'>{{item.remark}}</div>
                         </div>
 
                         <!--                        <span class="badge badge-pill bg-primary float-right">4</span>-->
 
                     </li>
                 </ul>
-                <div class="card-body d-flex justify-content-end">
+                <div class="card-body d-flex justify-content-end" v-if='can_check'>
                     <div class='row'>
                         <button type="button" class="btn btn-primary mr-1 mb-1 waves-effect waves-light text-right"
                                 @click='confer("Confer")'>
@@ -50,11 +61,21 @@
         props: {
             check_list_props: Array,
             form_id: Number,
+            can_check: Boolean,
+            check_id: Number,
         },
         data() {
             return {
                 lodding: false,
                 check_list: null,
+                postData : {
+                    id: '',
+                    member_id: '',
+                    signature: '',
+                    remark: '',
+                    status: 0,
+                },
+
             }
         },
         computed: {
@@ -63,13 +84,17 @@
         beforeMount: function () {
         },
         mounted: function () {
-            this.getCheck();
+            this.asyncGet();
         },
         methods: {
-            async getCheck() {
+            async asyncGet() {
+                let vue = this;
+
                 while (this.check_list === null) {
                     this.check_list = await this.settime();
                 }
+                this.postData.id = this.check_id;
+                this.postData.member_id = this.login_user.id;
             },
             settime() {
                 let vue = this;
@@ -79,8 +104,15 @@
                     }, 500)
                 });
             },
+            getReplace(id){
+              if(id){
+                  return `${this.getMember(id)}`
+              }
+            },
             getMember(id) {
-                return getMember(id);
+                if(id){
+                    return getMember(id);
+                }
             },
             statusBadge(status) {
                 let className = '';
@@ -105,27 +137,55 @@
                 }
                 return `<div class='badge badge-${className}'>${html}</div>`
             },
-            post(action, remark = null) {
-                let status = action == 'Confer' ? 2 : 0;
-                let postData = {
-                    id: this.form_id,
-                    member_id: this.login_user.id,
-                    signature: '',
-                    remark,
-                    status
+            swalCancel() {
+                Swal.fire({
+                    title: 'Cancelled',
+                    text: 'This From Apply file is safe :)',
+                    type: 'error',
+                    confirmButtonClass: 'btn btn-success',
+                })
+            },
+            swalSuccess(result){
+                let type = result.value.status == 1 ? 'success' : 'error';
+                let timerInterval;
+
+                let swalConfig = {
+                    type,
+                    title : `${result.value.status_string}`,
+                    html: ` ${result.value.message} <b></b>`,
                 }
-                return axios.post('api/form/check', postData)
-                    .then(function (response) {
-                       console.log(response);
-                       return response
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
+                if(result.value.status == 1){
+                    swalConfig.timer = 2000;
+                    swalConfig.onBeforeOpen = () => {
+                        Swal.showLoading()
+                        timerInterval = setInterval(() => {
+                            const content = Swal.getContent()
+                            if (content) {
+                                const b = content.querySelector('b')
+                                if (b) {
+                                    b.textContent = Math.round(Swal.getTimerLeft() / 1000,1);
+                                }
+                            }
+                        }, 100)
+                    };
+                    swalConfig.onClose = () => {
+                        clearInterval(timerInterval)
+                    };
+                }else{
+                    swalConfig.confirmButtonClass = 'btn btn-success';
+                }
+                Swal.fire( swalConfig
+                ).then(result=>{
+                    if(result){
+                        javascript:location.href = '/form-edit?id=' + this.form_id;
+                    }
+
+                })
             },
             async confer(action) {
                 let vue = this;
-                Swal.fire({
+                this.postData.status = action == 'Confer' ? 2 : 0;
+                let swalConfig = {
                     title: 'Are you sure?',
                     text: "You won't be able to revert this!",
                     type: 'warning',
@@ -136,20 +196,35 @@
                     confirmButtonClass: 'btn btn-primary',
                     cancelButtonClass: 'btn btn-danger ml-1',
                     buttonsStyling: false,
-                }).then(async function (result) {
+                }
+                if(action == 'Confer'){
+                    swalConfig.showLoaderOnConfirm = true;
 
-                    if (result.value) {
-                        if (action === 'Confer') {
-                            let result = await vue.post(action);
-                            console.log(result);
-
-                            Swal.fire({
-                                type: "success",
-                                title: `${action}!`,
-                                text: `This From Apply has been ${action}.`,
-                                confirmButtonClass: 'btn btn-success',
+                    swalConfig.preConfirm= (result) => {
+                        return axios.post('api/form/check',this.postData )
+                            .then(function (response) {
+                                return response.data;
                             })
-                        } else {
+                            .catch(function (error) {
+                                Swal.showValidationMessage(
+                                    `Request failed: ${error}`
+                                )
+                            });
+                    };
+                    Swal.fire(
+                        swalConfig
+                    ).then((result)=>{
+                        if( result.value !== undefined){
+                           vue.swalSuccess(result);
+                        }else{
+                            vue.swalCancel();
+                        }
+                    })
+                }else{
+                    Swal.fire(
+                        swalConfig
+                    ).then((result)=> {
+                        if( result.value !== undefined) {
                             Swal.fire({
                                 title: `${action}`,
                                 text: "請輸入原因",
@@ -163,36 +238,32 @@
                                     if (!value) {
                                         return 'You need to write something!'
                                     }
+                                },
+                                showLoaderOnConfirm: true,
+                                preConfirm: (remark) => {
+                                    this.postData.remark = remark;
+                                    return axios.post('api/form/check', this.postData)
+                                        .then(function (response) {
+                                            return response.data;
+                                        })
+                                        .catch(function (error) {
+                                            Swal.showValidationMessage(
+                                                `Request failed: ${error}`
+                                            )
+                                        });
                                 }
-                            })
-                                .then(function (result) {
-                                    /*TODO::form check api*/
-                                    if (result.dismiss === Swal.DismissReason.cancel || result.dismiss === 'backdrop') {
-                                        Swal.fire({
-                                            title: 'Cancelled',
-                                            text: 'This From Apply file is safe :)',
-                                            type: 'error',
-                                            confirmButtonClass: 'btn btn-success',
-                                        })
-                                    } else {
-                                        Swal.fire({
-                                            type: "success",
-                                            title: `${action}!`,
-                                            text: `This From Apply has been ${action}.`,
-                                            confirmButtonClass: 'btn btn-success',
-                                        })
-                                    }
-                                })
+                            }).then((result) => {
+                                if (result.value !== undefined) {
+                                    vue.swalSuccess(result);
+                                } else {
+                                    vue.swalCancel();
+                                }
+                            });
+                        }else{
+                            vue.swalCancel();
                         }
-                    } else if (result.dismiss === Swal.DismissReason.cancel) {
-                        Swal.fire({
-                            title: 'Cancelled',
-                            text: 'This From Apply file is safe :)',
-                            type: 'error',
-                            confirmButtonClass: 'btn btn-success',
-                        })
-                    }
-                })
+                    });
+                }
             }
         }
         ,

@@ -3,7 +3,7 @@
         <keep-alive>
             <component v-bind:is="form_type" :dom_id='form_type' :form_action='"edit"' :can_edit='can_edit'/>
         </keep-alive>
-        <check-point v-show='check_list' :form_id='id' :check_list_props='check_list'></check-point>
+        <check-point v-show='check_list' :form_id='id' :check_list_props='check_list' :can_check='can_check' :check_id='check_id'></check-point>
         <div class='row border-top-light mt-2 justify-content-end' v-show='form_type && can_edit'>
             <button type="button" class="btn btn-primary mr-1 mb-1 waves-effect waves-light text-right mt-2"
                     @click='submit' :disabled='lodding'>
@@ -32,7 +32,9 @@
                 dom_id: 'form-edit',
                 init: false,
                 can_edit: false,
-                lodding: false
+                lodding: false,
+                can_check: false,
+                check_id: 0,
             }
         },
         computed: {
@@ -101,7 +103,8 @@
                 let vue = this;
 
                 axios.post('api/form/get', {
-                    id: vue.id
+                    id: vue.id,
+                    member_id : vue.login_user.id,
                 }).then(function (response) {
                     let result = response.data;
                     if (result.status !== 1) {
@@ -129,10 +132,15 @@
                             vue.form_type = 'form-travel_fee';
                             break;
                     }
-                    if (result.data.status == 1) {
-                        vue.can_edit = true;
+                    if(result.data.apply_member_id === vue.login_user.id){
+                        if (result.data.status == 1) {
+                            vue.can_edit = true;
+                        }
                     }
+
                     vue.check_list = result.data.checkPoint;
+                    vue.can_check = result.data.check_status.can_check == 0 ? false : true;
+                    vue.check_id = result.data.check_status.form_check_point_id;
                     vue.jsonReverse(result.data.column);
                 }).then(() => {
 

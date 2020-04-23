@@ -10,7 +10,21 @@
     | contains the "web" middleware group. Now create something great!
     |
     */
-
+    Route::any('/reset',function (){
+       $formApply = new \App\FormApply();
+       $data = $formApply->find(1);
+        $data->status = 1;
+        $data->now = 1;
+        $data->next = 2;
+        $data->checkPoint->map(function($v,$k){
+            $v->status =1 ;
+            $v->signed_at = null;
+            $v->remark = '';
+            $v->replace_signed_member_id = null;
+            $v->update();
+            return $v;
+        });
+    });
     Route::view('/', 'pages.index',
                 [ 'breadcrumbs' => [ [ 'name' => "User" ], [ 'link' => "form-new", 'name' => "申請簽核" ] ] ]);
     //  User

@@ -27,7 +27,7 @@
         <div class="card">
             <div class="card-content">
                 <div class="card-body">
-                    <ag :dom_id='"agrid"' :api_urls='["form/check/list"]'></ag>
+                    <ag :dom_id='"ag_action"' :api_urls='["api/form/check/list"]' :api_parmater_role='2'></ag>
                 </div>
             </div>
         </div>
