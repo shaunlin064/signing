@@ -4,7 +4,6 @@
       "url": "",
       "name": "User",
       "slug": "User",
-      "badge": "2",
       "badgeClass": "badge badge-warning badge-pill float-right mr-2",
       "icon": "feather icon-user",
       "submenu": [
@@ -32,7 +31,6 @@
       "url": "",
       "name": "Signinger",
       "slug": "Signinger",
-      "badge": "2",
       "badgeClass": "badge badge-warning badge-pill float-right mr-2",
       "icon": "feather icon-edit",
       "submenu": [
@@ -54,7 +52,6 @@
       "url": "",
       "name": "Executor",
       "slug": "Executor",
-      "badge": "2",
       "badgeClass": "badge badge-warning badge-pill float-right mr-2",
       "icon": "feather icon-zap",
       "submenu": [

@@ -294,6 +294,7 @@
 
                 //檢查有沒有在關卡中
                 $check_point = $FormApply->checkPoint()->where('status', 1)->orderBy('review_order', 'ASC')->get();
+
                 foreach ( $check_point as $k => $v )
                 {
                     $replace_members = json_decode($v->replace_members, true);
@@ -314,6 +315,8 @@
                     ->whereNull('signed_at')
                     ->where('overwrite', 0)
                     ->count();
+
+
                 if ( $overwriteCount == 0 && $in_checkpoint != 0 )
                 {
                     $result['check_status']['can_check'] = 1;
@@ -330,7 +333,7 @@
                                                        'replace_members',
                                                    ]);
                     $item['created_at'] = date('Y-m-d', strtotime($item['created_at']));
-
+                    $item['role_str'] = $item['role'] == 1 ? '簽核' : '執行' ;
                     return $item;
                 });
 
@@ -1010,13 +1013,16 @@
          * @param $signUserId
          * @return Boolean
          */
-        private function checkCanSigning ( FormApplyCheckpoint $checkPoint, $signUserId )
+        private function checkCanSigning ( FormApplyCheckpoint $checkPoint, $signUserId,$rewriteMessage = true )
         {
             if ( !$checkPoint->status == 1 && !$checkPoint->signed_at === null )
             {
                 //此關已簽
-                self::$message['status_string'] = '簽核失敗';
-                self::$message['message'] = '此關卡已簽核，請勿重複簽署';
+                if($rewriteMessage){
+                    self::$message['status_string'] = '簽核失敗';
+                    self::$message['message'] = '此關卡已簽核，請勿重複簽署';
+                }
+
                 return false;
             }
             //檢查是否為可代簽人
@@ -1027,8 +1033,11 @@
                 /*確認是否為代簽人*/
                 if ( !in_array($signUserId, $replace_members) )
                 {
-                    self::$message['status_string'] = '簽核失敗';
-                    self::$message['message'] = '您所在的關卡有卡關或您並非簽署者';
+                    if($rewriteMessage)
+                    {
+                        self::$message['status_string'] = '簽核失敗';
+                        self::$message['message'] = '您所在的關卡有卡關或您並非簽署者';
+                    }
                     return false;
                 }
             }
@@ -1046,15 +1055,21 @@
                 //  status    簽核狀態 0:駁回 1:待簽核 2:通過'
                 if ( $befoerCheckList->where('status', 0)->count() > 0 )
                 {
-                    self::$message['status_string'] = '簽核失敗';
-                    self::$message['message'] = '此表單已有人駁回';
+                    if($rewriteMessage)
+                    {
+                        self::$message['status_string'] = '簽核失敗';
+                        self::$message['message'] = '此表單已有人駁回';
+                    }
                     return false;
                 };
                 /*執行者不能取代與代簽*/
                 if ( $befoerCheckList->where('status', 1)->count() > 0 && $checkPoint->role == 2 )
                 {
-                    self::$message['status_string'] = '簽核失敗';
-                    self::$message['message'] = '此表單前面尚有卡關執行者無法取代簽核';
+                    if($rewriteMessage)
+                    {
+                        self::$message['status_string'] = '簽核失敗';
+                        self::$message['message'] = '此表單前面尚有卡關執行者無法取代簽核';
+                    }
                     return false;
                 }
                 //  取出 前面關卡未簽 checkpoint 確認是否有設定 卡關*/
@@ -1066,8 +1081,11 @@
                     $overWriteName = $overWriteData->pluck('signed_member_id')->map(function ( $v, $k ) {
                         return getMember($v);
                     });
-                    self::$message['status_string'] = '簽核失敗';
-                    self::$message['message'] = '此表單前面尚有卡關無法取代簽核' . $overWriteName->implode(',');
+                    if($rewriteMessage)
+                    {
+                        self::$message['status_string'] = '簽核失敗';
+                        self::$message['message'] = '此表單前面尚有卡關無法取代簽核' . $overWriteName->implode(',');
+                    }
                     return false;
                 }
             };

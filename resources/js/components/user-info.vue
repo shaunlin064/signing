@@ -8,7 +8,7 @@
                 <span class="user-status">{{login_user.department}}</span>
             </div>
             <span><img class="round"
-                       src="images/portrait/small/avatar-s-18.jpg"
+                       src="images/portrait/small/avatar-s-23.jpg"
                        alt="avatar" height="40"
                        width="40"/></span>
         </a>
@@ -31,7 +31,7 @@
         },
         data() {
             return {
-                over_time : false,
+
             }
         },
         computed: {
@@ -42,23 +42,8 @@
         },
         mounted: function () {
             this.setSession();
-            this.asyncGet();
         },
         methods: {
-            async asyncGet() {
-                this.over_time = await this.settime();
-                if(this.over_time){
-                    this.relogin();
-                }
-                console.log(this.over_time);
-            },
-            settime() {
-                return new Promise((resolve, reject) => {
-                    setTimeout(() => {
-                        resolve(true)
-                    }, 15 * 60000)
-                });
-            },
             setSession(){
                 this.$store.state.login_user = this.session.login_user;
                 this.$store.state.member = this.session.member;
@@ -67,26 +52,12 @@
                 sessionStorage.setItem('member', JSON.stringify(this.session.member));
                 sessionStorage.setItem('department', JSON.stringify(this.session.department));
             },
-            relogin(){
-                Swal.fire({
-                    title: '請重新登入',
-                    text: '閒置過久系統已登出',
-                    type: 'info',
-                    confirmButtonClass: 'btn btn-success',
-                }).then(result=>{
-                    javascript:location.href='/login';
-                });
-            },
             openMenu(event) {
                 let targetDom = $(event.currentTarget);
                 targetDom.parent('.dropdown').addClass('show');
                 targetDom.next().addClass('show');
             },
             logout(){
-                // Object.keys(localStorage).forEach( key=>{
-                //     localStorage.removeItem(key);
-                // })
-                // sessionStorage.clear();
                 axios({
                     url: 'session/release',
                     method: 'post',

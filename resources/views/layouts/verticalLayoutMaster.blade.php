@@ -46,8 +46,12 @@
         @endif
 
     </div>
+{{--    @include('pages.auth-lock-screen')--}}
+    <lock-screen></lock-screen>
     <!-- End: Content-->
     </div>
+
+
     @if($configData['blankPage'] == false && isset($configData['blankPage']))
 {{--    @include('pages/customizer')--}}
 

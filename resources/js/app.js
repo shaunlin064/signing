@@ -62,6 +62,7 @@ Vue.component('user-notification',require('./components/user-notification').defa
 
 /*login*/
 Vue.component('login', require('./components/login').default);
+Vue.component('lock-screen',require('./components/lock-screen').default);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

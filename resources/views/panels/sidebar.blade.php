@@ -7,7 +7,7 @@ $configData = Helper::applClasses();
   <div class="navbar-header">
     <ul class="nav navbar-nav flex-row">
       <li class="nav-item mr-auto">
-        <a class="navbar-brand" href="dashboard-analytics">
+        <a class="navbar-brand" href="/">
           <div class="brand-logo"></div>
           <h2 class="brand-text mb-0">Signing</h2>
         </a>

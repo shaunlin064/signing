@@ -11,6 +11,7 @@
 <link rel="stylesheet" href="{{ asset(mix('css/themes/dark-layout.css')) }}">
 <link rel="stylesheet" href="{{ asset(mix('css/themes/semi-dark-layout.css')) }}">
 <link rel="stylesheet" href="{{ asset(mix('vendors/css/extensions/sweetalert2.min.css')) }}">
+<link rel="stylesheet" href="{{ asset(mix('css/pages/authentication.css')) }}">
 {{-- {!! Helper::applClasses() !!} --}}
 @php
     $configData = Helper::applClasses();

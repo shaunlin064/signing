@@ -275,11 +275,10 @@
             }
 
             //將登入資訊儲存至session
-//            $request->replace([ 'value' => $message['data'] ]);
-//            $api_request = Request::create('session/put', 'POST');
-//            $api_request = $api_request->replace($request->input());
-//            $response = Route::dispatch($api_request)->getOriginalContent();
-
+            $request->replace([ 'value' => $message['data'] ]);
+            $api_request = Request::create('session/put', 'POST');
+            $api_request = $api_request->replace($request->input());
+            $response = Route::dispatch($api_request)->getOriginalContent();
 
 //            SessionController::store($message['data']);
             return $message;
@@ -428,7 +427,7 @@
          * @param Request $request
          * 設定訊息為已讀
          * 依照訊息id設定為已讀
-         * @input id : 訊息ID
+         * @input id : 訊息ID Array
          * @input member_id : 接收者ID
          * @return array
          */
@@ -439,13 +438,12 @@
             {
 
                 $message = SystemMessage::where('member_id', $request->get('member_id'))
-                    ->where('id', $request->get('id'))
-                    ->first();
+                    ->whereIn('id', $request->get('id'));
 
-                if ( $message != null )
+
+                if ( $message->exists() )
                 {
-                    $message->read_at = date('Y-m-d H:i:s');
-                    $message->save();
+                    $message = SystemMessage::query()->whereIn('id',$request->get('id'))->update(['read_at' => date('Y-m-d H:i:s')]);
 
                     self::$message['status'] = 1;
                     self::$message['status_string'] = "設定成功";

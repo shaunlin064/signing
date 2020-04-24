@@ -27,14 +27,15 @@ class AuthenticationController extends Controller
             'password' => 'required',
         ]);
 
-        $request = newRequest(['password' => md5($request->password) , 'account' => $request->account]);
+        $remoteRequest = newRequest(['password' => md5($request->password) , 'account' => $request->account]);
         $systemController = New \App\Http\Controllers\API\SystemController();
-        $result = $systemController->login($request);
+        $result = $systemController->login($remoteRequest);
 
         if($result['status'] != 1){
             return view('/pages/auth-login', [
                 'pageConfigs' => self::$pageConfigs,
-                'error' => $result['message']
+                'error' => $result['message'],
+                'form_data' => [ $request->account, $request->password]
             ]);
         }
 
@@ -42,6 +43,9 @@ class AuthenticationController extends Controller
 
         if(session('return_url')){
             return Redirect::to(session('return_url'));
+        }
+        if($request->return_url){
+            return Redirect::to($request->return_url);
         }
         return Redirect::route('index');
     }

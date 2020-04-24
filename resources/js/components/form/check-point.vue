@@ -10,17 +10,19 @@
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item">
                     <div class='row'>
-                        <div class='col-sm-2 col-align-c'>簽核人</div>
-                        <div class='col-sm-2 col-align-c'>代簽人</div>
+                        <div class='col-sm-1 d-flex justify-content-center'>簽核人</div>
+                        <div class='col-sm-1 d-flex justify-content-center'>身份</div>
+                        <div class='col-sm-2 d-flex justify-content-center'>代簽人</div>
                         <div class='col-sm-2 d-flex justify-content-center'>簽核狀態</div>
-                        <div class='col-sm-2 col-align-l'>簽核日期</div>
-                        <div class='col-sm-3 col-align-l'>備註</div>
+                        <div class='col-sm-2 col-align-l d-flex justify-content-center'>簽核日期</div>
+                        <div class='col-sm-3 col-align-l d-flex justify-content-center'>備註</div>
                     </div>
                     </li>
                     <li class="list-group-item" v-for='item in check_list' @model='check_list'>
                         <div class='row'>
-                            <div class='col-sm-2 col-align-c'>{{getMember(item.signed_member_id)}}</div>
-                            <div class='col-sm-2 col-align-c'>{{getReplace(item.replace_signed_member_id)}}</div>
+                            <div class='col-sm-1 d-flex justify-content-center'>{{getMember(item.signed_member_id)}}</div>
+                            <div class='col-sm-1 d-flex justify-content-center'>{{item.role_str}}</div>
+                            <div class='col-sm-2 d-flex justify-content-center'>{{getReplace(item.replace_signed_member_id)}}</div>
                             <div class='col-sm-2 d-flex justify-content-center' v-html='statusBadge(item.status)'>}
                             </div>
                             <div class='col-sm-2 col-align-l'  v-html='item.signed_at'></div>
@@ -176,10 +178,9 @@
                 }
                 Swal.fire( swalConfig
                 ).then(result=>{
-                    if(result){
+                    if(type === 'success'){
                         javascript:location.href = '/form-edit?id=' + this.form_id;
                     }
-
                 })
             },
             async confer(action) {

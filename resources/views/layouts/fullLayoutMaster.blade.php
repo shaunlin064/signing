@@ -47,7 +47,6 @@ $configData = Helper::applClasses();
         </div>
     </div>
     <!-- End: Content-->
-
     {{-- include default scripts --}}
     @include('panels/scripts')
 
