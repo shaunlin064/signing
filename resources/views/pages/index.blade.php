@@ -478,8 +478,10 @@
         <script src="{{ asset(mix('vendors/js/charts/apexcharts.min.js')) }}"></script>
         <script src="{{ asset(mix('vendors/js/extensions/tether.min.js')) }}"></script>
         <script src="{{ asset(mix('vendors/js/extensions/shepherd.min.js')) }}"></script>
+
 @endsection
 @section('page-script')
         <!-- Page js files -->
         <script src="{{ asset(mix('js/scripts/pages/dashboard-analytics.js')) }}"></script>
+
 @endsection

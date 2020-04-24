@@ -527,7 +527,6 @@
 
                 $this->signingBeforeMe($request, $checkPoint, $now);
 
-
                 //沒有人卡關 人員在代簽名單中 人員為簽署者 則可簽
                 $checkPoint->signed_at = $now;
                 $checkPoint->signature = $request->get('signature');

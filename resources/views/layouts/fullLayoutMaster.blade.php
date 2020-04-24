@@ -1,8 +1,10 @@
 <?
+    use App\Helpers\Helper;
     $pageConfigs = [
         'bodyClass' => "bg-full-screen-image",
         'blankPage' => true
     ];
+
     ?>
 @isset($pageConfigs)
 {!! Helper::updatePageConfig($pageConfigs) !!}
@@ -28,10 +30,11 @@
 {{-- {!! Helper::applClasses() !!} --}}
 @php
 $configData = Helper::applClasses();
+
 @endphp
 
 <body
-    class="vertical-layout vertical-menu-modern 1-column {{ $configData['blankPageClass'] }} {{ $configData['bodyClass'] }} {{($configData['theme'] === 'light') ? '' : $configData['theme'] }}"
+    class="vertical-layout vertical-menu-modern 1-column {{ $configData['blankPageClass'] }} {{ $configData['bodyClass'] }} {{($configData['theme'] === 'light') ? '' : $configData['layoutTheme'] }}"
     data-menu="vertical-menu-modern" data-col="1-column" data-layout="{{ $configData['theme'] }}">
 
     <!-- BEGIN: Content-->

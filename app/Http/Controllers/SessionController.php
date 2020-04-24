@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Route;
+use Illuminate\Support\Facades\Session;
 
 class SessionController extends Controller
 {
@@ -14,18 +15,17 @@ class SessionController extends Controller
      * @param $data
      * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    public static function cacheSessionData ( $data ): void
+    public static function store ( $data ): void
     {
-        $loginUser = $data['login_user'];
-        $date = Carbon::now()->format('Y-m-d');
+        $loginUser = &$data['login_user'];
         $loginUser['last_login'] = Carbon::now()->format('Y-m-d h:i:s');
         $member = $data['member'];
         $department = $data['department'];
 
-        if ( Cache::store('memcached')->has('login_user') )
+        if ( Cache::store('memcached')->has('login_user_log') )
         {
             $cacheLoginser = collect(Cache::store('memcached')
-                                         ->get('login_user'))->map(function ( $v, $k ) use ( $loginUser ) {
+                                         ->get('login_user_log'))->map(function ( $v, $k ) use ( $loginUser ) {
                 if ( $v['id'] == $loginUser['id'] )
                 {
                     $v = $loginUser;
@@ -34,9 +34,10 @@ class SessionController extends Controller
             });
         } else
         {
-            $cacheLoginser[] = $data['login_user'];
+            $cacheLoginser[$loginUser['id']] = $loginUser;
         }
-        Cache::store('memcached')->forever('login_user', $cacheLoginser);
+        session(['js_signing' =>  $data]);
+        Cache::store('memcached')->forever('login_user_log', $cacheLoginser);
         Cache::store('memcached')->forever('member', $member);
         Cache::store('memcached')->forever('department', $department);
     }
@@ -79,9 +80,9 @@ class SessionController extends Controller
     }
 
     public function release(){
+
         session::forget('js_signing');
         session::forget('return_url');
-
         return null;
     }
 }

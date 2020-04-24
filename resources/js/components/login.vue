@@ -9,9 +9,10 @@
             <p class="px-2">Welcome back, please login to your account.</p>
             <div class="card-content">
                 <div class="card-body pt-1">
-                    <form action="">
+                    <form action="/remoteLogin" method='post'>
                         <fieldset class="form-label-group form-group position-relative has-icon-left">
-                            <input type="text" class="form-control" id="user-name" placeholder="Username"
+                            <input type='hidden' name='_token' :value='csrf_token'>
+                            <input type="text" class="form-control" id="user-name" name='account' placeholder="Username"
                                    v-model='account' required>
                             <div class="form-control-position">
                                 <i class="feather icon-user"></i>
@@ -20,7 +21,7 @@
                         </fieldset>
 
                         <fieldset class="form-label-group position-relative has-icon-left">
-                            <input type="password" class="form-control" id="user-password" placeholder="Password"
+                            <input type="password" class="form-control" id="user-password" name='password' placeholder="Password"
                                    v-model='password' required>
                             <div class="form-control-position">
                                 <i class="feather icon-lock"></i>
@@ -42,7 +43,7 @@
                                 </fieldset>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary float-right btn-inline" @click='login' :disabled='lodding'>
+                        <button type="submit" class="btn btn-primary float-right btn-inline"  :disabled='lodding'>
                             <span role="status" aria-hidden="true" class="spinner-grow spinner-grow-sm" v-show='lodding'></span>
                             Login</button>
                     </form>
@@ -61,7 +62,9 @@
 
     export default {
         name: "login",
-        props: {},
+        props: {
+            csrf_token:String,
+        },
         data() {
             return {
                 account: '',
@@ -85,7 +88,6 @@
                     this.lodding = false;
                     return false;
                 }
-                console.log(this.response.data);
                 if(this.response.data.status != 1 ){
                     alert('密碼錯誤');
                     this.lodding = false;

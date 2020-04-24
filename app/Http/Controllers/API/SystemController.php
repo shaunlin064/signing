@@ -254,7 +254,6 @@
          */
         public function login ( Request $request )
         {
-
             if ( $request->get('key') != null )
             {
                 //由key登入的狀況
@@ -281,8 +280,8 @@
 //            $api_request = $api_request->replace($request->input());
 //            $response = Route::dispatch($api_request)->getOriginalContent();
 
-            SessionController::cacheSessionData($message['data']);
 
+//            SessionController::store($message['data']);
             return $message;
         }
 
@@ -408,7 +407,6 @@
         {
             try
             {
-
                 $message = SystemMessage::where('member_id', $request->get('member_id'))
                     ->where('id', $request->get('id'))
                     ->first()->toArray();
@@ -483,8 +481,5 @@
 
             return $data;
         }
-
-
-
 
     }

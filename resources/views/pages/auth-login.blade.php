@@ -1,3 +1,4 @@
+
 @extends('layouts/fullLayoutMaster')
 
 @section('title', 'Login Page')
@@ -15,7 +16,7 @@
                     <div class="col-lg-6 d-lg-block d-none text-center align-self-center px-1 py-0">
                         <img src="{{ asset('images/pages/login.png') }}" alt="branding logo">
                     </div>
-                    <login></login>
+                    <login :csrf_token='"{{ csrf_token() }}"' ></login>
                 </div>
             </div>
         </div>

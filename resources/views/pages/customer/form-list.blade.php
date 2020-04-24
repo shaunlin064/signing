@@ -39,8 +39,10 @@
 @section('vendor-script')
     {{-- vendor files --}}
     <script src="{{ asset(mix('vendors/js/tables/ag-grid/ag-grid-community.min.noStyle.js')) }}"></script>
+
 @endsection
 @section('page-script')
     {{-- Page js files --}}
+
 {{--    <script src="{{ asset(mix('js/scripts/form/form-list.js')).'?v='.time() }}"></script>--}}
 @endsection

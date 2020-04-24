@@ -132,7 +132,8 @@
                             vue.form_type = 'form-travel_fee';
                             break;
                     }
-                    if(result.data.apply_member_id === vue.login_user.id){
+
+                    if(result.data.apply_member_id ===  parseInt(vue.login_user.id)){
                         if (result.data.status == 1) {
                             vue.can_edit = true;
                         }
@@ -140,6 +141,7 @@
 
                     vue.check_list = result.data.checkPoint;
                     vue.can_check = result.data.check_status.can_check == 0 ? false : true;
+
                     vue.check_id = result.data.check_status.form_check_point_id;
                     vue.jsonReverse(result.data.column);
                 }).then(() => {
