@@ -83,6 +83,7 @@
                 async asyncGet() {
                     this.over_time = await this.settime();
                     if(this.over_time){
+                        $('html, body').animate({scrollTop : 0},0);
                         this.logout();
                     }
                 },
@@ -140,6 +141,7 @@
                                 vue.over_time = false;
                                 vue.lodding = false;
                                 //重新計時
+                                $('body').css({'overflow':''});
                                 vue.asyncGet();
                                 vue.password = '';
                             }
@@ -178,17 +180,18 @@
                     ).catch(err => console.error(err));
                 },
                 logout(){
-                    axios({
-                        url: 'session/release',
-                        method: 'post',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        }
-                    }).then(
-                        (res)=>{
-                            $('body').css({'overflow':'hidden'});
-                        }
-                    ).catch(err => console.error(err));
+                    $('body').css({'overflow':'hidden'});
+                    // axios({
+                    //     url: 'session/release',
+                    //     method: 'post',
+                    //     headers: {
+                    //         'Content-Type': 'application/json',
+                    //     }
+                    // }).then(
+                    //     (res)=>{
+                    //         $('body').css({'overflow':'hidden'});
+                    //     }
+                    // ).catch(err => console.error(err));
                 },
             },
             updated() {
