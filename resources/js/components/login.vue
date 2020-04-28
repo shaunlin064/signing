@@ -45,7 +45,7 @@
 <!--                                </fieldset>-->
 <!--                            </div>-->
 <!--                        </div>-->
-                        <button type="submit" class="btn btn-primary float-right btn-inline"  :disabled='lodding'>
+                        <button type="submit" class="btn btn-primary float-right btn-inline" @click='login' :disabled='lodding'>
                             <span role="status" aria-hidden="true" class="spinner-grow spinner-grow-sm" v-show='lodding'></span>
                             Login</button>
                     </form>
@@ -112,29 +112,30 @@
                    return;
                 }
                 this.lodding = true;
-                let password = MD5(this.password);
-                let account = this.account;
-                let vue = this;
+                $('form').submit();
+                // let password = MD5(this.password);
+                // let account = this.account;
+                // let vue = this;
 
-                axios.post('api/system/login', {
-                    account,
-                    password
-                })
-                    .then(function (response) {
-                        vue.response = response;
-                        if(vue.validate()){
-                            sessionStorage.setItem('login_user', JSON.stringify(response.data.data.login_user));
-                            sessionStorage.setItem('member', JSON.stringify(response.data.data.member));
-                            sessionStorage.setItem('department', JSON.stringify(response.data.data.department));
-                            localStorage.setItem('login_user', JSON.stringify(response.data.data.login_user));
-                            localStorage.setItem('member', JSON.stringify(response.data.data.member));
-                            localStorage.setItem('department', JSON.stringify(response.data.data.department));
-                            javascript:location.href='/';
-                        }
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
+                // axios.post('api/system/login', {
+                //     account,
+                //     password
+                // })
+                //     .then(function (response) {
+                //         vue.response = response;
+                //         if(vue.validate()){
+                //             sessionStorage.setItem('login_user', JSON.stringify(response.data.data.login_user));
+                //             sessionStorage.setItem('member', JSON.stringify(response.data.data.member));
+                //             sessionStorage.setItem('department', JSON.stringify(response.data.data.department));
+                //             localStorage.setItem('login_user', JSON.stringify(response.data.data.login_user));
+                //             localStorage.setItem('member', JSON.stringify(response.data.data.member));
+                //             localStorage.setItem('department', JSON.stringify(response.data.data.department));
+                //             javascript:location.href='/';
+                //         }
+                //     })
+                //     .catch(function (error) {
+                //         console.log(error);
+                //     });
 
             },
         },
