@@ -21,14 +21,15 @@
                         </div>
                     </div>
                 </a>
-                <a class="d-flex justify-content-between" href="javascript:void(0)" v-for='item in message'>
+<!--                :href='item.url'-->
+                <a class="d-flex justify-content-between" @click='messageRead($event,index)' v-for=' (item, index) in message'>
                     <div class="media d-flex align-items-start">
                         <div class="media-left"><i
                             class="feather icon-plus-square font-medium-5 primary"></i>
                         </div>
                         <div class="media-body">
-                            <h6 class="primary media-heading">{{item.title}}!</h6><small
-                            class="notification-text">{{item.content}}</small>
+                            <h6 class="primary media-heading" v-show='item.read_at === null'>New !</h6>
+                            <small class="notification-text">{{item.content}}</small>
                         </div>
                         <small>
                             <time class="media-meta" :datetime='item.created_at'>
@@ -111,11 +112,11 @@
 <!--                </div>-->
 <!--                </a>-->
             </li>
-<!--            <li class="dropdown-menu-footer">-->
-<!--                <a class="dropdown-item p-1 text-center" href="javascript:void(0)">-->
-<!--                    Read all notifications-->
-<!--                </a>-->
-<!--            </li>-->
+            <li class="dropdown-menu-footer">
+                <a class="dropdown-item p-1 text-center" href="javascript:void(0)" @click='messageReadAll'>
+                    Read all notifications
+                </a>
+            </li>
         </ul>
     </li>
 </template>
@@ -129,7 +130,6 @@
         data() {
             return {
                 new_message_count: 0,
-                new_message_ids: [],
                 message_count : 0,
                 message: [],
             }
@@ -184,7 +184,7 @@
                 axios({
                     url: 'api/system/message/list',
                     method: 'post',
-                    data: {member_id: vue.login_user.id},
+                    data: {member_id: vue.login_user.id , take : 10},
                     headers: {
                         'Content-Type': 'application/json',
                     }
@@ -196,7 +196,6 @@
                         res.data.data.map((v)=>{
                             if(v.read_at === null){
                                 count++;
-                                vue.new_message_ids.push(v.id);
                             }
                         });
                         vue.new_message_count = count;
@@ -207,29 +206,65 @@
                 let targetDom = $(event.currentTarget);
                 targetDom.parent('.dropdown').addClass('show');
                 targetDom.next().addClass('show');
-                let vue = this;
 
-               if(vue.new_message_ids){
-                   axios({
-                       url: 'api/system/message/setRead',
-                       method: 'post',
-                       data: {
-                           id : vue.new_message_ids,
-                           member_id: vue.login_user.id
-                       },
-                       headers: {
-                           'Content-Type': 'application/json',
-                       }
-                   }).then(
-                       (res) => {
-                           if(res.data.status === 1){
-                               vue.new_message_count = 0;
-                               vue.new_message_ids = [];
-                           }
-                       }
-                   ).catch(err => console.error(err));
-               }
             },
+            messageRead(event,index){
+                let vue = this;
+                let id = vue.message[index].id;
+                let url = vue.message[index].url;
+
+                if(vue.message[index].read_at === null){
+                    axios({
+                        url: 'api/system/message/setRead',
+                        method: 'post',
+                        data: {
+                            id : [id],
+                            member_id: vue.login_user.id
+                        },
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    }).then(
+                        (res) => {
+                            if(res.data.status === 1){
+                                vue.new_message_count = vue.new_message_count-1;
+                            }
+
+                        }
+                    ).catch(err => console.error(err));
+                }
+
+                javascript:location.href = url;
+
+            },
+            messageReadAll(){
+                let vue =this;
+                axios({
+                    url: 'api/system/message/setReadAll',
+                    method: 'post',
+                    data: {
+                        member_id: vue.login_user.id
+                    },
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                }).then(
+                    (res) => {
+                        if(res.data.status === 1){
+                            vue.new_message_count = 0;
+                        }
+                        vue.message = res.data.data;
+                        vue.message_count = res.data.data.length;
+                        let count = 0;
+                        res.data.data.map((v)=>{
+                            if(v.read_at === null){
+                                count++;
+                            }
+                        });
+                        vue.new_message_count = count;
+                    }
+                ).catch(err => console.error(err));
+            }
         },
         updated() {
             // console.log('view updated')
