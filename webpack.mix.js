@@ -1,7 +1,14 @@
 const mix = require('laravel-mix');
 const exec = require('child_process').exec;
 require('dotenv').config();
-
+if(Mix.isWatching()){
+    mix.webpackConfig({
+        watchOptions:{
+            ignored : /node_modules/,
+            //poll : 1000
+        },
+    })
+}
 /*
  |--------------------------------------------------------------------------
  | Mix Asset Management

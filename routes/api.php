@@ -173,6 +173,13 @@ Route::post('/system/message/setRead',
         'as' => 'api.system.message.setRead' ,
         'uses' => 'API\SystemController@messageSetRead'
     ]);
+//設定所有系統訊息已讀取
+Route::post('/system/message/setReadAll',
+            [
+                'as' => 'api.system.message.setReadAll' ,
+                'uses' => 'API\SystemController@messageSetReadAll'
+            ]);
+
 
 /**
  * ===================================================================

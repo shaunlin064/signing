@@ -42,7 +42,7 @@
         },
         {
           "url": "form-all",
-          "name": "所有簽核",
+          "name": "已審簽核",
           "icon": "feather icon-circle",
           "i18n": "nav.dashboard_ecommerce"
         }
