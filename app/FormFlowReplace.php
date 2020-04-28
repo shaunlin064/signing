@@ -11,8 +11,8 @@ class FormFlowReplace extends Model
 
     protected $fillable = [
         'form_flow_id',
-        'review_type',
-        'reviewer_id'
+        'replace_type',
+        'replace_id'
     ];
 
     /**

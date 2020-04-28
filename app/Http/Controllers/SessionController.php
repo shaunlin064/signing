@@ -46,18 +46,23 @@ class SessionController extends Controller
      * @param $dataKey 'login_user' ,'member' , 'department'
      * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    public function getSession($dataKey){
+    public static function getSession($dataKey){
+
+        if(session('js_signing'.$dataKey) !== null){
+            return session('js_signing'.$dataKey);
+        }
 
         if ( !Cache::store('memcached')->has($dataKey) ){
-            $this->getRemoteData();
+            SessionController::getRemoteData();
         }
 
         return Cache::store('memcached')->get($dataKey);
 
     }
-    public function getRemoteData(){
+    public static function getRemoteData(){
         $request = new Request(['account'=>'shaun','password'=>'495200aac2f182eaca03d02df7887e06']);
         $systemController = New \App\Http\Controllers\API\SystemController();
+
         $systemController->login($request);
     }
 

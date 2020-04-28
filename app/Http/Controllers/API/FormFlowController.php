@@ -4,7 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-
+use Validator;
 use App\FormFlow;
 use DB;
 
@@ -93,9 +93,27 @@ class FormFlowController extends Controller
      * @input overwrite: 是否可被上層簽核取代 0:不可 1:可
      * @input replace: 是否有代簽 0:不可 1:可
      * @input role: 角色 1:簽核 2:執行
+     * @input replace_type : 簽核類型 1:指定人 2:指定位階
+     * @input replace_id : 指定簽核人ID or 簽核位階 1:一階主管 2:二階主管 3:三階主管
      * @return array
      */
     public function add(Request $request){
+        $validator = Validator::make($request->all(),
+                                     [ 'name' => 'required',
+                                       'form_id' => 'required',
+                                       'review_order' => 'required',
+                                       'review_type' => 'required',
+                                       'reviewer_id' => 'required',
+                                       'overwrite' => 'required',
+                                       'replace' => 'required',
+                                       'role' => 'required',
+                                         ]);
+        if($validator->errors()->any()){
+            self::$message['status_string'] = '新增失敗';
+            self::$message['message'] = '欄位驗證失敗';
+            self::$message['data'] = $validator->errors()->toArray();
+            return self::$message;
+        }
 
         DB::beginTransaction();
         try {
@@ -103,24 +121,17 @@ class FormFlowController extends Controller
             $FlowCheck = FormFlow::where('form_id',$request->get('form_id'))
                 ->where('review_order',$request->get('review_order'))
                 ->count();
+
             if($FlowCheck == 0){
                 //寫入簽核關卡資料
-                $FormFlow = FormFlow::create([
-                    'form_id' => $request->get('form_id'),
-                    'review_order' => $request->get('review_order'),
-                    'review_type' =>$request->get('review_type'),
-                    'reviewer_id' =>$request->get('reviewer_id'),
-                    'overwrite' =>$request->get('overwrite'),
-                    'replace' =>$request->get('replace'),
-                    'role' =>$request->get('role'),
-                ]);
+                $FormFlow = FormFlow::create($request->except(['replace_type','replace_id']));
 
                 //寫入多筆關卡可代簽資料
                 if($request->get('replace_type') != null) {
                     foreach ($request->get('replace_type') as $k => $v) {
-                        $FormFlow->replace()->create([
-                            'review_type' => $v,
-                            'reviewer_id' => $request->get('reviewer_id')[$k]
+                        $FormFlow->replaceMember()->create([
+                            'replace_type' => $v,
+                            'replace_id' => $request->get('replace_id')[$k]
                         ]);
                     }
                 }
@@ -139,6 +150,7 @@ class FormFlowController extends Controller
             }
 
         }catch (\Exception $ex){
+
             DB::rollback();
             self::$message['status_string'] = '新增失敗';
             self::$message['message'] = '資料庫錯誤!'.$ex->getMessage();

@@ -6,6 +6,9 @@
      * Time: 14:34
      */
 
+    use App\Http\Controllers\SessionController;
+
+
 
     /*START 「Date 相關」 */
     //判斷日期為當月第幾週
@@ -66,14 +69,12 @@
 
     function getMember ( $id, $field = 'name' )
     {
-        $sessionController = New \App\Http\Controllers\SessionController();
-        $data = $sessionController->getSession('member');
+        $data = SessionController::getSession('member');
         return $data[$id][$field];
     }
 
     function getDepartment ( $id, $field = 'name' )
     {
-        $sessionController = New \App\Http\Controllers\SessionController();
-        $data = $sessionController->getSession('department');
+        $data = SessionController::getSession('department');
         return $data[$id][$field];
     }

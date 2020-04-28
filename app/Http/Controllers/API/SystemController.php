@@ -280,7 +280,7 @@
             $api_request = $api_request->replace($request->input());
             $response = Route::dispatch($api_request)->getOriginalContent();
 
-//            SessionController::store($message['data']);
+            SessionController::store($message['data']);
             return $message;
         }
 
@@ -436,10 +436,8 @@
 
             try
             {
-
                 $message = SystemMessage::where('member_id', $request->get('member_id'))
                     ->whereIn('id', $request->get('id'));
-
 
                 if ( $message->exists() )
                 {
@@ -464,6 +462,46 @@
             return self::$message;
         }
 
+        /**
+         * @param Request $request
+         * 設定user 所有訊息為已讀
+         * @input member_id : 接收者ID
+         * @return array
+         */
+        public function messageSetReadAll ( Request $request )
+        {
+
+            try
+            {
+                $message = SystemMessage::where('member_id', $request->get('member_id'))->whereNull('read_at');
+
+                if ( $message->exists() )
+                {
+                    $id = $message->get()->pluck('id');
+
+                    SystemMessage::query()->whereIn('id',$id)->update(['read_at' => date('Y-m-d H:i:s')]);
+
+                    $message = SystemMessage::where('member_id', $request->get('member_id'))
+                        ->orderBy('id', 'DESC')->take(10)->get()->toArray();
+
+                    self::$message['status'] = 1;
+                    self::$message['status_string'] = "設定成功";
+                    self::$message['data'] = $message;
+                } else
+                {
+                    self::$message['status_string'] = "設定失敗";
+                    self::$message['data'] = '找不到此訊息';
+                }
+
+
+            } catch ( \Exception $ex )
+            {
+                self::$message['status_string'] = "設定失敗";
+                self::$message['message'] = $ex->getMessage();
+            }
+
+            return self::$message;
+        }
         /**
          * @param string $data : 要解密的資料
          * @param string $method :解密碼的方式

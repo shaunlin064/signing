@@ -17,8 +17,8 @@ class CreateFormFlowReplace extends Migration
             $table->id();
             $table->timestamps();
             $table->unsignedBigInteger('form_flow_id')->comment('表單簽核流程ID');
-            $table->unsignedTinyInteger('review_type')->comment('簽核人類型 1:指定人 2:指定位階');
-            $table->unsignedInteger('reviewer_id')->comment('指定簽核人ID or 簽核位階 1:一階主管 2:二階主管 3:三階主管');
+            $table->unsignedTinyInteger('replace_type')->comment('簽核人類型 1:指定人 2:指定位階');
+            $table->unsignedInteger('replace_id')->comment('指定簽核人ID or 簽核位階 1:一階主管 2:二階主管 3:三階主管');
         });
 
       DB::statement("ALTER TABLE `form_flow_replace` comment'表單簽核流程代簽'");

@@ -18,7 +18,7 @@ class CheckLogin
     {
         if(session('js_signing') == null)
         {
-            session(['return_url'=> $request->fullUrl()]);
+            session(['return_url' => $request->fullUrl()]);
             return Redirect::to('login');
         }
         return $next($request);

@@ -12,6 +12,7 @@ class FormFlow extends Model
     protected $table = 'form_flow';
 
     protected $fillable = [
+        'name',
         'form_id',
         'review_order',
         'review_type',
