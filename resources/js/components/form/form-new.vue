@@ -1,6 +1,5 @@
 <template>
-
-    <form action="#" method='GET' class="steps-validation wizard-circle" :id='dom_id'>
+    <form onsubmit="return false" class="steps-validation wizard-circle" :id='dom_id'>
         <!-- Step 1 -->
         <h6><i class="step-icon feather icon-home"></i> Step 1</h6>
         <fieldset>
@@ -29,7 +28,7 @@
             <component v-bind:is="form_type" :dom_id='form_type' :form_action='"new"' :can_edit='true'/>
         </keep-alive>
         <div class='row border-top-light mt-2 justify-content-end' v-show='form_type'>
-            <button type="button" class="btn btn-primary mr-1 mb-1 waves-effect waves-light text-right mt-2" @click='submit' :disabled='lodding'>
+            <button type="submit" class="btn btn-primary mr-1 mb-1 waves-effect waves-light text-right mt-2" @click='submit' :disabled='lodding'>
                 <span role="status" aria-hidden="true" class="spinner-grow spinner-grow-sm" v-show='lodding'></span>
                 送出</button>
         </div>
@@ -53,6 +52,7 @@
                 dom_id: 'form-new',
                 dom_target: 'form_type',
                 lodding : false,
+                validate_message : {},
             }
         },
         computed: {
@@ -87,7 +87,7 @@
                     eval(`vue.form_submit_data['${vue.form_type}']['form_id'] = '${selectFormConfig['id']}';`);
                     Object.keys(column).forEach(columnName=>{
                         /*TODO::set fake default 之後待討論驗證與形態問題*/
-                        eval(`vue.form_submit_data['${vue.form_type}']['${columnName}'] = '1';`);
+                        eval(`vue.form_submit_data['${vue.form_type}']['${columnName}'] = '';`);
 
                         /*default Array*/
                         if($.inArray(columnName,['form_stamp_type','accompany_user_id','attend_member','apply_attachment']) != -1){
@@ -111,29 +111,63 @@
                     this.currentComponent(e);
                 });
             },
+            validate(){
+                let vue = this;
+                let data = this.getPostData();
+                this.lodding = true;
+                vue.validate_message = {};
+                let checkColumn = ['apply_attachment','remark'];
+                switch (vue.form_type) {
+                    case 'form-sign':
+                        checkColumn.push('recipient_company','recipient_contact','recipient_phone','recipient_address');
+                        break;
+                }
+                Object.keys(data).forEach( key => {
+                    if( data[key].length == 0) {
+                        if($.inArray(key, checkColumn) === -1){
+                            console.log(checkColumn,$.inArray(key, checkColumn));
+                            vue.lodding = false;
+                            vue.validate_message[key] = 'required';
+                        }
+                    }
+                });
+                if (Object.keys(vue.validate_message).length !== 0) {
+                    return true; // 如果为空,返回false
+                }
+                return false;
+
+            },
             submit(){
                 this.lodding = true;
                 let data = this.getPostData();
                 let vue = this;
+
+                /*post validate*/
+                let type = this.validate();
+                console.log(type);
+                if(type){
+                    return false;
+                }
+                console.log('post success');
                 /* some Array need to Json*/
-                data = this.toJson(data);
-
-                /*TODO::post 後續轉跳與錯誤動作*/
-                axios.post('api/form/apply', data)
-                    .then(function (response) {
-                        let result = response.data;
-                        if(result.status != 1 || result.status_string !== '申請成功'){
-                            alert(result.message + result.status_string);
-                            vue.lodding = false;
-                            return false;
-                        }
-                        javascript:location.href='/form-list';
-
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                        alert(error);
-                    });
+                // data = this.toJson(data);
+                //
+                // /*TODO::post 後續轉跳與錯誤動作*/
+                // axios.post('api/form/apply', data)
+                //     .then(function (response) {
+                //         let result = response.data;
+                //         if(result.status != 1 || result.status_string !== '申請成功'){
+                //             alert(result.message + result.status_string);
+                //             vue.lodding = false;
+                //             return false;
+                //         }
+                //         javascript:location.href='/form-list';
+                //
+                //     })
+                //     .catch(function (error) {
+                //         console.log(error);
+                //         alert(error);
+                //     });
 
             },
             getPostData(){

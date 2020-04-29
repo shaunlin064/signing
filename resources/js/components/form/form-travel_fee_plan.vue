@@ -14,9 +14,9 @@
         </div>
         <div class="col-md-3">
             <div class="form-label-group">
-                <input type="text" class="form-control"
+                <input type="date" class="form-control"
                        placeholder="日期" v-model='form_submit_data[dom_id]["items"][id]["date"]'
-                       :disabled='can_edit === false'>
+                       :disabled='can_edit === false' required>
                 <label>日期</label>
             </div>
         </div>
@@ -25,7 +25,7 @@
 
                 <input type="text" class="form-control"
                        placeholder="洽訪公司" v-model='form_submit_data[dom_id]["items"][id]["customer_company"]'
-                       :disabled='can_edit === false'
+                       :disabled='can_edit === false' required
                 >
                 <label>洽訪公司</label>
             </div>
@@ -34,7 +34,7 @@
             <div class="form-label-group">
                 <input type="text" class="form-control" placeholder="對象姓名/稱謂"
                        v-model='form_submit_data[dom_id]["items"][id]["customer_name"]'
-                       :disabled='can_edit === false'
+                       :disabled='can_edit === false' required
                 >
                 <label>對象姓名/稱謂</label>
             </div>
@@ -43,7 +43,7 @@
             <div class="form-label-group">
                 <input type="text" class="form-control" placeholder="會議形式"
                        v-model='form_submit_data[dom_id]["items"][id]["meet_type"]'
-                       :disabled='can_edit === false'
+                       :disabled='can_edit === false' required
                 >
                 <label>會議形式</label>
             </div>
@@ -54,7 +54,7 @@
                 <!--TODO:: form submit removeAttr disabled-->
                 <select class="custom-select select2 form-control"
                         :disabled='form_submit_data[dom_id]["items"][id]["charge_user"] !== null'
-                        :id='"charge_user_"+id'
+                        :id='"charge_user_"+id' required
                 >
                     <option value>請選擇</option>
                     <option v-for='item in member' :value='item.id'
@@ -67,7 +67,7 @@
             <div class="form-label-group mt-2">
                 <input type="text" class="form-control" v-model='form_submit_data[dom_id]["items"][id]["agenda"]'
                        :disabled='can_edit === false'
-                       placeholder="洽談內容"
+                       placeholder="洽談內容" required
                 >
                 <label>洽談內容</label>
             </div>

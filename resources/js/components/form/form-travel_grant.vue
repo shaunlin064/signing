@@ -4,6 +4,60 @@
             <div class="card">
                 <h4 class="card-title">差旅申請單</h4>
             </div>
+            <div class='card-body row justify-content-end'>
+                <div class="modal-info mr-1 mb-1 d-inline-block">
+                    <button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#info">
+                        注意事項
+                    </button>
+
+                    <div class="modal fade text-left" id="info" tabindex="-1" role="dialog"
+                         aria-labelledby="myModalLabel130" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header bg-info white">
+                                    <h5 class="modal-title" id="myModalLabel130">Info</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <br class="modal-body">
+                                <div class="card">
+                                    <div class="card-content">
+                                        <div class="card-body">
+                                            <h4 class="card-title">表單填寫事項</h4>
+                                            <p class="card-text">
+                                                出差地點為雙北市以外之地區，須事先申請並於出差後一周內報銷。</p>
+                                        </div>
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item">
+                                                提出差旅申請(同行者只需填寫一份申請單)<br>
+
+                                                國內外出差申請單<br>
+
+                                                請詳載姓名、出差事由、出差地點、出差期間、工作計劃及逐日前往地點、訪洽對象等，並於一周前提出申請。<br>
+                                            </li>
+                                        </ul>
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item">
+                                                若需公司協助交通及住宿安排，請於申請單註記，並於提交申請單時，與執行長室Ravin再次說明<br>
+                                            </li>
+                                        </ul>
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item">
+                                                用印完畢後,若選擇「自行寄出」者,將收到用完印之合約;勾選「總務寄出」
+                                                者,將直接由總務協助寄出。
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-info" data-dismiss="modal">Accept</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="row">
             <div class="col-md-6">
@@ -22,7 +76,7 @@
             <div class='col-md-6 mt-2'>
                 <div class="form-label-group">
                     <input type="text" id="apply_subject" class="form-control" placeholder="出差事由" name="apply_subject"
-                           v-model='form_submit_data[dom_id]["apply_subject"]' :disabled='can_edit === false'>
+                           v-model='form_submit_data[dom_id]["apply_subject"]' :disabled='can_edit === false' required>
                     <label for="apply_subject">出差事由</label>
                 </div>
             </div>
@@ -31,26 +85,26 @@
                     <label>出差人</label>
                     <select class="custom-select select2 form-control" multiple="multiple" id='accompany_user_id'
                             name="accompany_user_id" v-model='form_submit_data[dom_id]["accompany_user_id"]'
-                            :disabled='can_edit === false'>
+                            :disabled='can_edit === false' required>
                         <option v-for='item in member' :value='item.id'>{{item.name}}</option>
                     </select>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="form-label-group">
-                    <input type="text" id="travel_date_start" class="form-control"
+                    <input type="date" id="travel_date_start" class="form-control"
                            placeholder="出差起始日期"
                            name="travel_date_start" v-model='form_submit_data[dom_id]["travel_date_start"]'
-                           :disabled='can_edit === false'>
+                           :disabled='can_edit === false' required>
                     <label for="travel_date_start">出差起始日期</label>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="form-label-group">
-                    <input type="text" id="travel_date_end" class="form-control"
+                    <input type="date" id="travel_date_end" class="form-control"
                            placeholder="出差結束日期"
                            name="travel_date_end" v-model='form_submit_data[dom_id]["travel_date_end"]'
-                           :disabled='can_edit === false'>
+                           :disabled='can_edit === false' required>
                     <label for="travel_date_end">出差結束日期</label>
                 </div>
             </div>
@@ -59,7 +113,7 @@
                     <input type="text" id="travel_location" class="form-control"
                            placeholder="出差地點"
                            name="travel_location" v-model='form_submit_data[dom_id]["travel_location"]'
-                           :disabled='can_edit === false'>
+                           :disabled='can_edit === false' required>
                     <label for="travel_location">出差地點</label>
                 </div>
             </div>
@@ -68,17 +122,17 @@
                     <input type="text" id="travel_stay_location" class="form-control"
                            placeholder="住宿地點" name="travel_stay_location"
                            v-model='form_submit_data[dom_id]["travel_stay_location"]'
-                           :disabled='can_edit === false'>
+                           :disabled='can_edit === false' required>
                     <label for="travel_stay_location">住宿地點</label>
                 </div>
             </div>
 
             <div class='col-md-6'>
                 <div class="form-label-group">
-                    <input type="text" id="predict_cost" class="form-control"
+                    <input type="number" min='0' max='99999' step='1' id="predict_cost" class="form-control"
                            placeholder="預估費用(台幣)"
                            name="predict_cost" v-model='form_submit_data[dom_id]["predict_cost"]'
-                           :disabled='can_edit === false'>
+                           :disabled='can_edit === false' required>
                     <label for="predict_cost">預估費用(台幣)</label>
                 </div>
             </div>
@@ -87,7 +141,7 @@
                             <textarea class="form-control" id="travel_remark" rows="1" placeholder="出差事由詳述"
                                       v-model='form_submit_data[dom_id]["travel_remark"]'
                                       :disabled='can_edit === false'
-                                      name="travel_remark"></textarea>
+                                      name="travel_remark" required></textarea>
                     <label for="travel_remark">出差事由詳述</label>
                 </fieldset>
             </div>

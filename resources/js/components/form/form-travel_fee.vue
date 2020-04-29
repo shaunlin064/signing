@@ -4,6 +4,63 @@
             <div class="card">
                 <h4 class="card-title">差旅費用報銷單</h4>
             </div>
+            <div class='card-body row justify-content-end'>
+                <div class="modal-info mr-1 mb-1 d-inline-block">
+                    <button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#info">
+                        注意事項
+                    </button>
+
+                    <div class="modal fade text-left" id="info" tabindex="-1" role="dialog"
+                         aria-labelledby="myModalLabel130" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header bg-info white">
+                                    <h5 class="modal-title" id="myModalLabel130">Info</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <br class="modal-body">
+                                <div class="card">
+                                    <div class="card-content">
+                                        <div class="card-body">
+                                            <h4 class="card-title">表單填寫事項</h4>
+                                            <p class="card-text">
+                                                旅費核銷單,需勾選已申請通過之差旅單<br>
+                                                可以填寫的費用為 該出差計畫負責業務<br>
+                                                請檢附差旅申請單及各項憑證單據並填妥國內外出差旅費報銷單，於出差後一周內提出申請。由於款項會直接匯入同仁薪資戶.<br>
+                                            </p>
+                                        </div>
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item">
+                                                國外出差之差旅費用申請，除檢附各項費用憑證外，並附上出入境之來回飛機票票根(或電子機票)及登機證與機票購票證明單(或代收轉付收據)<br><br>
+                                                若遺失登機證者，請檢附足資證明出國事實之護照影本代替,<br>
+                                                但若無法及時提供者，則須自行向航空公司申請搭機證明並負擔相關費用<br>
+                                                若前往大陸出差，請檢附台胞證影本代替。<br>
+                                            </li>
+                                        </ul>
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item">
+                                                國外出差交通費申請，請註明起迄地點並附上車票票根或購票證明為原始憑證。<br>
+                                            </li>
+                                        </ul>
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item">
+                                                國外出差旅費之換算匯率將以出國前一日（如逢假日往前順推）臺灣銀行即期賣出參考匯價 為計算基
+
+                                                礎。(此部份由財務部換算成台幣)。<br>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-info" data-dismiss="modal">Accept</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="row">
             <div class="col-md-6">
@@ -24,7 +81,7 @@
                     <div class="form-group">
                         <label>差旅單</label>
                         <select class="custom-select select2 form-control" id='form_grant_id' :disabled='form_action=="edit"'
-                                name="form_grant_id">
+                                name="form_grant_id" required>
                             <option value>請選擇</option>
                             <option v-for='item in travel_grant_datas' :value='item.id' :selected='form_submit_data[dom_id]["form_grant_id"]'
                             >

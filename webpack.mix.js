@@ -76,19 +76,20 @@ mix.js('resources/js/core/app-menu.js', 'public/js/core')
     .sass('resources/sass/colors.scss', 'public/css')
     .sass('resources/sass/components.scss', 'public/css')
     .sass('resources/sass/custom-rtl.scss', 'public/css')
-    .sass('resources/sass/custom-laravel.scss', 'public/css');
-
-mix.then(() => {
-    if (process.env.MIX_CONTENT_DIRECTION === "rtl") {
-        let command = `node ${path.resolve('node_modules/rtlcss/bin/rtlcss.js')} -d -e ".css" ./public/css/ ./public/css/`;
-        exec(command, function (err, stdout, stderr) {
-            if (err !== null) {
-                console.log(err);
-            }
-        });
-        // exec('./node_modules/rtlcss/bin/rtlcss.js -d -e ".css" ./public/css/ ./public/css/');
-    }
-});
+    .sass('resources/sass/custom-laravel.scss', 'public/css')
+    .options({processCssUrls: false});
+//
+// mix.then(() => {
+//     if (process.env.MIX_CONTENT_DIRECTION === "rtl") {
+//         let command = `node ${path.resolve('node_modules/rtlcss/bin/rtlcss.js')} -d -e ".css" ./public/css/ ./public/css/`;
+//         exec(command, function (err, stdout, stderr) {
+//             if (err !== null) {
+//                 console.log(err);
+//             }
+//         });
+//         exec('./node_modules/rtlcss/bin/rtlcss.js -d -e ".css" ./public/css/ ./public/css/');
+//     }
+// });
 
 
 // if (mix.inProduction()) {

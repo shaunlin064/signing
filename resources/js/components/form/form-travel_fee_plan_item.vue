@@ -19,9 +19,9 @@
         </div>
         <div class='col-md-3'>
             <div class="form-label-group">
-                <input type="text" class="form-control" id='fee' v-model='form_submit_data[dom_id]["items"][parent_id]["fee_items"][id]["fee"]'
+                <input type="number" min='0' max='99999' step='1' class="form-control" id='fee' v-model='form_submit_data[dom_id]["items"][parent_id]["fee_items"][id]["fee"]'
                        placeholder="應付費用"
-                       name="fee" :disabled='can_edit === false'>
+                       name="fee" :disabled='can_edit === false' required>
                 <label for="fee">應付費用</label>
             </div>
         </div>
