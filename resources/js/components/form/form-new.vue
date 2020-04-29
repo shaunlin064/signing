@@ -154,26 +154,26 @@
                 if (type) {
                     return false;
                 }
-                console.log('post success');
+                // console.log('post success');
                 /* some Array need to Json*/
-                // data = this.toJson(data);
-                //
-                // /*TODO::post 後續轉跳與錯誤動作*/
-                // axios.post('api/form/apply', data)
-                //     .then(function (response) {
-                //         let result = response.data;
-                //         if(result.status != 1 || result.status_string !== '申請成功'){
-                //             alert(result.message + result.status_string);
-                //             vue.lodding = false;
-                //             return false;
-                //         }
-                //         javascript:location.href='/form-list';
-                //
-                //     })
-                //     .catch(function (error) {
-                //         console.log(error);
-                //         alert(error);
-                //     });
+                data = this.toJson(data);
+
+                /*TODO::post 後續轉跳與錯誤動作*/
+                axios.post('api/form/apply', data)
+                    .then(function (response) {
+                        let result = response.data;
+                        if(result.status != 1 || result.status_string !== '申請成功'){
+                            alert(result.message + result.status_string);
+                            vue.lodding = false;
+                            return false;
+                        }
+                        javascript:location.href='/form-list';
+
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                        alert(error);
+                    });
 
             },
             getPostData() {
