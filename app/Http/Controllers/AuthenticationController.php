@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Controllers\Help\Crypt;
 use Illuminate\Support\Facades\Redirect;
 
 class AuthenticationController extends Controller
@@ -20,16 +21,34 @@ class AuthenticationController extends Controller
             'pageConfigs' => self::$pageConfigs
         ]);
     }
+
+    public function keyAccessLogin ( Request $request ) {
+
+        if( $request->key == null ){
+            return view('pages.auth-login');
+        }else{
+            $result = $this->doRemoteLogin('','',$request->key);
+
+            if($result['status'] != 1){
+                return view('/pages/auth-login', [
+                    'pageConfigs' => self::$pageConfigs,
+                    'error' => $result['message'],
+                    'form_data' => [ $request->account, $request->password]
+                ]);
+            }
+
+            return Redirect::route('index');
+        }
+    }
+
     public function login(Request $request){
 
-        $validatedData = $request->validate([
+        $request->validate([
             'account' => 'required',
             'password' => 'required',
         ]);
 
-        $remoteRequest = newRequest(['password' => md5($request->password) , 'account' => $request->account]);
-        $systemController = New \App\Http\Controllers\API\SystemController();
-        $result = $systemController->login($remoteRequest);
+        $result = $this->doRemoteLogin($request->account, $request->password);
 
         if($result['status'] != 1){
             return view('/pages/auth-login', [
@@ -39,8 +58,6 @@ class AuthenticationController extends Controller
             ]);
         }
 
-        SessionController::store($result['data']);
-
         if(session('return_url')){
             return Redirect::to(session('return_url'));
         }
@@ -48,6 +65,20 @@ class AuthenticationController extends Controller
             return Redirect::to($request->return_url);
         }
         return Redirect::route('index');
+    }
+
+    public function doRemoteLogin ($account,$password,$accessKey = null) {
+        $systemController = New \App\Http\Controllers\API\SystemController();
+        if($accessKey){
+            $remoteRequest = newRequest(['key' => $accessKey]);
+
+        }else{
+            $remoteRequest = newRequest(['password' => md5($password) , 'account' => $account]);
+
+        }
+        $result = $systemController->login($remoteRequest);
+
+        return $result;
     }
 
     // Lock Screen

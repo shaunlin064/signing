@@ -275,12 +275,15 @@
             }
 
             //將登入資訊儲存至session
-            $request->replace([ 'value' => $message['data'] ]);
-            $api_request = Request::create('session/put', 'POST');
-            $api_request = $api_request->replace($request->input());
-            $response = Route::dispatch($api_request)->getOriginalContent();
+//            $request->replace([ 'value' => $message['data'] ]);
+//            $api_request = Request::create('session/put', 'POST');
+//            $api_request = $api_request->replace($request->input());
+//            $response = Route::dispatch($api_request)->getOriginalContent();
 
-            SessionController::store($message['data']);
+            if($message['status'] == 1){
+                SessionController::store($message['data']);
+            }
+
             return $message;
         }
 
