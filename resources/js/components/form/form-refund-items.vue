@@ -49,7 +49,7 @@
         </div>
         <div class='col-md-2'>
             <div class="form-label-group mt-2">
-                <input type="number" min='0' max='99999' step='1'  class="form-control"
+                <input type="number" min='0' max='99999' step='1'  class="form-control price"
                        v-model='form_submit_data[dom_id]["items"][id]["price"]' :disabled='can_edit === false'
                        placeholder="金額" required>
                 <label>金額</label>

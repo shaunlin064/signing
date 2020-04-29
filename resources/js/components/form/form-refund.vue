@@ -91,8 +91,7 @@
             <component v-for="(item,key) in items" v-bind:is="item.component" :id='parseInt(item.id)' :dom_id='dom_id'
                        :key='item.id'
                        :type='item.type' :form_action='form_action' :can_edit='can_edit'></component>
-            <div class='row col-md-12 justify-content-end border-top-light' v-show='can_edit'>
-
+            <div class='row col-md-12 justify-content-end border-top-light'>
                 <div class='col-md-4 text-right mt-1'>
                     <div class="btn-group dropdown mr-1 mb-1">
                         <button type="button" class="btn btn-outline-primary dropdown-toggle" @click='openMenu'
@@ -102,6 +101,93 @@
                         </button>
                         <div class="dropdown-menu">
                             <a class="dropdown-item" @click='addItem(item)' v-for='item in refund_type'>{{item}}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-content">
+                        <div class="card-body">
+                            <h4 class="card-title">金額統計</h4>
+                            <p class="card-text"></p>
+                        </div>
+                        <div class="card-body row">
+                            <div class="col-xl-2 col-md-4 col-sm-6">
+                                <div class="card text-center">
+                                    <div class="card-content">
+                                        <div class="card-body">
+                                            <div class="avatar bg-rgba-info p-50 m-0 mb-1">
+                                                <div class="avatar-content">
+                                                    <i class="feather icon-shopping-cart text-info font-medium-5"></i>
+                                                </div>
+                                            </div>
+                                            <h2 class="text-bold-700">{{refund_total.乘車}}</h2>
+                                            <p class="mb-0 line-ellipsis">乘車</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-2 col-md-4 col-sm-6">
+                                <div class="card text-center">
+                                    <div class="card-content">
+                                        <div class="card-body">
+                                            <div class="avatar bg-rgba-warning p-50 m-0 mb-1">
+                                                <div class="avatar-content">
+                                                    <i class="feather icon-clipboard text-warning font-medium-5"></i>
+                                                </div>
+                                            </div>
+                                            <h2 class="text-bold-700">{{refund_total.案件}}</h2>
+                                            <p class="mb-0 line-ellipsis">案件</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-2 col-md-4 col-sm-6">
+                                <div class="card text-center">
+                                    <div class="card-content">
+                                        <div class="card-body">
+                                            <div class="avatar bg-rgba-danger p-50 m-0 mb-1">
+                                                <div class="avatar-content">
+                                                    <i class="feather icon-users text-danger font-medium-5"></i>
+                                                </div>
+                                            </div>
+                                            <h2 class="text-bold-700">{{refund_total.交際}}</h2>
+                                            <p class="mb-0 line-ellipsis">交際</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-2 col-md-4 col-sm-6">
+                                <div class="card text-center">
+                                    <div class="card-content">
+                                        <div class="card-body">
+                                            <div class="avatar bg-rgba-primary p-50 m-0 mb-1">
+                                                <div class="avatar-content">
+                                                    <i class="feather icon-heart text-primary font-medium-5"></i>
+                                                </div>
+                                            </div>
+                                            <h2 class="text-bold-700">{{refund_total['其他']}}</h2>
+                                            <p class="mb-0 line-ellipsis">其他</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-2 col-md-4 col-sm-6">
+                                <div class="card text-center">
+                                    <div class="card-content">
+                                        <div class="card-body">
+                                            <div class="avatar bg-rgba-primary p-50 m-0 mb-1">
+                                                <div class="avatar-content">
+                                                    <i class="feather icon-trending-up text-primary font-medium-5"></i>
+                                                </div>
+                                            </div>
+                                            <h2 class="text-bold-700">{{refund_total.total}}</h2>
+                                            <p class="mb-0 line-ellipsis">總計</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -142,6 +228,9 @@
                 refund_type: [
                     '乘車', '案件', '交際', '其他'
                 ],
+                refund_total:{
+                  '乘車' : 0, '案件' : 0, '交際' : 0, '其他': 0, 'total' : 0
+                },
                 member_name: '',
                 department_name: '',
                 items: [],
@@ -157,10 +246,29 @@
             this.initial();
         },
         methods: {
+            count_total(){
+                let count = 0;
+                let formItemData = this.form_submit_data[this.dom_id]['items'];
+                let vue = this;
+                Object.keys(vue.refund_total).forEach(key => {
+                    vue.refund_total[key] = 0;
+                });
+                Object.keys(formItemData).forEach(key => {
+                    let type = formItemData[key]['type'];
+                    count += parseInt(formItemData[key]['price']);
+                    vue.refund_total[type]+= parseInt(formItemData[key]['price']);
+                });
+                vue.refund_total['total'] = count;
+            },
             initial() {
                 let vue = this;
+                vue.count_total();
+
                 $('.row').on('click', '[data-action="deleteItem"]', function (e) {
                     vue.deleteItem(e);
+                });
+                $('.row').on('keyup', '.form-control.price', function (e) {
+                    vue.count_total();
                 });
 
                 if (this.form_action === 'new') {
