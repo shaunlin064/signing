@@ -25,7 +25,7 @@
                             <div class='col-sm-2 d-flex justify-content-center'>{{getReplace(item.replace_signed_member_id)}}</div>
                             <div class='col-sm-1 d-flex justify-content-center' v-html='statusBadge(item.status)'>}
                             </div>
-                            <div class='col-sm-2 col-align-l'  v-html='item.signed_at'></div>
+                            <div class='col-sm-2 d-flex justify-content-center'  v-html='item.signed_at'></div>
                             <div class='col-12 col-sm-3 col-align-l'>{{item.remark}}</div>
                         </div>
 
