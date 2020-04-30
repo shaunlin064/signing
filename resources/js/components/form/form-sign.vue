@@ -200,7 +200,12 @@
                 }else{
                     vue.department_name = getDepartment(vue.form_submit_data[vue.dom_id]['apply_department_id']);
                     vue.member_name = getMember(vue.form_submit_data[vue.dom_id]['apply_member_id']);
+
+                    if(vue.form_submit_data[vue.dom_id]['deployed'] === 'company'){
+                        vue.deployed = true;
+                    }
                 }
+
                 /*select tigger*/
                 ['form_stamp_type','deployed'].map(k=>{
                     let targetDom = $(`#${vue.dom_id} #${k}`);
