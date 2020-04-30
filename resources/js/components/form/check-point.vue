@@ -14,8 +14,8 @@
                         <div class='col-sm-2 d-flex justify-content-center'>身份</div>
                         <div class='col-sm-2 d-flex justify-content-center'>代簽人</div>
                         <div class='col-sm-1 d-flex justify-content-center'>簽核狀態</div>
-                        <div class='col-sm-2 col-align-l d-flex justify-content-center'>簽核日期</div>
-                        <div class='col-sm-3 col-align-l d-flex justify-content-center'>備註</div>
+                        <div class='col-sm-2 d-flex justify-content-center'>簽核日期</div>
+                        <div class='col-sm-3 d-flex justify-content-center'>備註</div>
                     </div>
                     </li>
                     <li class="list-group-item" v-for='item in check_list' @model='check_list'>
@@ -26,7 +26,7 @@
                             <div class='col-sm-1 d-flex justify-content-center' v-html='statusBadge(item.status)'>}
                             </div>
                             <div class='col-sm-2 d-flex justify-content-center'  v-html='item.signed_at'></div>
-                            <div class='col-12 col-sm-3 col-align-l'>{{item.remark}}</div>
+                            <div class='col-12 col-sm-3 d-flex justify-content-center'>{{item.remark}}</div>
                         </div>
 
                         <!--                        <span class="badge badge-pill bg-primary float-right">4</span>-->
