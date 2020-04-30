@@ -91,7 +91,7 @@
             <component v-for="(item,key) in items" v-bind:is="item.component" :id='parseInt(item.id)' :dom_id='dom_id'
                        :key='item.id'
                        :type='item.type' :form_action='form_action' :can_edit='can_edit'></component>
-            <div class='row col-md-12 justify-content-end border-top-light'>
+            <div class='row col-md-12 justify-content-end border-top-light' v-show='can_edit'>
                 <div class='col-md-4 text-right mt-1'>
                     <div class="btn-group dropdown mr-1 mb-1">
                         <button type="button" class="btn btn-outline-primary dropdown-toggle" @click='openMenu'
@@ -267,7 +267,7 @@
                 $('.row').on('click', '[data-action="deleteItem"]', function (e) {
                     vue.deleteItem(e);
                 });
-                $('.row').on('keyup', '.form-control.price', function (e) {
+                $('.row').on('change', '.form-control.price', function (e) {
                     vue.count_total();
                 });
 
