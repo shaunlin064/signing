@@ -257,9 +257,10 @@
             },
             deleteItem(event) {
                 let vue = this;
-                let id = $(event.currentTarget).data('id');
+                let id = parseInt($(event.currentTarget).data('id'));
+
                 this.items.map((e, k) => {
-                    if (e.id === id) {
+                    if (parseInt(e.id) === id) {
                         this.items.splice(k, 1);
                         delete vue.form_submit_data[vue.dom_id]["items"][id];
                     }

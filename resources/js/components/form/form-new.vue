@@ -131,7 +131,7 @@
                 Object.keys(data).forEach(key => {
                     if (data[key].length == 0) {
                         if ($.inArray(key, checkColumn) === -1) {
-                            console.log(checkColumn, $.inArray(key, checkColumn));
+                            console.log(checkColumn, $.inArray(key, checkColumn),key);
                             vue.lodding = false;
                             vue.validate_message[key] = 'required';
                         }

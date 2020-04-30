@@ -5,7 +5,7 @@
                 <label>{{parseInt(id)}}</label>
             </div>
 
-            <div class='col-md-2 text-right' v-show='can_edit'>
+            <div class='col-md-2 text-right' v-show='can_edit === true && plan_action === "new_plan"'>
                 <button type="button" data-action='deleteItem' :data-id='id'
                         class="btn btn-icon btn-danger mr-1 mb-1 waves-effect waves-light">
                     <i
@@ -16,7 +16,7 @@
             <div class="form-label-group">
                 <input type="date" class="form-control"
                        placeholder="日期" v-model='form_submit_data[dom_id]["items"][id]["date"]'
-                       :disabled='can_edit === false' required>
+                       :disabled='can_edit === false || plan_action !== "new_plan"' required>
                 <label>日期</label>
             </div>
         </div>
@@ -25,7 +25,7 @@
 
                 <input type="text" class="form-control"
                        placeholder="洽訪公司" v-model='form_submit_data[dom_id]["items"][id]["customer_company"]'
-                       :disabled='can_edit === false' required
+                       :disabled='can_edit === false || plan_action !== "new_plan"' required
                 >
                 <label>洽訪公司</label>
             </div>
@@ -34,7 +34,7 @@
             <div class="form-label-group">
                 <input type="text" class="form-control" placeholder="對象姓名/稱謂"
                        v-model='form_submit_data[dom_id]["items"][id]["customer_name"]'
-                       :disabled='can_edit === false' required
+                       :disabled='can_edit === false || plan_action !== "new_plan"' required
                 >
                 <label>對象姓名/稱謂</label>
             </div>
@@ -43,7 +43,7 @@
             <div class="form-label-group">
                 <input type="text" class="form-control" placeholder="會議形式"
                        v-model='form_submit_data[dom_id]["items"][id]["meet_type"]'
-                       :disabled='can_edit === false' required
+                       :disabled='can_edit === false || plan_action !== "new_plan"' required
                 >
                 <label>會議形式</label>
             </div>
@@ -53,7 +53,7 @@
                 <label>負責業務</label>
                 <!--TODO:: form submit removeAttr disabled-->
                 <select class="custom-select select2 form-control"
-                        :disabled='form_submit_data[dom_id]["items"][id]["charge_user"] !== null'
+                        :disabled='can_edit === false || plan_action !== "new_plan"'
                         :id='"charge_user_"+id' required
                 >
                     <option value>請選擇</option>
@@ -66,7 +66,7 @@
         <div class='col-md-6'>
             <div class="form-label-group mt-2">
                 <input type="text" class="form-control" v-model='form_submit_data[dom_id]["items"][id]["agenda"]'
-                       :disabled='can_edit === false'
+                       :disabled='can_edit === false || plan_action !== "new_plan"'
                        placeholder="洽談內容" required
                 >
                 <label>洽談內容</label>
@@ -112,7 +112,7 @@
             plan_action: String,
             form_action: String,
             can_edit:Boolean,
-            id: Number,
+            id: Number
         },
         data() {
             return {
@@ -126,7 +126,6 @@
         beforeMount: function () {
         },
         mounted: function () {
-
             this.initial();
         },
         methods: {
