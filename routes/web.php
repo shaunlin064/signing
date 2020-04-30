@@ -20,8 +20,8 @@
     Route::get('/keyAccessLogin','AuthenticationController@keyAccessLogin')->name('keyAccessLogin');
 
     Route::group(['middleware' => ['checkLogin']], function () {
-        Route::view('/', 'pages.index',
-                    [ 'breadcrumbs' => [ [ 'name' => "home" ]] ])->name('index');
+        Route::view('/', 'pages.customer.form-list',
+                    [ 'breadcrumbs' => [ [ 'name' => "User" ], [ 'link' => "form-list", 'name' => "簽核狀態" ] ] ])->name('index');
         //  User
         Route::view('/form-new', 'pages.customer.form-new',
                     [ 'breadcrumbs' => [ [ 'name' => "User" ], [ 'link' => "form-new", 'name' => "申請簽核" ] ] ]);
