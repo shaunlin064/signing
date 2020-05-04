@@ -70,6 +70,7 @@
                         editable: false,
                         sortable: true,
                         filter: true,
+                        minWidth: 100,
                         // width: 120,
                     },
                     {
@@ -78,6 +79,7 @@
                         editable: false,
                         sortable: true,
                         filter: true,
+                        minWidth: 150,
                         // width: 150
                     },
                     {
@@ -86,6 +88,7 @@
                         editable: false,
                         sortable: true,
                         filter: true,
+                        minWidth: 150,
                         // width: 150,
                         cellRenderer: this.ageGetMember
                     },
@@ -95,6 +98,7 @@
                         editable: false,
                         sortable: true,
                         filter: true,
+                        minWidth: 200,
                         // width: 330
                     },
                     {
@@ -102,24 +106,28 @@
                         field: "status_string",
                         editable: false,
                         sortable: true,
-                        filter: true
+                        filter: true,
+                        minWidth: 100,
                     },
                     {
                         headerName: "申請日期",
                         field: "created_at_format",
                         editable: false,
                         sortable: true,
-                        filter: true
+                        filter: true,
+                        minWidth: 150,
                     },
                     {
                         headerName: "Action",
                         field: "action",
-                        cellRenderer: this.ageCellRendererFunc
+                        cellRenderer: this.ageCellRendererFunc,
+                        minWidth: 150,
                     }
                 ],
                 gridOptions: {
                     columnDefs: [],
                     // rowSelection: "multiple",
+                    // minWidth: 1000,
                     floatingFilter: true,
                     filter: true,
                     pagination: true,
@@ -127,8 +135,10 @@
                     pivotPanelShow: "always",
                     colResizeDefault: "shift",
                     animateRows: true,
+                    enableSorting: true,
                     suppressSizeToFit:true,
-                    resizable: true
+                    resizable: true,
+                    suppressHorizontalScroll: true,
                 }
             }
         },
@@ -139,6 +149,8 @@
         },
         mounted: function () {
             this.init();
+        //    ag-root-wrapper ag-layout-normal ag-ltr
+        //    ag-root-wrapper-body ag-layout-normal
         },
         methods: {
             init() {
