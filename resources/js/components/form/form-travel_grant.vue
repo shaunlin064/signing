@@ -42,12 +42,6 @@
                                                 若需公司協助交通及住宿安排，請於申請單註記，並於提交申請單時，與執行長室Ravin再次說明<br>
                                             </li>
                                         </ul>
-                                        <ul class="list-group list-group-flush">
-                                            <li class="list-group-item">
-                                                用印完畢後,若選擇「自行寄出」者,將收到用完印之合約;勾選「總務寄出」
-                                                者,將直接由總務協助寄出。
-                                            </li>
-                                        </ul>
                                     </div>
                                 </div>
                             </div>

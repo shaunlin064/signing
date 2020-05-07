@@ -31,12 +31,13 @@
                                         </div>
                                         <ul class="list-group list-group-flush">
                                             <li class="list-group-item">
-                                               若該請款項目為案件用物品,請填寫「委刊編號」於案件編號欄位。
+                                                若該請款項目為案件用物品,請填寫「委刊編號」於案件編號欄位。
                                             </li>
                                         </ul>
                                         <ul class="list-group list-group-flush">
                                             <li class="list-group-item">
-                                                應填寫受款人姓名或公司寶號、發票號碼、發票開立日、含稅金額。請注意,受款人非寫申請人姓名,而是憑證開立方。 <br> <br>Ex. 將會議室投影機送回原廠維修,而廠商開立發票索款,受款人便
+                                                應填寫受款人姓名或公司寶號、發票號碼、發票開立日、含稅金額。請注意,受款人非寫申請人姓名,而是憑證開立方。 <br> <br>Ex.
+                                                將會議室投影機送回原廠維修,而廠商開立發票索款,受款人便
                                                 為「奧圖瑪科技有限公司」,而非寫自己的名字。
                                             </li>
                                         </ul>
@@ -57,7 +58,6 @@
             </div>
         </div>
         <div class="row">
-
             <div class='row col-md-12'>
                 <div class="col-md-6">
                     <div class="form-label-group">
@@ -81,10 +81,39 @@
                         <label for="apply_subject">名稱</label>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class='col-md-6'>
+                    <li class="d-inline-block mr-2">
+                        <fieldset>
+                            <div class="vs-checkbox-con vs-checkbox-primary">
+                                <input type="checkbox" v-model="campaign" :disabled='can_edit === false'>
+                                <span class="vs-checkbox">
+                      <span class="vs-checkbox--check">
+                        <i class="vs-icon feather icon-check"></i>
+                      </span>
+                    </span>
+                                <span class="">後台案件</span>
+                            </div>
+                        </fieldset>
+                    </li>
+                    <li class="d-inline-block mr-2">
+                        <fieldset>
+                            <div class="vs-checkbox-con vs-checkbox-primary">
+                                <input type="checkbox" v-model="receipt" :disabled='can_edit === false'>
+                                <span class="vs-checkbox">
+                      <span class="vs-checkbox--check">
+                        <i class="vs-icon feather icon-check"></i>
+                      </span>
+                    </span>
+                                <span class="">有發票</span>
+                            </div>
+                        </fieldset>
+                    </li>
+                </div>
+                <div class="col-md-6" v-if='campaign'>
                     <div class="form-label-group">
                         <input type="text" id="campaign_id" class="form-control" placeholder="案件編號" name="campaign_id"
-                               v-model='form_submit_data[dom_id]["campaign_id"]' :disabled='can_edit === false'>
+                               v-model='form_submit_data[dom_id]["campaign_id"]' :disabled='can_edit === false'
+                        :required='campaign'>
                         <label for="campaign_id">案件編號</label>
                     </div>
                 </div>
@@ -101,27 +130,27 @@
                 </div>
                 <div class="col-md-6">
                     <div class="form-label-group">
+                        <input type="number" min='0' max='99999' step='1' id="receipt_price" class="form-control"
+                               placeholder="金額(稅)" v-model='form_submit_data[dom_id]["receipt_price"]'
+                               :disabled='can_edit === false'
+                               name="receipt_price" required>
+                        <label for="receipt_price">金額(稅)</label>
+                    </div>
+                </div>
+                <div class="col-md-6" v-if='receipt'>
+                    <div class="form-label-group">
                         <input type="text" id="receipt_number" class="form-control" placeholder="發票號碼"
                                v-model='form_submit_data[dom_id]["receipt_number"]' :disabled='can_edit === false'
-                               name="receipt_number" required>
+                               name="receipt_number" :required='receipt'>
                         <label for="receipt_number">發票號碼</label>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6" v-if='receipt'>
                     <div class="form-label-group">
                         <input type="date" id="receipt_date" class="form-control" placeholder="開立發票日期"
                                v-model='form_submit_data[dom_id]["receipt_date"]' :disabled='can_edit === false'
-                               name="receipt_date" required>
+                               name="receipt_date" :required='receipt'>
                         <label for="receipt_date">開立發票日期</label>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-label-group">
-                        <input type="number" min='0' max='99999' step='1' id="receipt_price" class="form-control"
-                               placeholder="發票金額(稅)" v-model='form_submit_data[dom_id]["receipt_price"]'
-                               :disabled='can_edit === false'
-                               name="receipt_price" required>
-                        <label for="receipt_price">發票金額(稅)</label>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -134,6 +163,15 @@
                             <option value="transfer">電匯</option>
                             <option value="other">其他</option>
                         </select>
+                    </div>
+                </div>
+                <div class='col-md-6 mt-2' v-if='transfer'>
+                    <div class="form-label-group">
+                        <input type="date" class="form-control" placeholder="指定匯款日期" id='transfer_date'
+                               v-model='form_submit_data[dom_id]["pay_type"]["transfer_date"]'
+                               :disabled='can_edit === false'
+                               name="transfer_date" :required='transfer'>
+                        <label for="transfer_date">指定匯款日期</label>
                     </div>
                 </div>
             </div>
@@ -159,6 +197,7 @@
 
 <script>
     import {mapState} from 'vuex';
+    import form from "../../mixins/form.js";
 
     export default {
         name: "form_payment",
@@ -167,46 +206,73 @@
             form_action: String,
             can_edit: Boolean,
         },
+        mixins: [form],
         data() {
             return {
                 member_name: '',
                 department_name: '',
+                campaign: false,
+                receipt: false,
+                transfer: false,
             }
         },
         computed: {
-            ...mapState(['form_submit_data', 'login_user', 'member', 'department']),
+            ...mapState(['form_submit_data', 'login_user', 'member', 'department','exPassCheckColumn']),
         },
         beforeMount: function () {
         },
         mounted: function () {
             this.initial();
-
         },
         methods: {
             initial() {
+                this.$store.state.exPassCheckColumn = this.exPassCheckColumn.concat(['campaign_id','receipt_number','receipt_date','transfer_date']);
                 if (this.form_action === 'new') {
                     this.department_name = this.login_user.department;
                     this.member_name = this.login_user.name;
                 } else {
                     this.department_name = getDepartment(this.form_submit_data[this.dom_id]['apply_department_id']);
                     this.member_name = getMember(this.form_submit_data[this.dom_id]['apply_member_id']);
+                    this.transfer = this.form_submit_data[this.dom_id]["pay_type"] === 'transfer';
+                    this.campaign = !nullCheck(this.form_submit_data[this.dom_id]["campaign_id"]);
+                    this.receipt = !nullCheck(this.form_submit_data[this.dom_id]["receipt_number"]);
                 }
                 $('#' + this.dom_id + ' #pay_type').change((e) => {
                     this.form_submit_data[this.dom_id]["pay_type"] = e.target.value;
+                    this.transfer = e.target.value === 'transfer';
+                });
+            },
+            setValidateColumn(add,columnNames){
+                if(add){
+                    /*remove*/
+                    columnNames.map((v,k)=>{
+                        let index = this.exPassCheckColumn.indexOf(v);
+                        this.$store.state.exPassCheckColumn.splice(index, 1);
+                    });
+                }else{
+                    /*add*/
+                    this.$store.state.exPassCheckColumn = this.exPassCheckColumn.concat(columnNames);
+                    this.setEmptyData(columnNames);
+                }
+            },
+            setEmptyData(columnNames){
+                columnNames.map((columnName)=> {
+                    this.form_submit_data[this.dom_id][columnName] = null;
                 });
             }
         },
         updated() {
         },
         watch: {
-            // change_date: {
-            //     immediate: true,
-            //     handler(val, oldVal) {
-            //         if (oldVal !== undefined) {
-            //             this.getCampaignData(this.user_ids, val);
-            //         }
-            //     }
-            // }
+            campaign: function(val) {
+                this.setValidateColumn(val,['campaign_id']);
+            },
+            receipt: function(val) {
+                this.setValidateColumn(val,['receipt_number','receipt_date']);
+            },
+            transfer: function(val) {
+                this.setValidateColumn(val,['transfer_date']);
+            },
         }
     }
 </script>

@@ -39,7 +39,7 @@
 
 <script>
     import {mapState} from 'vuex';
-
+    import form from "../../mixins/form.js";
     export default {
         name: "form_new",
         components: {
@@ -48,6 +48,7 @@
         props: {
             form_config: Object,
         },
+        mixins: [form],
         data() {
             return {
                 form_type: '',
@@ -59,18 +60,27 @@
             }
         },
         computed: {
-            ...mapState(['form_submit_data', 'login_user', 'member', 'department']),
+            ...mapState(['form_submit_data', 'login_user', 'member', 'department','exPassCheckColumn']),
 
         },
         beforeMount: function () {
         },
         mounted: function () {
-
             $(document).ready(() => {
                 this.initial();
             });
+
         },
         methods: {
+            initial() {
+                $(".select2").select2({
+                    dropdownAutoWidth: true,
+                    width: '100%'
+                });
+                $('#' + this.dom_target).change((e) => {
+                    this.currentComponent(e);
+                });
+            },
             currentComponent(event) {
                 let formConfig = this.form_config;
                 let vue = this;
@@ -105,58 +115,20 @@
                     eval(`vue.form_submit_data['${vue.form_type}']['apply_department_id'] = '${vue.login_user.department_id}';`);
                 }
             },
-            initial() {
-                $(".select2").select2({
-                    dropdownAutoWidth: true,
-                    width: '100%'
-                });
-                $('#' + this.dom_target).change((e) => {
-                    this.currentComponent(e);
-                });
-            },
-            validate() {
-                let vue = this;
-                let data = this.getPostData();
-                this.lodding = true;
-                vue.validate_message = {};
-                let checkColumn = ['apply_attachment', 'remark'];
-                switch (vue.form_type) {
-                    case 'form-payment':
-                        checkColumn.push('campaign_id');
-                        break;
-                    case 'form-sign':
-                        checkColumn.push('recipient_company', 'recipient_contact', 'recipient_phone', 'recipient_address');
-                        break;
-                }
-                Object.keys(data).forEach(key => {
-                    if (data[key].length == 0) {
-                        if ($.inArray(key, checkColumn) === -1) {
-                            console.log(checkColumn, $.inArray(key, checkColumn),key);
-                            vue.lodding = false;
-                            vue.validate_message[key] = 'required';
-                        }
-                    }
-                });
-                if (Object.keys(vue.validate_message).length !== 0) {
-                    return true; // 如果为空,返回false
-                }
-                return false;
-
-            },
             submit() {
                 this.lodding = true;
-                let data = this.getPostData();
                 let vue = this;
 
+                /* some Array need to Json*/
+                let data = vue.formGetPostData();
+
                 /*post validate*/
-                let type = this.validate();
-                console.log(type);
+                let type = this.formValidate();
                 if (type) {
                     return false;
                 }
-                // console.log('post success');
                 /* some Array need to Json*/
-                data = this.toJson(data);
+                data = this.formToJson(data);
 
                 /*TODO::post 後續轉跳與錯誤動作*/
                 axios.post('api/form/apply', data)
@@ -175,29 +147,6 @@
                         alert(error);
                     });
 
-            },
-            getPostData() {
-                return Object.assign({}, eval(`this.form_submit_data['${this.form_type}']`));
-            },
-            toJson(data) {
-                /* other Array to Json*/
-                Object.keys(data).forEach(columnName => {
-                    if ($.inArray(columnName, ['form_stamp_type', 'accompany_user_id', 'attend_member', 'apply_attachment']) != -1) {
-                        data[columnName] = JSON.stringify(data[columnName]);
-                    }
-                });
-                /*travel_fee*/
-                if (data['items'] !== undefined) {
-                    let itemsData = data['items'];
-                    Object.keys(itemsData).forEach(key => {
-
-                        if (itemsData[key]['fee_items'] !== undefined) {
-                            itemsData[key]['fee_items'] = JSON.stringify(itemsData[key]['fee_items']);
-                        }
-                    });
-                    data['items'] = itemsData;
-                }
-                return data;
             },
         },
         updated() {

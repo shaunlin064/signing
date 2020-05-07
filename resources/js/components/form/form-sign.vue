@@ -87,6 +87,7 @@
                             v-model='form_submit_data[dom_id]["form_stamp_type"]' :disabled='can_edit === false' required>
                         <option value="company">公司大章</option>
                         <option value="principal">負責人章</option>
+                        <option value="invoice">發票章</option>
                     </select>
                 </div>
             </div>

@@ -1,4 +1,4 @@
-window.getUrlParmas = function(){
+window.getUrlParmas = function () {
     let URLParams = new URL(document.URL).searchParams;
 
     let data = {};
@@ -8,15 +8,15 @@ window.getUrlParmas = function(){
     return data;
 };
 
-window.changeUrlParmas = function(data) {
+window.changeUrlParmas = function (data) {
     window.history.pushState('', '', '?' + $.param(data));
 };
 
-window.sleep = function(time) {
+window.sleep = function (time) {
     return new Promise((resolve) => setTimeout(resolve, time));
 };
 
-window.urlPost = function(URL, PARAMTERS,TARGET = '_blank') {
+window.urlPost = function (URL, PARAMTERS, TARGET = '_blank') {
 
     //创建form表单
     var temp_form = document.createElement("form");
@@ -48,7 +48,23 @@ window.urlPost = function(URL, PARAMTERS,TARGET = '_blank') {
 
 }
 
-window.MD5 = function(string) {
+/*確認是否為空值*/
+window.nullCheck = function (item) {
+
+    if (item === undefined || item === null) {
+        return true;
+    }
+    /*型態判斷*/
+    /*如果為不為陣列類 可以確定不為空*/
+    if (typeof(item) !== 'object') {
+        return item === '' || item === 0;
+    }
+    /*其餘object or array 靠判斷length*/
+    return Object.keys(item).length === 0;
+
+}
+
+window.MD5 = function (string) {
     function RotateLeft(lValue, iShiftBits) {
         return (lValue << iShiftBits) | (lValue >>> (32 - iShiftBits));
     }
@@ -263,33 +279,34 @@ window.MD5 = function(string) {
     return temp.toLowerCase();
 }
 
-
-window.getDepartment = function (id,field = 'name') {
+window.getDepartment = function (id, field = 'name') {
     let name = null;
     let data = '';
 
-    if(sessionStorage.department != undefined){
+    if (sessionStorage.department != undefined) {
         data = JSON.parse(sessionStorage.department);
-    }else if(localStorage.department != undefined){
+    } else if (localStorage.department != undefined) {
         data = JSON.parse(localStorage.department);
-    }else{
-        javascript:location.href='/login';
+    } else {
+        javascript:location.href = '/login';
     }
     name = data[id][field];
     return name;
 }
 
-window.getMember = function (id,field = 'name') {
+window.getMember = function (id, field = 'name') {
     let name = null;
     let data = '';
-    if(sessionStorage.member != undefined){
+    if (sessionStorage.member != undefined) {
         data = JSON.parse(sessionStorage.member);
-    }else if(localStorage.member != undefined){
+    } else if (localStorage.member != undefined) {
         data = JSON.parse(localStorage.member);
-    }else{
-        javascript:location.href='/login';
+    } else {
+        javascript:location.href = '/login';
     }
 
     name = data[id][field];
     return name;
 }
+
+

@@ -95,8 +95,14 @@
                     </div>
                 </div>
             </div>
+
             <compoenents v-for='item in plan_fee' v-bind:is="item.component" :key='item.id' :id='parseInt(item.id)' :dom_id='dom_id'
                          :parent_id='item.parent_id' :can_edit='can_edit'></compoenents>
+            <div class="row col-md-12 justify-content-end text-right">
+                <div class="p-1">
+                    小計  :  <span class='plan_fee_item_total'>{{ plan_fee_item_total }}</span>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -117,24 +123,52 @@
         data() {
             return {
                 plan_fee: [],
-                count: -1
+                count: -1,
+                plan_fee_item_total: 0
             }
         },
         computed: {
-            ...mapState(['form_submit_data', 'login_user', 'member', 'department']),
+            ...mapState(['form_submit_data', 'login_user', 'member', 'department','plan_fee_count_total','plan_fee_counts']),
         },
         beforeMount: function () {
         },
         mounted: function () {
             this.initial();
+            this.getPlanFeeItemTotal();
         },
         methods: {
+            getPlanFeeItemTotal(){
+
+                let count = 0;
+
+                if(this.form_submit_data[this.dom_id]["items"][this.id] !== undefined) {
+                    let formData = this.form_submit_data[this.dom_id]["items"][this.id]['fee_items'];
+                    if (formData) {
+                        Object.keys(formData).forEach((key) => {
+                            count += parseInt(formData[key]['fee']);
+                        });
+                    }
+                    this.$store.state.plan_fee_counts[this.id] = count;
+                }
+
+                this.plan_fee_item_total = count;
+
+                let formItemData = this.plan_fee_counts;
+                let count2 = 0;
+                Object.keys(formItemData).forEach((k)=>{
+                    count2 += parseFloat(formItemData[k]);
+                });
+                this.$store.state.plan_fee_count_total = count2;
+            },
             initial() {
                 var vue = this;
                 $('.row').on('click', '[data-action="deleteItem_fee"]', function (e) {
                     vue.deleteItem(e);
+                    vue.getPlanFeeItemTotal();
                 });
-
+                $('.row').on('change', '.form-control.price', function (e) {
+                    vue.getPlanFeeItemTotal();
+                });
                 let chargeUserDom = $('#' + vue.dom_id + ' #charge_user_' + vue.id);
                 chargeUserDom.change((e, v) => {
                     vue.form_submit_data[vue.dom_id]["items"][vue.id]['charge_user'] = chargeUserDom.val();
@@ -172,7 +206,7 @@
                     id: this.count.toString(),
                     type: type,
                     currency: 'TWD',
-                    fee: null,
+                    fee: 0,
                 };
             },
             deleteItem(target) {
@@ -185,6 +219,7 @@
                         delete vue.form_submit_data[vue.dom_id]["items"][parentId]["fee_items"][id];
                     }
                 });
+
             }
         },
         updated() {

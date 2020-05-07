@@ -1,11 +1,12 @@
 <template>
-    <form action="#" method='GET' class="steps-validation wizard-circle" :id='dom_id'>
+    <form onsubmit="return false" class="steps-validation wizard-circle" :id='dom_id'>
         <keep-alive>
             <component v-bind:is="form_type" :dom_id='form_type' :form_action='"edit"' :can_edit='can_edit'/>
         </keep-alive>
-        <check-point v-show='check_list' :form_id='id' :check_list_props='check_list' :can_check='can_check' :check_id='check_id'></check-point>
+        <check-point v-show='check_list' :form_id='id' :check_list_props='check_list' :can_check='can_check'
+                     :check_id='check_id'></check-point>
         <div class='row border-top-light mt-2 justify-content-end' v-show='form_type && can_edit'>
-            <button type="button" class="btn btn-primary mr-1 mb-1 waves-effect waves-light text-right mt-2"
+            <button type="submit" class="btn btn-primary mr-1 mb-1 waves-effect waves-light text-right mt-2"
                     @click='submit' :disabled='lodding'>
                 <span role="status" aria-hidden="true" class="spinner-grow spinner-grow-sm" v-show='lodding'></span>
                 <strong>送出</strong>
@@ -16,7 +17,7 @@
 
 <script>
     import {mapState} from 'vuex';
-
+    import form from '../../mixins/form.js';
     export default {
         name: "form-edit",
         components: {
@@ -25,6 +26,7 @@
         props: {
             id: Number
         },
+        mixins: [form],
         data() {
             return {
                 form_type: '',
@@ -35,6 +37,7 @@
                 lodding: false,
                 can_check: false,
                 check_id: 0,
+                validate_message: {},
             }
         },
         computed: {
@@ -48,14 +51,31 @@
                 this.getAjaxFormData();
             });
         },
+        created: function () {
+        },
         methods: {
+            initial() {
+                $(".select2").select2({
+                    dropdownautowidth: true,
+                    width: '100%'
+                });
+            },
             submit() {
                 this.lodding = true;
                 let vue = this;
 
                 /* some Array need to Json*/
-                let data = this.toJson(vue.getPostData());
+                let data = this.formGetPostData();
+
+                /*post validate*/
+                let type = this.formValidate();
+                if (type) {
+                    return false;
+                }
+
                 data.id = vue.id;
+                data = this.formToJson(data);
+
                 // /*TODO::post 後續轉跳與錯誤動作*/
                 axios.post('api/form/edit', data)
                     .then(function (response) {
@@ -74,29 +94,6 @@
                         alert(error);
                     });
             },
-            getPostData() {
-                return Object.assign({}, eval(`this.form_submit_data['${this.form_type}']`));
-            },
-            toJson(data) {
-                /* other Array to Json*/
-                Object.keys(data).forEach(columnName => {
-                    if ($.inArray(columnName, ['form_stamp_type', 'accompany_user_id', 'attend_member', 'apply_attachment']) != -1) {
-                        data[columnName] = JSON.stringify(data[columnName]);
-                    }
-                });
-                /*travel_fee*/
-                if (data['items'] !== undefined) {
-                    let itemsData = data['items'];
-                    Object.keys(itemsData).forEach(key => {
-
-                        if (itemsData[key]['fee_items'] !== undefined) {
-                            itemsData[key]['fee_items'] = JSON.stringify(itemsData[key]['fee_items']);
-                        }
-                    });
-                    data['items'] = itemsData;
-                }
-                return data;
-            },
             getAjaxFormData() {
                 // console.log(this.id);
                 /*ajax get data*/
@@ -104,7 +101,7 @@
 
                 axios.post('api/form/get', {
                     id: vue.id,
-                    member_id : vue.login_user.id,
+                    member_id: vue.login_user.id,
                 }).then(function (response) {
                     let result = response.data;
                     if (result.status !== 1) {
@@ -133,7 +130,7 @@
                             break;
                     }
 
-                    if(result.data.apply_member_id ===  parseInt(vue.login_user.id)){
+                    if (result.data.apply_member_id === parseInt(vue.login_user.id)) {
                         if (result.data.status == 1) {
                             vue.can_edit = true;
                         }
@@ -148,14 +145,6 @@
 
                 }).catch(function (error) {
                     console.log(error);
-                });
-
-            },
-            initial() {
-
-                $(".select2").select2({
-                    dropdownautowidth: true,
-                    width: '100%'
                 });
 
             },
@@ -212,7 +201,7 @@
                             let anchorEl = document.createElement('a');
                             anchorEl.setAttribute('href', value.url);
                             anchorEl.setAttribute('target', '_blank');
-                            anchorEl.setAttribute('class','cursor-pointer');
+                            anchorEl.setAttribute('class', 'cursor-pointer');
                             anchorEl.innerHTML = "<br>Download";
                             mockFile.previewTemplate.appendChild(anchorEl);
 

@@ -26,17 +26,13 @@
                                         <div class="card-body">
                                             <h4 class="card-title">表單填寫事項</h4>
                                             <p class="card-text">
-                                                旅費核銷單,需勾選已申請通過之差旅單<br>
-                                                可以填寫的費用為 該出差計畫負責業務<br>
-                                                請檢附差旅申請單及各項憑證單據並填妥國內外出差旅費報銷單，於出差後一周內提出申請。由於款項會直接匯入同仁薪資戶.<br>
+                                                需先勾選已申請通過之差旅單，並檢附差旅申請單及各項憑證單據並填妥國內外出差旅費報銷單，於出差後二周內提出申請。由於款項會直接匯入同仁薪資戶，所以報銷單提出請以「個人」為單位，請同仁勿合併報差旅費以免後續請款作業有問題。<br>
                                             </p>
                                         </div>
                                         <ul class="list-group list-group-flush">
                                             <li class="list-group-item">
                                                 國外出差之差旅費用申請，除檢附各項費用憑證外，並附上出入境之來回飛機票票根(或電子機票)及登機證與機票購票證明單(或代收轉付收據)<br><br>
-                                                若遺失登機證者，請檢附足資證明出國事實之護照影本代替,<br>
-                                                但若無法及時提供者，則須自行向航空公司申請搭機證明並負擔相關費用<br>
-                                                若前往大陸出差，請檢附台胞證影本代替。<br>
+                                                若遺失登機證者，請檢附足資證明出國事實之護照影本代替,但若無法及時提供者，則須自行向航空公司申請搭機證明並負擔相關費用，若前往大陸出差，請檢附台胞證影本代替。<br>
                                             </li>
                                         </ul>
                                         <ul class="list-group list-group-flush">
@@ -46,9 +42,7 @@
                                         </ul>
                                         <ul class="list-group list-group-flush">
                                             <li class="list-group-item">
-                                                國外出差旅費之換算匯率將以出國前一日（如逢假日往前順推）臺灣銀行即期賣出參考匯價 為計算基
-
-                                                礎。(此部份由財務部換算成台幣)。<br>
+                                                國外出差旅費之換算匯率將以出國前一日（如逢假日往前順推）臺灣銀行即期賣出參考匯價 為計算基 礎。(此部份由財務部換算成台幣)。<br>
                                             </li>
                                         </ul>
                                     </div>
@@ -116,6 +110,11 @@
                     </button>
                 </div>
             </div>
+            <div class='row col-md-12 justify-content-end '>
+                <div class='col-md-12 m-1 text-right'>
+                    總計  ：  <span>{{plan_fee_count_total}}</span>
+                </div>
+            </div>
             <div class='col-md-12 mt-2'>
                 <fieldset class="form-label-group">
                             <textarea class="form-control" id="remark" rows="3" placeholder="備註"
@@ -153,23 +152,40 @@
                 department_name: '',
                 travel_grant_datas: [],
                 items: [],
-                count: 0
+                count: 0,
+                feeCount: 0,
             }
         },
         computed: {
-            ...mapState(['form_submit_data', 'login_user', 'member', 'department']),
+            ...mapState(['form_submit_data', 'login_user', 'member', 'department','plan_fee_count_total','plan_fee_counts']),
         },
         beforeMount: function () {
         },
         mounted: function () {
             this.initial();
+            this.asyncGet();
         },
         methods: {
+            async asyncGet() {
+                let wait = await this.settime();
+                if (wait) {
+                    this.getPlanFeeTotal();
+                }
+            },
+            settime() {
+                return new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        resolve(true)
+                    }, 1 * 1000)
+                });
+            },
             initial() {
                 var vue = this;
                 $('.row').on('click', '[data-action="deleteItem"]', function (e) {
                     vue.deleteItem(e);
+                    vue.getPlanFeeTotal();
                 });
+
                 this.getTraveGrantData();
                 if (this.form_action === 'new') {
                     this.department_name = this.login_user.department;
@@ -192,6 +208,32 @@
                     })
                 }
 
+            },
+            getPlanFeeTotal(){
+                // let formItemData = this.plan_fee_counts;
+                // let count = 0;
+                // Object.keys(formItemData).forEach((k)=>{
+                //     count += parseFloat(formItemData[k]);
+                // });
+                // console.log(count);
+
+                let count = 0;
+
+                if(this.form_submit_data[this.dom_id]["items"] !== undefined) {
+                    let formData = this.form_submit_data[this.dom_id]["items"];
+                    if (formData) {
+
+                        Object.keys(formData).forEach((key) => {
+                            let tmpData = formData[key]['fee_items'];
+
+                            Object.keys(tmpData).forEach((key) => {
+                                count += parseInt(tmpData[key]['fee']);
+                            });
+                        });
+                    }
+                }
+                this.$store.state.plan_fee_count_total = count;
+                this.feeCount = count;
             },
             addItem() {
                 this.count++;
@@ -290,6 +332,7 @@
             deleteItem(event) {
                 let vue = this;
                 let id = $(event.currentTarget).data('id');
+                delete vue.plan_fee_counts[id];
                 this.items.map((e, k) => {
                     if (e.id === id) {
                         this.items.splice(k, 1);
@@ -305,14 +348,13 @@
             });
         },
         watch: {
-            // change_date: {
-            //     immediate: true,
-            //     handler(val, oldVal) {
-            //         if (oldVal !== undefined) {
-            //             this.getCampaignData(this.user_ids, val);
-            //         }
-            //     }
-            // }
+            plan_fee_count_total : {
+                deep: true,
+                immediate: true,
+                handler(val, oldVal) {
+                    this.feeCount = val;
+                },
+            }
         }
     }
 </script>
