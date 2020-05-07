@@ -34,6 +34,9 @@
                 'pay_type'            => [
                     'name' => '付款方式'
                 ],
+                'transfer_date' => [
+                    'name' => '指定匯款日期'
+                ],
                 'remark'              => [
                     'name' => '備註'
                 ],
@@ -157,7 +160,7 @@
                         'campaign_id'  => [
                             'name' => '委刊編號'
                         ],
-                        'form_grant_id'      => [
+                        'form_pair_data_id'      => [
                             'name' => '交際送禮單號'
                         ],
                         'price'        => [
@@ -256,7 +259,7 @@
                 'apply_subject'        => [
                     'name' => '項目'
                 ],
-                'form_grant_id' => [
+                'form_pair_data_id' => [
                     'name' => '差旅單'
                 ],
                 'items'                => [

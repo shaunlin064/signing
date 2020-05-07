@@ -74,10 +74,10 @@
                 <div class="form-label-group">
                     <div class="form-group">
                         <label>差旅單</label>
-                        <select class="custom-select select2 form-control" id='form_grant_id' :disabled='form_action=="edit"'
-                                name="form_grant_id" required>
+                        <select class="custom-select select2 form-control" id='form_pair_data_id' :disabled='form_action=="edit"'
+                                name="form_pair_data_id" required>
                             <option value>請選擇</option>
-                            <option v-for='item in travel_grant_datas' :value='item.id' :selected='form_submit_data[dom_id]["form_grant_id"]'
+                            <option v-for='item in travel_grant_datas' :value='item.id' :selected='form_submit_data[dom_id]["form_pair_data_id"]'
                             >
                                 {{item.apply_subject}}
                             </option>
@@ -176,7 +176,7 @@
                 return new Promise((resolve, reject) => {
                     setTimeout(() => {
                         resolve(true)
-                    }, 1 * 1000)
+                    }, 1 * 100)
                 });
             },
             initial() {
@@ -190,9 +190,9 @@
                 if (this.form_action === 'new') {
                     this.department_name = this.login_user.department;
                     this.member_name = this.login_user.name;
-                    $('#' + this.dom_id + ' #form_grant_id').change((e, v) => {
+                    $('#' + this.dom_id + ' #form_pair_data_id').change((e, v) => {
                         this.getFromData(e.target.value);
-                        this.form_submit_data[this.dom_id]["form_grant_id"] = e.target.value;
+                        this.form_submit_data[this.dom_id]["form_pair_data_id"] = e.target.value;
                     });
                 } else {
                     this.department_name = getDepartment(this.form_submit_data[this.dom_id]['apply_department_id']);
@@ -210,13 +210,6 @@
 
             },
             getPlanFeeTotal(){
-                // let formItemData = this.plan_fee_counts;
-                // let count = 0;
-                // Object.keys(formItemData).forEach((k)=>{
-                //     count += parseFloat(formItemData[k]);
-                // });
-                // console.log(count);
-
                 let count = 0;
 
                 if(this.form_submit_data[this.dom_id]["items"] !== undefined) {
@@ -258,7 +251,7 @@
                 let vue = this;
                 let data = {
                     form_id: 5,
-                    apply_member_id: this.login_user.id
+                    member_id: this.login_user.id
                 };
                 if(this.form_action == 'new'){
                     /*TODO:: 確認簽核流程完成 拉回來的資料還需要再做判斷處理*/
@@ -275,7 +268,7 @@
                             console.log(error);
                         });
                 }else{
-                    let id = this.form_submit_data[this.dom_id]['form_grant_id'];
+                    let id = this.form_submit_data[this.dom_id]['form_pair_data_id'];
                     axios.post('api/form/get', {id:id})
                         .then(function (response) {
                             let result = response.data;
@@ -294,6 +287,7 @@
             getFormTravelGrantPlans() {
                 let vue = this;
                 let data = Object.assign([], vue.form_submit_data[vue.dom_id]['items']);
+
                 if (data !== '') {
                     data.map((e, v) => {
                         e.fee_items = {};
@@ -307,26 +301,22 @@
                     });
                 }
             },
-            getFromData(id) {
+            async getFromData(id) {
                 let vue = this;
                 if(id === undefined || id === ''){
                     vue.items = [];
                     vue.form_submit_data[vue.dom_id]['items'] = {};
                 }else{
-                    axios.post('api/form/get', {'id': id})
-                        .then(function (response) {
-                            let result = response.data;
-                            if (result.status !== 1) {
-                                alert(result.message);
-                                return false;
-                            }
-                            vue.form_submit_data[vue.dom_id]["items"] = result.data.column.items;
-                        }).then(() => {
-                        vue.items = [];
-                        vue.getFormTravelGrantPlans();
-                    }).catch(function (error) {
-                        console.log(error);
+                    vue.items = [];
+                    vue.travel_grant_datas.map((v)=>{
+                        if( parseInt(id) === parseInt(v['id'])){
+                            vue.form_submit_data[vue.dom_id]["items"] = JSON.parse(v['value']);
+                        }
                     });
+                    let wait = await vue.settime();
+                    if (wait) {
+                        vue.getFormTravelGrantPlans();
+                    }
                 }
             },
             deleteItem(event) {

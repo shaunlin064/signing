@@ -18,6 +18,7 @@ class CreateFormPairDatasTable extends Migration
             $table->id();
             $table->timestamps();
             $table->unsignedInteger('form_apply_id')->comment('表單id');
+            $table->unsignedInteger('use_to_form_apply_id')->nullable()->comment('使用的表單id');
             $table->unsignedTinyInteger('form_id')->comment('簽核表單ID(類型)');
             $table->unsignedInteger('member_id')->comment('申請人員ID');
             $table->char('apply_subject',64)->comment('名稱');

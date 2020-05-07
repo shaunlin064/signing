@@ -100,7 +100,13 @@
                             'status'          => 1
                         ]
                     );
+                    /*旅費核銷單 同時需要修改 pair_data 資料*/
+                    /*TODO::代墊交際單勾選的時候要留意邏輯*/
+                    $formPairDataId = $request->form_pair_data_id ?? null;
 
+                    if($formPairDataId){
+                        FormPairData::where( 'id' , $formPairDataId )->update(['status' => 1 ,'use_to_form_apply_id' => $FormApply->id]);
+                    }
                     //寫入填單資料
                     $form = Config('form.' . $request->get('form_id'));
                     foreach ( $form['column'] as $k => $v ) {
@@ -905,7 +911,7 @@
          * 取得上方依賴列表
          * 依照apply_member_id & form_id 取出是form_id類型且為apply_member_id提出且未被使用過的資料
          * @inpit form_id : 指定表單類型ID，若無則不區分
-         * @input apply_member_id : 指定填單人員ID
+         * @input member_id : 指定填單人員ID
          * @return array['data'][0]['id'] : 表單ID
          * @return array['data'][0]['created_at'] : 申請時間(原始值)
          * @return array['data'][0]['updated_at'] : 修改時間(原始值)
@@ -924,40 +930,43 @@
          */
         public function depend ( Request $request ) {
 
+
             try {
                 //先找到form_grant_id已被用過的清單
-                $used_form_apply_id = FormData::where('column', 'form_grant_id')->pluck('value');
+//                $used_form_apply_id = FormData::where('column', 'form_grant_id')->pluck('value');
+//
+//                $list = FormApply::whereNull('fail_at')->where('form_id', $request->get('form_id'))->where(
+//                    'apply_member_id', $request->get('apply_member_id')
+//                )->whereNotIn('id', $used_form_apply_id)->whereNull('now')->whereNull('next')->get();
+//                //取得session資料
+//                $member     = SessionController::getSession('member');
+//                $department = SessionController::getSession('department');
+//
+//                $status = Config('form_status.apply');
 
-                $list = FormApply::whereNull('fail_at')->where('form_id', $request->get('form_id'))->where(
-                    'apply_member_id', $request->get('apply_member_id')
-                )->whereNotIn('id', $used_form_apply_id)->whereNull('now')->whereNull('next')->get();
-                //取得session資料
-                $member     = SessionController::getSession('member');
-                $department = SessionController::getSession('department');
+//                $list->map(
+//                    function ( $item ) use ( $member, $department, $status ) {
+//
+//                        $department_id
+//                            = ( isset($member[ $item->apply_member_id ]) ) ? $member[ $item->apply_member_id ]['department_id'] : null;
+//                        $dpartment
+//                            = ( isset($department[ $department_id ]) ) ? $department[ $department_id ]['name'] : '';
+//
+//                        $item->created_at_format = $item->created_at->format('Y-m-d');
+//                        $item->form_type         = Config('form')[ $item->form_id ]['name'];
+//                        $item->status_string     = $status[ $item->status ];
+//                        $item->department        = $dpartment;
+//                        $item->member
+//                                                 = ( isset($member[ $item->apply_member_id ]) ) ? $member[ $item->apply_member_id ]['name'] : '';
+//                        $item->apply_subject     = $item->data()->where('column', 'apply_subject')->pluck('value')->get(
+//                            0
+//                        );
+//
+//                        return $item;
+//                    }
+//                );
 
-                $status = Config('form_status.apply');
-
-                $list->map(
-                    function ( $item ) use ( $member, $department, $status ) {
-
-                        $department_id
-                            = ( isset($member[ $item->apply_member_id ]) ) ? $member[ $item->apply_member_id ]['department_id'] : null;
-                        $dpartment
-                            = ( isset($department[ $department_id ]) ) ? $department[ $department_id ]['name'] : '';
-
-                        $item->created_at_format = $item->created_at->format('Y-m-d');
-                        $item->form_type         = Config('form')[ $item->form_id ]['name'];
-                        $item->status_string     = $status[ $item->status ];
-                        $item->department        = $dpartment;
-                        $item->member
-                                                 = ( isset($member[ $item->apply_member_id ]) ) ? $member[ $item->apply_member_id ]['name'] : '';
-                        $item->apply_subject     = $item->data()->where('column', 'apply_subject')->pluck('value')->get(
-                            0
-                        );
-
-                        return $item;
-                    }
-                );
+                $list = FormPairData::where(['member_id' => $request->member_id , 'form_id' => $request->form_id , 'status'=>0 ] )->get();
 
                 self::$message['status']        = 1;
                 self::$message['status_string'] = '取得成功';
