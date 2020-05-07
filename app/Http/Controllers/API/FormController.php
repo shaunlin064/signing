@@ -3,12 +3,12 @@
 
     namespace App\Http\Controllers\API;
 
-    use App\EmailSend;
     use App\FormApply;
     use App\FormApplyCheckpoint;
     use App\FormData;
     use App\FormDataSub;
     use App\FormFlow;
+    use App\FormPairData;
     use App\Http\Controllers\Controller;
     use App\Http\Controllers\SessionController;
     use App\SuperUser;
@@ -35,7 +35,13 @@
          * message : API成功或失敗訊息說明
          * data : API執行成功夾帶資料
          */
-        protected static $message = [ 'status' => 0, 'status_string' => '', 'message' => '', 'data' => [] ];
+        protected static $message
+            = [
+                'status'        => 0,
+                'status_string' => '',
+                'message'       => '',
+                'data'          => []
+            ];
         public $canCheck = false;
 
         /**
@@ -49,16 +55,20 @@
          */
         public function apply ( Request $request ) {
 
-            $validator = Validator::make($request->all(),
-                                         [ 'form_id' => 'required', 'apply_member_id' => 'required', ]);
+            $validator = Validator::make(
+                $request->all(), [
+                                   'form_id'         => 'required',
+                                   'apply_member_id' => 'required',
+                               ]
+            );
 
             if ( $validator->fails() ) {
                 $error = $validator->errors()->toArray();
                 $error = reset($error);
 
-                self::$message['status'] = 0;
+                self::$message['status']        = 0;
                 self::$message['status_string'] = '驗證錯誤';
-                self::$message['message'] = $error[0];
+                self::$message['message']       = $error[0];
 
                 return self::$message;
             }
@@ -68,9 +78,9 @@
 
                 //確認form_id有在定義中
                 if ( !array_key_exists($request->get('form_id'), Config('form')) ) {
-                    self::$message['status'] = 0;
+                    self::$message['status']        = 0;
                     self::$message['status_string'] = '驗證錯誤';
-                    self::$message['message'] = '表單不存在，請洽管理員';
+                    self::$message['message']       = '表單不存在，請洽管理員';
 
                     return self::$message;
                 }
@@ -83,24 +93,42 @@
                 if ( !is_null($FormFlow) ) {
 
                     //寫入申請表單
-                    $FormApply = FormApply::create([ 'form_id'         => $request->get('form_id'),
-                                                     'apply_member_id' => $request->get('apply_member_id'),
-                                                     'status'          => 1 ]);
+                    $FormApply = FormApply::create(
+                        [
+                            'form_id'         => $request->get('form_id'),
+                            'apply_member_id' => $request->get('apply_member_id'),
+                            'status'          => 1
+                        ]
+                    );
 
                     //寫入填單資料
                     $form = Config('form.' . $request->get('form_id'));
                     foreach ( $form['column'] as $k => $v ) {
 
                         //寫入主資料
-                        $MainData = $FormApply->data()->create([ 'form_id' => $request->get('form_id'), 'column' => $k,
-                                                                 'value'   => ( $request->get($k) == '' || is_array($request->get($k)) ) ? null : $request->get($k) ]);
+                        $MainData = $FormApply->data()->create(
+                            [
+                                'form_id' => $request->get('form_id'),
+                                'column'  => $k,
+                                'value'   => ( $request->get($k) == '' || is_array(
+                                        $request->get($k)
+                                    ) ) ? null : $request->get($k)
+                            ]
+                        );
 
                         if ( isset($v['sub_column']) && is_array($request->get($k)) ) {
                             //有子欄位，寫入子資料
                             foreach ( $request->get($k) as $k1 => $v1 ) {
                                 foreach ( $v['sub_column'] as $k2 => $v2 ) {
-                                    $MainData->subData()->create([ 'key'   => $k1, 'column' => $k2,
-                                                                   'value' => ( $request->get($k)[ $k1 ][ $k2 ] == '' ) ? null : $request->get($k)[ $k1 ][ $k2 ] ]);
+                                    $MainData->subData()->create(
+                                        [
+                                            'key'    => $k1,
+                                            'column' => $k2,
+                                            'value'  => ( $request->get(
+                                                    $k
+                                                )[ $k1 ][ $k2 ] == '' ) ? null : $request->get($k)[ $k1 ][ $k2 ]
+                                        ]
+                                    );
                                 }
                             }
                         }
@@ -120,11 +148,11 @@
                             } else {
                                 $signed_member_id = $member[ $request->get('apply_member_id') ]['executive'];
                                 /* TODO::erp 後台主管設定 最部門主高主管定義邏輯有問題 如果最高主管為 15 json的話 自動替換成 top_manage*/
-                                if($signed_member_id == 15){
+                                if ( $signed_member_id == 15 ) {
                                     $signed_member_id = $member[ $request->get('apply_member_id') ]['top_manage'];
                                 }
                             }
-                        } else if ($v->review_type == 3) {
+                        } else if ( $v->review_type == 3 ) {
                             $signed_member_id = $request->get('apply_member_id');
                         }
 
@@ -142,67 +170,75 @@
                                     $replace_id = $member[ $request->get('apply_member_id') ]['executive'];
                                 }
                                 array_push($replace_signed_member_id, $replace_id);
-                            }else{
+                            } else {
                                 array_push($replace_signed_member_id, $v1->replace_id);
                             }
                         }
 
                         /* TODO::未來需修正後台主管設定邏輯 top manage 為 null 或簽核關卡為自己 直接跳過不設關卡 1級主管 沒有top_manage*/
-                        if($signed_member_id !== null){
-                            if(  $signed_member_id !== $request->get('apply_member_id') || $v->role != 1 ){
-                                $FormApply->checkPoint()->create([ 'review_order'     => $v->review_order, 'role' => $v->role,
-                                                                   'signed_member_id' => $signed_member_id,
-                                                                   'overwrite'        => $v->overwrite,
-                                                                   'replace_members'  => json_encode($replace_signed_member_id),
-                                                                   'status'           => 1 ]);
+                        if ( $signed_member_id !== null ) {
+                            if ( $signed_member_id !== $request->get('apply_member_id') || $v->role != 1 ) {
+                                $FormApply->checkPoint()->create(
+                                    [
+                                        'review_order'     => $v->review_order,
+                                        'role'             => $v->role,
+                                        'signed_member_id' => $signed_member_id,
+                                        'overwrite'        => $v->overwrite,
+                                        'replace_members'  => json_encode($replace_signed_member_id),
+                                        'status'           => 1
+                                    ]
+                                );
                             }
                         }
 
 
-
                         //寄出通知信件
-/*                        $mail_data = [ 'name'       => $member[ $signed_member_id ]['name'],
-                                       'form_id'    => $request->get('form_id'),
-                                       'member'     => $member[ $request->get('apply_member_id') ]['name'],
-                                       'created_at' => date('Y-m-d H:i:s') ];
+                        /*                        $mail_data = [ 'name'       => $member[ $signed_member_id ]['name'],
+                                                               'form_id'    => $request->get('form_id'),
+                                                               'member'     => $member[ $request->get('apply_member_id') ]['name'],
+                                                               'created_at' => date('Y-m-d H:i:s') ];
 
-                        EmailSend::create([ 'notify_type'    => '簽核通知',
-                                            'receiver_email' => $member[ $signed_member_id ]['email'],
-                                            'receiver_name'  => $member[ $signed_member_id ]['name'] . ' - ' . $member[ $signed_member_id ]['org_name_ch'],
-                                            'template'       => 'Email.signing_notify', 'subject' => "傑思 愛德威 - 簽核系統通知",
-                                            'content'        => json_encode($mail_data), 'status' => 0 ]);*/
+                                                EmailSend::create([ 'notify_type'    => '簽核通知',
+                                                                    'receiver_email' => $member[ $signed_member_id ]['email'],
+                                                                    'receiver_name'  => $member[ $signed_member_id ]['name'] . ' - ' . $member[ $signed_member_id ]['org_name_ch'],
+                                                                    'template'       => 'Email.signing_notify', 'subject' => "傑思 愛德威 - 簽核系統通知",
+                                                                    'content'        => json_encode($mail_data), 'status' => 0 ]);*/
                     }
                     //設定目前關卡狀態
-                    $FormApply->now = $FormApply->checkPoint()->first()->id;
-                    $FormApply->next = ( $FormApply->checkPoint()
-                            ->skip(1)
-                            ->first() == null ) ? null : $FormApply->checkPoint()->skip(1)->first()->id;
+                    $FormApply->now  = $FormApply->checkPoint()->first()->id;
+                    $FormApply->next = ( $FormApply->checkPoint()->skip(1)->first(
+                        ) == null ) ? null : $FormApply->checkPoint()->skip(1)->first()->id;
                     $FormApply->save();
 
                     //寫入通知訊息 通知第一位簽核者
-                    SystemMessage::create([ 'member_id' => $FormFlow->first()['reviewer_id'], 'title' => '系統訊息',
-                                            'content'   => '您有一則待簽核資料，請儘速處理',
-                                            'url'       => Route('form-edit', [ "id" => $FormApply->id ]),
-                                            'send_by'   => 0 ]);
+                    SystemMessage::create(
+                        [
+                            'member_id' => $FormFlow->first()['reviewer_id'],
+                            'title'     => '系統訊息',
+                            'content'   => '您有一則待簽核資料，請儘速處理',
+                            'url'       => Route('form-edit', [ "id" => $FormApply->id ]),
+                            'send_by'   => 0
+                        ]
+                    );
 
                 } else {
                     self::$message['status_string'] = '申請失敗';
-                    self::$message['message'] = '未有簽核流程，申請表未開放使用';
+                    self::$message['message']       = '未有簽核流程，申請表未開放使用';
 
                     return self::$message;
                 }
 
 
-                self::$message['status'] = 1;
+                self::$message['status']        = 1;
                 self::$message['status_string'] = '申請成功';
-                self::$message['message'] = '';
-                self::$message['data'] = $FormApply;
+                self::$message['message']       = '';
+                self::$message['data']          = $FormApply;
                 DB::commit();
 
             } catch ( \Exception $ex ) {
                 DB::rollback();
                 self::$message['status_string'] = '申請失敗';
-                self::$message['message'] = '資料庫錯誤!' . $ex->getMessage();
+                self::$message['message']       = '資料庫錯誤!' . $ex->getMessage();
             }
 
             return self::$message;
@@ -228,33 +264,15 @@
                 $FormApply = FormApply::findOrFail($request->get('id'));
 
                 $result = $FormApply->toArray();
+
                 //封裝欄位填寫資料
-                $form = Config('form.' . $FormApply->form_id);
-                $columnData = $FormApply->data;
-                $column = $columnData->pluck('value', 'column');
-                foreach ( $columnData as $k => $v ) {
-                    if ( isset($form['column'][ $v->column ]['sub_column']) ) {
-                        //取得子欄位資料
-                        $subData = [];
-                        $subDataTemp = FormDataSub::select('key')->where('form_data_id', $v->id)->groupBy('key')->get();
-                        foreach ( $subDataTemp as $k1 => $v1 ) {
-
-                            $subData[ $v1->key ] = FormDataSub::where('form_data_id', $v->id)
-                                ->where('key', $v1->key)
-                                ->pluck('value', 'column');
-
-                        }
-                        $column[ $v->column ] = $subData;
-                    }
-                }
-                $result['column'] = $column;
-
+                $result['column'] = $FormApply->formDataWrap();
 
                 //確認可簽核狀態
-                $in_checkpoint = 0;
-                $assign_checkpoint_id = 0;
-                $result['check_status']['can_check'] = 0;
-                $result['check_status']['is_replace'] = 0;
+                $in_checkpoint                                 = 0;
+                $assign_checkpoint_id                          = 0;
+                $result['check_status']['can_check']           = 0;
+                $result['check_status']['is_replace']          = 0;
                 $result['check_status']['form_check_point_id'] = 0;
 
                 //檢查有沒有在關卡中
@@ -262,67 +280,54 @@
 
                 // 找尋使用者 最多可以簽核的關卡id
                 /* ex: 連續三關都是同一個user 或者可以取代的簽核  將直接取最後可簽核id*/
-                foreach($check_point as $key => $item){
-                    $canCheck = $this->checkCanSigning($item,$member_id,false);
-                    if($canCheck  == false){
+                foreach ( $check_point as $key => $item ) {
+                    $canCheck = $this->checkCanSigning($item, $member_id, false);
+                    if ( $canCheck == false ) {
                         break;
                     }
                     $replace_members = json_decode($item->replace_members, true);
                     if ( in_array($member_id, $replace_members) ) {
                         $result['check_status']['is_replace'] = 1;
                     }
-                    $in_checkpoint = $item->review_order;
+                    $in_checkpoint        = $item->review_order;
                     $assign_checkpoint_id = $item->id;
                 }
 
-
-//
-//                foreach ( $check_point as $k => $v ) {
-//                    $replace_members = json_decode($v->replace_members, true);
-//                    if ( $v->signed_member_id == $member_id || in_array($member_id, $replace_members) ) {
-//                        $in_checkpoint = $v->review_order;
-//                        $assign_checkpoint_id = $v->id;
-//                        if ( in_array($member_id, $replace_members) ) {
-//                            $result['check_status']['is_replace'] = 1;
-//                        }
-//                        break;
-//                    }
-//                }
-//
-//                //檢查有沒有比我前面的人卡關
-//                $overwriteCount = $FormApply->checkPoint()
-//                    ->where('review_order', '<', $in_checkpoint)
-//                    ->whereNull('signed_at')
-//                    ->where('overwrite', 0)
-//                    ->count();
-
-
                 if ( $in_checkpoint != 0 ) {
-                    $result['check_status']['can_check'] = 1;
+                    $result['check_status']['can_check']           = 1;
                     $result['check_status']['form_check_point_id'] = $assign_checkpoint_id;
                 }
 
                 //封裝簽核列表
-                $formflow = FormFlow::where('form_id',$FormApply->form_id)->get();
+                $formflow = FormFlow::where('form_id', $FormApply->form_id)->get();
 
-                $result['checkPoint'] = $FormApply->checkPoint->transform(function ( $item, $key ) use($formflow) {
-                    $item['check_point_name'] = $formflow->where('review_order',$item->review_order)->max('name');
-                    $item = collect($item)->forget([ 'updated_at', 'form_apply_id', 'overwrite', 'replace_members', ]);
-                    $item['created_at'] = date('Y-m-d', strtotime($item['created_at']));
-                    $item['role_str'] = $item['role'] == 1 ? '簽核' : '執行';
+                $result['checkPoint'] = $FormApply->checkPoint->transform(
+                    function ( $item, $key ) use ( $formflow ) {
+                        $item['check_point_name'] = $formflow->where('review_order', $item->review_order)->max('name');
+                        $item                     = collect($item)->forget(
+                            [
+                                'updated_at',
+                                'form_apply_id',
+                                'overwrite',
+                                'replace_members',
+                            ]
+                        );
+                        $item['created_at']       = date('Y-m-d', strtotime($item['created_at']));
+                        $item['role_str']         = $item['role'] == 1 ? '簽核' : '執行';
 
-                    return $item;
-                });
+                        return $item;
+                    }
+                );
 
-                self::$message['status'] = 1;
+                self::$message['status']        = 1;
                 self::$message['status_string'] = '取得成功';
-                self::$message['message'] = '';
-                self::$message['data'] = $result;
+                self::$message['message']       = '';
+                self::$message['data']          = $result;
 
             } catch ( \Exception $ex ) {
 
                 self::$message['status_string'] = '取得失敗';
-                self::$message['message'] = '資料庫錯誤!' . $ex->getMessage();
+                self::$message['message']       = '資料庫錯誤!' . $ex->getMessage();
             }
 
             return self::$message;
@@ -340,9 +345,9 @@
             DB::beginTransaction();
             try {
                 //檢查申請表是否已經有人簽核
-                $FormApplyCheckpoint = FormApplyCheckpoint::where('form_apply_id', $request->get('id'))
-                    ->whereNotNull('signed_at')
-                    ->first();
+                $FormApplyCheckpoint = FormApplyCheckpoint::where('form_apply_id', $request->get('id'))->whereNotNull(
+                    'signed_at'
+                )->first();
 
                 if ( $FormApplyCheckpoint == null ) {
                     $FormApply = FormApply::findOrFail($request->get('id'));
@@ -358,15 +363,29 @@
                         foreach ( $form['column'] as $k => $v ) {
 
                             //寫入主資料
-                            $MainData = $FormApply->data()->create([ 'form_id' => $FormApply->form_id, 'column' => $k,
-                                                                     'value'   => ( $request->get($k) == '' || is_array($request->get($k)) ) ? null : $request->get($k) ]);
+                            $MainData = $FormApply->data()->create(
+                                [
+                                    'form_id' => $FormApply->form_id,
+                                    'column'  => $k,
+                                    'value'   => ( $request->get($k) == '' || is_array(
+                                            $request->get($k)
+                                        ) ) ? null : $request->get($k)
+                                ]
+                            );
 
                             if ( isset($v['sub_column']) && is_array($request->get($k)) ) {
                                 //有子欄位，寫入子資料
                                 foreach ( $request->get($k) as $k1 => $v1 ) {
                                     foreach ( $v['sub_column'] as $k2 => $v2 ) {
-                                        $MainData->subData()->create([ 'key'   => $k1, 'column' => $k2,
-                                                                       'value' => ( $request->get($k)[ $k1 ][ $k2 ] == '' ) ? null : $request->get($k)[ $k1 ][ $k2 ] ]);
+                                        $MainData->subData()->create(
+                                            [
+                                                'key'    => $k1,
+                                                'column' => $k2,
+                                                'value'  => ( $request->get(
+                                                        $k
+                                                    )[ $k1 ][ $k2 ] == '' ) ? null : $request->get($k)[ $k1 ][ $k2 ]
+                                            ]
+                                        );
                                     }
                                 }
                             }
@@ -375,28 +394,28 @@
                         $FormApply->push();
                     } else {
                         self::$message['status_string'] = '編輯失敗';
-                        self::$message['message'] = '表單錯誤或資料已經作廢';
+                        self::$message['message']       = '表單錯誤或資料已經作廢';
 
                         return self::$message;
                     }
                 } else {
                     self::$message['status_string'] = '編輯失敗';
-                    self::$message['message'] = '表單錯誤或已有簽核紀錄無法作廢';
+                    self::$message['message']       = '表單錯誤或已有簽核紀錄無法作廢';
 
                     return self::$message;
                 }
 
 
-                self::$message['status'] = 1;
+                self::$message['status']        = 1;
                 self::$message['status_string'] = '編輯成功';
-                self::$message['message'] = '';
-                self::$message['data'] = $FormApply;
+                self::$message['message']       = '';
+                self::$message['data']          = $FormApply;
                 DB::commit();
 
             } catch ( \Exception $ex ) {
                 DB::rollback();
                 self::$message['status_string'] = '編輯失敗';
-                self::$message['message'] = '資料庫錯誤!' . $ex->getMessage();
+                self::$message['message']       = '資料庫錯誤!' . $ex->getMessage();
             }
 
             return self::$message;
@@ -414,9 +433,9 @@
             DB::beginTransaction();
             try {
                 //檢查申請表是否已經有人簽核
-                $FormApplyCheckpoint = FormApplyCheckpoint::where('form_apply_id', $request->get('id'))
-                    ->whereNotNull('signed_at')
-                    ->first();
+                $FormApplyCheckpoint = FormApplyCheckpoint::where('form_apply_id', $request->get('id'))->whereNotNull(
+                    'signed_at'
+                )->first();
 
                 if ( $FormApplyCheckpoint == null ) {
                     $FormApply = FormApply::findOrFail($request->get('id'));
@@ -425,28 +444,28 @@
                         $FormApply->save();
                     } else {
                         self::$message['status_string'] = '作廢失敗';
-                        self::$message['message'] = '表單錯誤或資料已經作廢';
+                        self::$message['message']       = '表單錯誤或資料已經作廢';
 
                         return self::$message;
                     }
                 } else {
                     self::$message['status_string'] = '作廢失敗';
-                    self::$message['message'] = '表單錯誤或已有簽核紀錄無法作廢';
+                    self::$message['message']       = '表單錯誤或已有簽核紀錄無法作廢';
 
                     return self::$message;
                 }
 
 
-                self::$message['status'] = 1;
+                self::$message['status']        = 1;
                 self::$message['status_string'] = '作廢成功';
-                self::$message['message'] = '';
-                self::$message['data'] = $FormApply;
+                self::$message['message']       = '';
+                self::$message['data']          = $FormApply;
                 DB::commit();
 
             } catch ( \Exception $ex ) {
                 DB::rollback();
                 self::$message['status_string'] = '作廢失敗';
-                self::$message['message'] = '資料庫錯誤!' . $ex->getMessage();
+                self::$message['message']       = '資料庫錯誤!' . $ex->getMessage();
             }
 
             return self::$message;
@@ -467,7 +486,7 @@
 
             DB::beginTransaction();
             try {
-                $now = date('Y-m-d H:i:s');
+                $now        = date('Y-m-d H:i:s');
                 $checkPoint = FormApplyCheckpoint::find($request->get('id'));
 
                 //檢查簽核狀態，確認是否可執行或者簽核
@@ -481,7 +500,7 @@
                 //沒有人卡關 人員在代簽名單中 人員為簽署者 則可簽
                 $checkPoint->signed_at = $now;
                 $checkPoint->signature = $request->get('signature');
-                $checkPoint->remark = $request->get('remark') ?? '';
+                $checkPoint->remark    = $request->get('remark') ?? '';
                 /*是否為代簽 補上代簽者 id*/
                 if ( json_decode($checkPoint->replace_members, true) ) {
                     $checkPoint->replace_signed_member_id = $request->get('member_id');
@@ -496,56 +515,95 @@
                 }
                 /*確認是否有下一關*/
                 $FormApplyCheckpointNext = FormApplyCheckpoint::where('form_apply_id', $checkPoint->form_apply_id)
-                    ->where('review_order', '>', $checkPoint->review_order)
-                    ->where('status', 1)
-                    ->whereNull('signed_at')
-                    ->orderBy('review_order', 'ASC')
-                    ->first();
+                                                              ->where(
+                                                                  'review_order', '>', $checkPoint->review_order
+                                                              )
+                                                              ->where('status', 1)
+                                                              ->whereNull('signed_at')
+                                                              ->orderBy('review_order', 'ASC')
+                                                              ->first();
                 /*有下一關 更改前後狀態*/
 
                 if ( $FormApplyCheckpointNext ) {
-                    $FormApplyCheckpointNextNext = FormApplyCheckpoint::where('form_apply_id',
-                                                                              $checkPoint->form_apply_id)
-                        ->where('review_order', '>', $FormApplyCheckpointNext->review_order)
-                        ->where('status', 1)
-                        ->whereNull('signed_at')
-                        ->orderBy('review_order', 'ASC')
-                        ->first();
+                    $FormApplyCheckpointNextNext = FormApplyCheckpoint::where(
+                        'form_apply_id', $checkPoint->form_apply_id
+                    )
+                                                                      ->where(
+                                                                          'review_order', '>',
+                                                                          $FormApplyCheckpointNext->review_order
+                                                                      )
+                                                                      ->where('status', 1)
+                                                                      ->whereNull(
+                                                                          'signed_at'
+                                                                      )
+                                                                      ->orderBy('review_order', 'ASC')
+                                                                      ->first();
 
                     $checkPoint->apply->now = $FormApplyCheckpointNext->id;
-                    $checkPoint->apply->next = ( $FormApplyCheckpointNextNext == null ) ? null : $FormApplyCheckpointNextNext->id;
+                    $checkPoint->apply->next
+                                            = ( $FormApplyCheckpointNextNext == null ) ? null : $FormApplyCheckpointNextNext->id;
 
                     //寫入通知訊息 通知下位簽核者
-                    SystemMessage::create([ 'member_id' => $FormApplyCheckpointNext['signed_member_id'], 'title' => '系統訊息',
-                                            'content'   => '您有一則待簽核資料，請儘速處理',
-                                            'url'       => Route('form-edit', [ "id" => $checkPoint->apply->id ]),
-                                            'send_by'   => 0 ]);
+                    SystemMessage::create(
+                        [
+                            'member_id' => $FormApplyCheckpointNext['signed_member_id'],
+                            'title'     => '系統訊息',
+                            'content'   => '您有一則待簽核資料，請儘速處理',
+                            'url'       => Route('form-edit', [ "id" => $checkPoint->apply->id ]),
+                            'send_by'   => 0
+                        ]
+                    );
                 } else {
                     //沒有下一關，代表簽核結束
-                    $checkPoint->apply->now = null;
+                    $checkPoint->apply->now  = null;
                     $checkPoint->apply->next = null;
                     if ( $request->get('status') != 0 ) {//審核結束並通過
                         $checkPoint->apply->status = 3;
                     }
-    /*簽核完成 通知申請者*/
-                    SystemMessage::create([ 'member_id' => $checkPoint->apply->apply_member_id, 'title' => '系統訊息',
-                                            'content'   => '您申請的簽核已完成流程',
-                                            'url'       => Route('form-edit', [ "id" => $checkPoint->apply->id ]),
-                                            'send_by'   => 0 ]);
+                    /*將資料寫入 form_pair_Data 供 旅費申請使用*/
+                    if ( $checkPoint->apply->form_id == 5 ) {
+                        $formApplyData = $checkPoint->apply->formDataWrap();
+                        $applyId       = $checkPoint->apply->id;
+                        collect($formApplyData['items'])->groupBy('charge_user')->each(
+                            function ( $v ) use ( $formApplyData, $applyId ) {
+
+                                FormPairData::create(
+                                    [
+                                        'apply_subject' => $formApplyData['apply_subject'],
+                                        'form_id'       => 5,
+                                        'member_id'     => (int) $v[0]['charge_user'],
+                                        'value'         => json_encode($v),
+                                        'form_apply_id' => $applyId,
+                                    ]
+                                );
+                            }
+                        );
+                    }
+
+                    /*簽核完成 通知申請者*/
+                    SystemMessage::create(
+                        [
+                            'member_id' => $checkPoint->apply->apply_member_id,
+                            'title'     => '系統訊息',
+                            'content'   => '您申請的簽核已完成流程',
+                            'url'       => Route('form-edit', [ "id" => $checkPoint->apply->id ]),
+                            'send_by'   => 0
+                        ]
+                    );
                 }
 
                 $checkPoint->push();
 
-                self::$message['status'] = 1;
+                self::$message['status']        = 1;
                 self::$message['status_string'] = '簽核成功';
-                self::$message['message'] = '';
-                self::$message['data'] = $checkPoint;
+                self::$message['message']       = '';
+                self::$message['data']          = $checkPoint;
                 DB::commit();
 
             } catch ( \Exception $ex ) {
                 DB::rollback();
                 self::$message['status_string'] = '簽核失敗';
-                self::$message['message'] = '資料庫錯誤!' . $ex->getMessage();
+                self::$message['message']       = '資料庫錯誤!' . $ex->getMessage();
             }
 
             return self::$message;
@@ -588,7 +646,7 @@
                 $member_id = $request->get('member_id');
 
                 //取得session資料
-                $member = SessionController::getSession('member');
+                $member     = SessionController::getSession('member');
                 $department = SessionController::getSession('department');
 
                 $status = Config('form_status.apply');
@@ -599,29 +657,35 @@
                     $replace_members = json_decode($v->replace_members, true);
                     if ( $v->signed_member_id == $member_id || in_array($member_id, $replace_members) ) {
 
-                        $department_id = ( isset($member[ $v->apply->apply_member_id ]) ) ? $member[ $v->apply->apply_member_id ]['department_id'] : null;
-                        $dpartment = ( isset($department[ $department_id ]) ) ? $department[ $department_id ]['name'] : '';
+                        $department_id
+                            = ( isset($member[ $v->apply->apply_member_id ]) ) ? $member[ $v->apply->apply_member_id ]['department_id'] : null;
+                        $dpartment
+                            = ( isset($department[ $department_id ]) ) ? $department[ $department_id ]['name'] : '';
 
-                        $item = [ 'id'                      => $v->id, 'form_apply_id' => $v->form_apply_id,
-                                  'form_id'                 => $v->apply->form_id,
-                                  'form_type'               => Config('form')[ $v->apply->form_id ]['name'],
-                                  'column'                  => $v->applyData()->pluck('value', 'column'),
-                                  'apply_member_id'         => $v->apply->apply_member_id,
-                                  'apply_at'                => $v->apply->created_at->format('Y-m-d'),
-                                  'status'                  => $v->apply->status,
-                                  'status_string'           => $status[ $v->apply->status ], 'department' => $dpartment,
-                                  'member'                  => ( isset($member[ $v->apply->apply_member_id ]) ) ? $member[ $v->apply->apply_member_id ]['name'] : '',
-                                  'apply_subject'           => $v->apply->data()
-                                      ->where('column', 'apply_subject')
-                                      ->pluck('value')
-                                      ->get(0), 'can_check' => 0, 'is_replace' => 0 ];
+                        $item = [
+                            'id'              => $v->id,
+                            'form_apply_id'   => $v->form_apply_id,
+                            'form_id'         => $v->apply->form_id,
+                            'form_type'       => Config('form')[ $v->apply->form_id ]['name'],
+                            'column'          => $v->applyData()->pluck('value', 'column'),
+                            'apply_member_id' => $v->apply->apply_member_id,
+                            'apply_at'        => $v->apply->created_at->format('Y-m-d'),
+                            'status'          => $v->apply->status,
+                            'status_string'   => $status[ $v->apply->status ],
+                            'department'      => $dpartment,
+                            'member'          => ( isset($member[ $v->apply->apply_member_id ]) ) ? $member[ $v->apply->apply_member_id ]['name'] : '',
+                            'apply_subject'   => $v->apply->data()
+                                                          ->where('column', 'apply_subject')
+                                                          ->pluck('value')
+                                                          ->get(0),
+                            'can_check'       => 0,
+                            'is_replace'      => 0
+                        ];
 
                         //檢查有沒有比我前面的人卡關
-                        $overwriteCount = FormApplyCheckpoint::where('review_order', '<', $v->review_order)
-                            ->where('form_apply_id', $v->form_apply_id)
-                            ->whereNull('signed_at')
-                            ->where('overwrite', 0)
-                            ->count();
+                        $overwriteCount = FormApplyCheckpoint::where('review_order', '<', $v->review_order)->where(
+                            'form_apply_id', $v->form_apply_id
+                        )->whereNull('signed_at')->where('overwrite', 0)->count();
 
                         if ( $overwriteCount == 0 ) {
                             $item['can_check'] = 1;
@@ -634,15 +698,15 @@
                         array_push($result, $item);
                     }
                 }
-                self::$message['status'] = 1;
+                self::$message['status']        = 1;
                 self::$message['status_string'] = '取得成功';
-                self::$message['message'] = '';
-                self::$message['data'] = $result;
+                self::$message['message']       = '';
+                self::$message['data']          = $result;
 
             } catch ( \Exception $ex ) {
                 DB::rollback();
                 self::$message['status_string'] = '取得失敗';
-                self::$message['message'] = '資料庫錯誤!' . $ex->getMessage();
+                self::$message['message']       = '資料庫錯誤!' . $ex->getMessage();
             }
 
             return self::$message;
@@ -675,7 +739,7 @@
 
             try {
                 $_GET['page'] = $request->get('page');
-                $list = FormApply::where('apply_member_id', $request->get('member_id'))->orderBy('id', 'DESC');
+                $list         = FormApply::where('apply_member_id', $request->get('member_id'))->orderBy('id', 'DESC');
                 if ( $request->get('page') == null ) {
                     $list = $list->get();
                 } else {
@@ -683,35 +747,42 @@
                 }
 
                 //取得session資料
-                $member = SessionController::getSession('member');
+                $member     = SessionController::getSession('member');
                 $department = SessionController::getSession('department');
 
                 $status = Config('form_status.apply');
 
-                $list->map(function ( $item ) use ( $member, $department, $status ) {
+                $list->map(
+                    function ( $item ) use ( $member, $department, $status ) {
 
-                    $department_id = ( isset($member[ $item->apply_member_id ]) ) ? $member[ $item->apply_member_id ]['department_id'] : null;
-                    $dpartment = ( isset($department[ $department_id ]) ) ? $department[ $department_id ]['name'] : '';
+                        $department_id
+                            = ( isset($member[ $item->apply_member_id ]) ) ? $member[ $item->apply_member_id ]['department_id'] : null;
+                        $dpartment
+                            = ( isset($department[ $department_id ]) ) ? $department[ $department_id ]['name'] : '';
 
-                    $item->created_at_format = $item->created_at->format('Y-m-d');
-                    $item->form_type = Config('form')[ $item->form_id ]['name'];
-                    $item->status_string = $status[ $item->status ];
-                    $item->department = $dpartment;
-                    $item->member = ( isset($member[ $item->apply_member_id ]) ) ? $member[ $item->apply_member_id ]['name'] : '';
-                    $item->apply_subject = $item->data()->where('column', 'apply_subject')->pluck('value')->get(0);
+                        $item->created_at_format = $item->created_at->format('Y-m-d');
+                        $item->form_type         = Config('form')[ $item->form_id ]['name'];
+                        $item->status_string     = $status[ $item->status ];
+                        $item->department        = $dpartment;
+                        $item->member
+                                                 = ( isset($member[ $item->apply_member_id ]) ) ? $member[ $item->apply_member_id ]['name'] : '';
+                        $item->apply_subject     = $item->data()->where('column', 'apply_subject')->pluck('value')->get(
+                            0
+                        );
 
-                    return $item;
-                });
+                        return $item;
+                    }
+                );
 
-                self::$message['status'] = 1;
+                self::$message['status']        = 1;
                 self::$message['status_string'] = '取得成功';
-                self::$message['message'] = '';
-                self::$message['data'] = $list;
+                self::$message['message']       = '';
+                self::$message['data']          = $list;
 
             } catch ( \Exception $ex ) {
                 DB::rollback();
                 self::$message['status_string'] = '取得失敗';
-                self::$message['message'] = '資料庫錯誤!' . $ex->getMessage();
+                self::$message['message']       = '資料庫錯誤!' . $ex->getMessage();
             }
 
             return self::$message;
@@ -764,19 +835,23 @@
                 if ( $request->get('apply_member_id') != null ) {
                     $list->where('apply_member_id', $request->get('apply_member_id'));
                 }
-                $list->whereHas('checkPoint', function ( $query ) use ( $request, $is_super_user ) {
+                $list->whereHas(
+                    'checkPoint', function ( $query ) use ( $request, $is_super_user ) {
                     $query->whereNotNull('signed_at');
                     if ( $request->get('role') != null ) {
                         $query->where('role', $request->get('role'));
                     }
-                    $query->where(function ( $query1 ) use ( $request, $is_super_user ) {
-                        if ( $request->get('member_id') != null && $is_super_user == false ) {
-                            $query1->orWhere('signed_member_id', $request->get('member_id'));
-                            $query1->orWhere('replace_signed_member_id', $request->get('member_id'));
+                    $query->where(
+                        function ( $query1 ) use ( $request, $is_super_user ) {
+                            if ( $request->get('member_id') != null && $is_super_user == false ) {
+                                $query1->orWhere('signed_member_id', $request->get('member_id'));
+                                $query1->orWhere('replace_signed_member_id', $request->get('member_id'));
+                            }
                         }
-                    });
+                    );
 
-                })->orderBy('id', 'DESC');
+                }
+                )->orderBy('id', 'DESC');
                 if ( $request->get('page') == null ) {
                     $list = $list->get();
                 } else {
@@ -784,35 +859,42 @@
                 }
 
                 //取得session資料
-                $member = SessionController::getSession('member');
+                $member     = SessionController::getSession('member');
                 $department = SessionController::getSession('department');
 
                 $status = Config('form_status.apply');
 
-                $list->map(function ( $item ) use ( $member, $department, $status ) {
+                $list->map(
+                    function ( $item ) use ( $member, $department, $status ) {
 
-                    $department_id = ( isset($member[ $item->apply_member_id ]) ) ? $member[ $item->apply_member_id ]['department_id'] : null;
-                    $dpartment = ( isset($department[ $department_id ]) ) ? $department[ $department_id ]['name'] : '';
+                        $department_id
+                            = ( isset($member[ $item->apply_member_id ]) ) ? $member[ $item->apply_member_id ]['department_id'] : null;
+                        $dpartment
+                            = ( isset($department[ $department_id ]) ) ? $department[ $department_id ]['name'] : '';
 
-                    $item->created_at_format = $item->created_at->format('Y-m-d');
-                    $item->form_type = Config('form')[ $item->form_id ]['name'];
-                    $item->status_string = $status[ $item->status ];
-                    $item->department = $dpartment;
-                    $item->member = ( isset($member[ $item->apply_member_id ]) ) ? $member[ $item->apply_member_id ]['name'] : '';
-                    $item->apply_subject = $item->data()->where('column', 'apply_subject')->pluck('value')->get(0);
+                        $item->created_at_format = $item->created_at->format('Y-m-d');
+                        $item->form_type         = Config('form')[ $item->form_id ]['name'];
+                        $item->status_string     = $status[ $item->status ];
+                        $item->department        = $dpartment;
+                        $item->member
+                                                 = ( isset($member[ $item->apply_member_id ]) ) ? $member[ $item->apply_member_id ]['name'] : '';
+                        $item->apply_subject     = $item->data()->where('column', 'apply_subject')->pluck('value')->get(
+                            0
+                        );
 
-                    return $item;
-                });
+                        return $item;
+                    }
+                );
 
-                self::$message['status'] = 1;
+                self::$message['status']        = 1;
                 self::$message['status_string'] = '取得成功';
-                self::$message['message'] = '';
-                self::$message['data'] = $list;
+                self::$message['message']       = '';
+                self::$message['data']          = $list;
 
             } catch ( \Exception $ex ) {
                 DB::rollback();
                 self::$message['status_string'] = '取得失敗';
-                self::$message['message'] = '資料庫錯誤!' . $ex->getMessage();
+                self::$message['message']       = '資料庫錯誤!' . $ex->getMessage();
             }
 
             return self::$message;
@@ -846,44 +928,46 @@
                 //先找到form_grant_id已被用過的清單
                 $used_form_apply_id = FormData::where('column', 'form_grant_id')->pluck('value');
 
-                $list = FormApply::whereNull('fail_at')
-                    ->where('form_id', $request->get('form_id'))
-                    ->where('apply_member_id', $request->get('apply_member_id'))
-                    ->whereNotIn('id', $used_form_apply_id)
-                    ->whereNull('now')
-                    ->whereNull('next')
-                    ->get();
-
+                $list = FormApply::whereNull('fail_at')->where('form_id', $request->get('form_id'))->where(
+                    'apply_member_id', $request->get('apply_member_id')
+                )->whereNotIn('id', $used_form_apply_id)->whereNull('now')->whereNull('next')->get();
                 //取得session資料
-                $member = SessionController::getSession('member');
+                $member     = SessionController::getSession('member');
                 $department = SessionController::getSession('department');
 
                 $status = Config('form_status.apply');
 
-                $list->map(function ( $item ) use ( $member, $department, $status ) {
+                $list->map(
+                    function ( $item ) use ( $member, $department, $status ) {
 
-                    $department_id = ( isset($member[ $item->apply_member_id ]) ) ? $member[ $item->apply_member_id ]['department_id'] : null;
-                    $dpartment = ( isset($department[ $department_id ]) ) ? $department[ $department_id ]['name'] : '';
+                        $department_id
+                            = ( isset($member[ $item->apply_member_id ]) ) ? $member[ $item->apply_member_id ]['department_id'] : null;
+                        $dpartment
+                            = ( isset($department[ $department_id ]) ) ? $department[ $department_id ]['name'] : '';
 
-                    $item->created_at_format = $item->created_at->format('Y-m-d');
-                    $item->form_type = Config('form')[ $item->form_id ]['name'];
-                    $item->status_string = $status[ $item->status ];
-                    $item->department = $dpartment;
-                    $item->member = ( isset($member[ $item->apply_member_id ]) ) ? $member[ $item->apply_member_id ]['name'] : '';
-                    $item->apply_subject = $item->data()->where('column', 'apply_subject')->pluck('value')->get(0);
+                        $item->created_at_format = $item->created_at->format('Y-m-d');
+                        $item->form_type         = Config('form')[ $item->form_id ]['name'];
+                        $item->status_string     = $status[ $item->status ];
+                        $item->department        = $dpartment;
+                        $item->member
+                                                 = ( isset($member[ $item->apply_member_id ]) ) ? $member[ $item->apply_member_id ]['name'] : '';
+                        $item->apply_subject     = $item->data()->where('column', 'apply_subject')->pluck('value')->get(
+                            0
+                        );
 
-                    return $item;
-                });
+                        return $item;
+                    }
+                );
 
-                self::$message['status'] = 1;
+                self::$message['status']        = 1;
                 self::$message['status_string'] = '取得成功';
-                self::$message['message'] = '';
-                self::$message['data'] = $list;
+                self::$message['message']       = '';
+                self::$message['data']          = $list;
 
             } catch ( \Exception $ex ) {
                 DB::rollback();
                 self::$message['status_string'] = '取得失敗';
-                self::$message['message'] = '資料庫錯誤!' . $ex->getMessage();
+                self::$message['message']       = '資料庫錯誤!' . $ex->getMessage();
             }
 
             return self::$message;
@@ -899,7 +983,7 @@
                 //此關已簽
                 if ( $rewriteMessage ) {
                     self::$message['status_string'] = '簽核失敗';
-                    self::$message['message'] = '此關卡已簽核，請勿重複簽署';
+                    self::$message['message']       = '此關卡已簽核，請勿重複簽署';
                 }
 
                 return false;
@@ -912,7 +996,7 @@
                 if ( !in_array($signUserId, $replace_members) ) {
                     if ( $rewriteMessage ) {
                         self::$message['status_string'] = '簽核失敗';
-                        self::$message['message'] = '您所在的關卡有卡關或您並非簽署者';
+                        self::$message['message']       = '您所在的關卡有卡關或您並非簽署者';
                     }
                     return false;
                 }
@@ -921,15 +1005,15 @@
             /*確認前面是否有關卡還尚未簽核*/ /*如果不是第一關需要判斷是否前面關卡*/
             /*取出前面所有關卡*/
             if ( $checkPoint->review_order != 1 ) {
-                $befoerCheckList = FormApplyCheckpoint::where('form_apply_id', $checkPoint->form_apply_id)
-                    ->where('review_order', '<', $checkPoint->review_order)
-                    ->get();
+                $befoerCheckList = FormApplyCheckpoint::where('form_apply_id', $checkPoint->form_apply_id)->where(
+                    'review_order', '<', $checkPoint->review_order
+                )->get();
                 /*判斷關卡是否已有駁回*/ /*已有人駁回 不需要再簽核了*/
                 //  status    簽核狀態 0:駁回 1:待簽核 2:通過'
                 if ( $befoerCheckList->where('status', 0)->count() > 0 ) {
                     if ( $rewriteMessage ) {
                         self::$message['status_string'] = '簽核失敗';
-                        self::$message['message'] = '此表單已有人駁回';
+                        self::$message['message']       = '此表單已有人駁回';
                     }
                     return false;
                 };
@@ -937,7 +1021,7 @@
                 if ( $befoerCheckList->where('status', 1)->count() > 0 && $checkPoint->role == 2 ) {
                     if ( $rewriteMessage ) {
                         self::$message['status_string'] = '簽核失敗';
-                        self::$message['message'] = '此表單前面尚有卡關執行者無法取代簽核';
+                        self::$message['message']       = '此表單前面尚有卡關執行者無法取代簽核';
                     }
                     return false;
                 }
@@ -946,12 +1030,14 @@
                 $overWriteData = $befoerCheckList->where('status', 1)->where('overwrite', 0);
 
                 if ( $overWriteData->count() > 0 ) {
-                    $overWriteName = $overWriteData->pluck('signed_member_id')->map(function ( $v, $k ) {
-                        return getMember($v);
-                    });
+                    $overWriteName = $overWriteData->pluck('signed_member_id')->map(
+                        function ( $v, $k ) {
+                            return getMember($v);
+                        }
+                    );
                     if ( $rewriteMessage ) {
                         self::$message['status_string'] = '簽核失敗';
-                        self::$message['message'] = '此表單前面尚有卡關無法取代簽核' . $overWriteName->implode(',');
+                        self::$message['message']       = '此表單前面尚有卡關無法取代簽核' . $overWriteName->implode(',');
                     }
                     return false;
                 }
@@ -972,20 +1058,22 @@
             //                status 0:駁回 1:暫存中 2:簽核中 3:通過
             if ( $request->get('status') != 0 ) {
                 $FormApplyCheckBefore = FormApplyCheckpoint::where('review_order', '<', $checkPoint->review_order)
-                    ->where('form_apply_id', $checkPoint->form_apply_id)
-                    ->whereNull('signed_at')
-                    ->where('overwrite', 1)
-                    ->get();
-                $FormApplyCheckBefore->each(function ( $v ) use ( $now, $request ) {
-                    $v->signed_at = $now;
-                    $v->signature = $request->get('signature');
-                    $v->status = $request->get('status');
-                    if($request->get('member_id') != $v->signed_member_id){
-                        $v->replace_signed_member_id = $request->get('member_id');
-                    }
+                                                           ->where('form_apply_id', $checkPoint->form_apply_id)
+                                                           ->whereNull('signed_at')
+                                                           ->where('overwrite', 1)
+                                                           ->get();
+                $FormApplyCheckBefore->each(
+                    function ( $v ) use ( $now, $request ) {
+                        $v->signed_at = $now;
+                        $v->signature = $request->get('signature');
+                        $v->status    = $request->get('status');
+                        if ( $request->get('member_id') != $v->signed_member_id ) {
+                            $v->replace_signed_member_id = $request->get('member_id');
+                        }
 
-                    $v->save();
-                });
+                        $v->save();
+                    }
+                );
             }
         }
     }
