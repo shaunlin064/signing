@@ -55,14 +55,17 @@ class User extends Authenticatable
 
         foreach($returnData['data']['member'] as $key => $item){
             if(isset($this->department[$item['department_id']])){
+                /*user 直接增加部門名稱*/
                 $returnData['data']['member'][$key]['department_name'] = $this->department[$item['department_id']]['name'];
+                /*department 增加同部門人員*/
+                $this->department[$item['department_id']]['members'][] = $item;
             }else{
                 $returnData['data']['member'][$key]['department_name'] = '';
             }
         }
         $this->users = $returnData['data']['member'];
         $returnData['data']['member_alive'] = collect($returnData['data']['member'])->where('user_resign_date','0000-00-00')->toarray();
-
+        $returnData['data']['department'] = $this->department;
         return $returnData;
     }
 }

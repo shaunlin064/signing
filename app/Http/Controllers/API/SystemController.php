@@ -3,12 +3,12 @@
 
     namespace App\Http\Controllers\API;
 
+    use App\Http\Controllers\ApiController;
     use App\Http\Controllers\Controller;
     use App\Http\Controllers\SessionController;
     use App\SystemMessage;
-    use Carbon\Carbon;
+    use App\User;
     use Illuminate\Http\Request;
-    use Illuminate\Support\Facades\Cache;
     use Route;
     use Storage;
 
@@ -31,123 +31,60 @@
          * message : API成功或失敗訊息說明
          * data : API執行成功夾帶資料
          */
-        protected static $message = [
-            'status'        => 0,
-            'status_string' => '',
-            'message'       => '',
-            'data'          => []
-        ];
+        protected static $message
+            = [
+                'status'        => 0,
+                'status_string' => '',
+                'message'       => '',
+                'data'          => []
+            ];
 
         /**
          * @param $username : 帳號
          * @param $password :md5後的密碼
-         * @param $encrypt :加解密的key
          * 執行遠端登入
          * 先檢查是不是客戶以及預設manager帳號
          * 如果都不是則透過curl向遠端伺服器發出驗證申請
          * 驗證成功後再向遠端伺服器取得部門資料
          * @return array
          */
-        protected static function remoteLogin ( $username, $password, $encrypt )
-        {
-            try
-            {
-                //檢查是否為預設Manager
-                $defaultAdminStatus = self::checkDefaultAdmin($username, $password);
-                if ( $defaultAdminStatus['status'] == 0 )
-                {
-                    //後台管理員登入
-                    //API取得後台系統登入者資訊與人員相關資訊
-                    $post = 'username=' . $username . '&password=' . $password . '&apikey=' . $encrypt;
+        protected static function remoteLogin ( $username, $password ) {
+            try {
+                //後台管理員登入
+                //API取得後台系統登入者資訊與人員相關資訊
+                $apiObj = new ApiController();
+                $data   = 'username=' . $username . '&password=' . $password . '&apikey=' . self::$encrypt;
+                $url    = env('API_LOGIN_URL');
+                $result = $apiObj->curlPost($data, $url, 'form');
 
-                    $ch = curl_init();
-                    curl_setopt($ch, CURLOPT_URL, env('API_LOGIN_URL'));
-                    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-                    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-                    curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
-                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                    $result = curl_exec($ch);
-                    curl_close($ch);
-
-                    $result = json_decode($result, true);
-
-                    if ( $result['status'] == 1 )
-                    { //登入成功
-
-                        //取得人員部門資料
-                        $post = 'token=' . urlencode($result['data']['token']);
-                        $ch = curl_init();
-                        curl_setopt($ch, CURLOPT_URL, env('API_GETMEMBER_URL'));
-                        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-                        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-                        curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
-                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                        $resultMember = curl_exec($ch);
-                        curl_close($ch);
-
-                        $resultMember = json_decode($resultMember, true);
-
-                        if ( $resultMember['status'] == 1 )
-                        {//取得成功
-                            $user = $result['data']['user'];
-                            $department = $resultMember['data']['department'];
-                            $member = $resultMember['data']['member'];
-                            //增加一個預設管理人員
-                            $member[0] = [
-                                "id"            => 0,
-                                "department_id" => 0,
-                                "name"          => "Admin",
-                                "org_name"      => "Admin",
-                                "org_name_ch"   => "管理員",
-                                "email"         => "it@js-adways.com.tw",
-                                "account"       => "Admin",
-                                "code"          => "",
-                                "status"        => 1
-                            ];
-
-                            //整理部門與人員資訊陣列
-                            foreach ( $department as $k => $v )
-                            {
-                                $department[ $k ]['members'] = [];
-                                foreach ( $member as $k1 => $v1 )
-                                {
-                                    if ( $v1['department_id'] == $v['id'] )
-                                    {
-                                        array_push($department[ $k ]['members'], $v1);
-                                    }
-                                }
-                            }
-
-                            $dataResult = [
-                                'login_user' => $user,
-                                'member'     => $member,
-                                'department' => $department
-                            ];
-
-                            self::$message['status'] = 1;
-                            self::$message['status_string'] = '登入成功';
-                            self::$message['message'] = '歡迎 ' . $user['name'];
-                            self::$message['data'] = $dataResult;
-
-                        } else
-                        {//取得失敗
-
-                            self::$message['status_string'] = '登入失敗';
-                            self::$message['message'] = $resultMember['message'];
-
-                        }
-                    } else
-                    {//登入失敗
-
-                        self::$message['status_string'] = '登入失敗';
-                        self::$message['message'] = $result['message'];
-
-                    }
+                if ( $result['status'] !== 1 ) {//登入失敗
+                    ( new SystemController )->loginFail($result);
+                    return self::$message;
                 }
-            } catch ( \Exception $ex )
-            {
+
+                $user = $result['data']['user'];
+                //取得人員部門資料
+                $objUser      = new User();
+                $resultMember = $objUser->getErpUser();
+
+                if ( $resultMember['status'] !== 1 ) {//登入失敗
+                    ( new SystemController )->loginFail($resultMember);
+                    return self::$message;
+                }
+
+                self::$message['status']        = 1;
+                self::$message['status_string'] = '登入成功';
+                self::$message['message']       = '歡迎 ' . $user['name'];
+                self::$message['data']          = [
+                    'login_user'   => $user,
+                    'department'   => $resultMember['data']['department'],
+                    'member'       => $resultMember['data']['member'],
+                    'member_alive' => $resultMember['data']['member_alive'],
+                ];
+
+            } catch ( \Exception $ex ) {
                 self::$message['status_string'] = '登入失敗';
-                self::$message['message'] = $ex->getMessage();
+                self::$message['message']       = $ex->getMessage();
             }
 
             return self::$message;
@@ -161,13 +98,13 @@
          * 暫時不支援本地端部門資料取得
          * @return array
          */
-        protected static function checkDefaultAdmin ( $username, $password )
-        {
+        protected static function checkDefaultAdmin ( $username, $password ) {
 
-            try
-            {
-                if ( md5($username) == '1d0258c2440a8d19e716292b231e3190' && $password == 'ac886a5225dc159479c53eb978072dab' )
-                {
+            try {
+
+                if ( md5(
+                        $username
+                    ) == '1d0258c2440a8d19e716292b231e3190' && $password == 'ac886a5225dc159479c53eb978072dab' ) {
                     $adminUser = [
                         "id"            => 0,
                         "department_id" => 0,
@@ -183,7 +120,7 @@
 
                     //取得人員部門資料
                     $post = 'token=' . urlencode('\/g5CClHztT2PeHYkSHwMMDFhzPN1KGv4Aotmzt39YzE=');
-                    $ch = curl_init();
+                    $ch   = curl_init();
                     curl_setopt($ch, CURLOPT_URL, env('API_GETMEMBER_URL'));
                     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
                     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
@@ -193,10 +130,9 @@
                     curl_close($ch);
 
                     $resultMember = json_decode($resultMember, true);
-                    if ( $resultMember['status'] == 1 )
-                    {//取得成功
+                    if ( $resultMember['status'] == 1 ) {//取得成功
                         $department = $resultMember['data']['department'];
-                        $member = $resultMember['data']['member'];
+                        $member     = $resultMember['data']['member'];
                         //增加一個預設管理人員
                         $member[0] = [
                             "id"            => 0,
@@ -211,13 +147,10 @@
                         ];
 
                         //整理部門與人員資訊陣列
-                        foreach ( $department as $k => $v )
-                        {
+                        foreach ( $department as $k => $v ) {
                             $department[ $k ]['members'] = [];
-                            foreach ( $member as $k1 => $v1 )
-                            {
-                                if ( $v1['department_id'] == $v['id'] )
-                                {
+                            foreach ( $member as $k1 => $v1 ) {
+                                if ( $v1['department_id'] == $v['id'] ) {
                                     array_push($department[ $k ]['members'], $v1);
                                 }
                             }
@@ -230,18 +163,22 @@
                         'department' => $department
                     ];
 
-                    self::$message['status'] = 1;
+                    self::$message['status']        = 1;
                     self::$message['status_string'] = '登入成功';
-                    self::$message['message'] = '歡迎 ' . $adminUser['name'];
-                    self::$message['data'] = $dataResult;
+                    self::$message['message']       = '歡迎 ' . $adminUser['name'];
+                    self::$message['data']          = $dataResult;
                 }
-            } catch ( \Exception $ex )
-            {
+            } catch ( \Exception $ex ) {
                 self::$message['status_string'] = '登入失敗';
             }
 
             return self::$message;
 
+        }
+
+        public function loginFail ( $result ) {
+            self::$message['status_string'] = '登入失敗';
+            self::$message['message']       = $result['message'];
         }
 
         /**
@@ -253,44 +190,40 @@
          * @input password : md5後的登入密碼
          * @return array
          */
-        public function login ( Request $request )
-        {
-            $account = '';
+        public function login ( Request $request ) {
+            $account  = '';
             $password = '';
-            if ( $request->get('key') != null )
-            {
+
+            if ( $request->get('key') != null ) {
                 //由key登入的狀況
                 $result = explode('_', self::decrypt($request->get('key'), 'AES-256-CBC'));
-                if ( count($result) != 2 )
-                {
+                if ( count($result) != 2 ) {
                     self::$message['status_string'] = '登入錯誤';
-                    self::$message['message'] = '登入連結有誤，請重新取得';
+                    self::$message['message']       = '登入連結有誤，請重新取得';
 
                     return self::$message;
                 }
-                $account = $result[0];
+                $account  = $result[0];
                 $password = $result[1];
-            } else
-            {
+            } else {
                 //由帳號密碼登入的狀況
-                $account = $request->get('account');
+                $account  = $request->get('account');
                 $password = $request->get('password');
             }
-            $message = self::remoteLogin($account, $password, self::$encrypt);
+            $message = self::remoteLogin($account, $password);
             //將登入資訊儲存至session
-            if($message['status'] == 1){
+            if ( $message['status'] == 1 ) {
                 SessionController::store($message['data']);
             }
 
             return $message;
         }
 
-        public function logout ( Request $request )
-        {
+        public function logout ( Request $request ) {
             //操作session
             $api_request = Request::create('session/release', 'POST');
             $api_request = $api_request->replace($request->input());
-            $response = Route::dispatch($api_request)->getOriginalContent();
+            $response    = Route::dispatch($api_request)->getOriginalContent();
         }
 
         /**
@@ -301,22 +234,18 @@
          * @input dir : 儲存資料夾
          * @return array
          */
-        public function upload ( Request $request )
-        {
-            try
-            {
+        public function upload ( Request $request ) {
+            try {
                 $item = $request->file('file');
-                $dir = $request->get('dir');
-                if ( is_array($item) && count($item) > 1 )
-                {
-                    $url = [];
+                $dir  = $request->get('dir');
+                if ( is_array($item) && count($item) > 1 ) {
+                    $url   = [];
                     $files = [];
-                    foreach ( $item as $k => $v )
-                    {
+                    foreach ( $item as $k => $v ) {
                         $path = $v->store($dir);
                         $size = Storage::size($path);
                         $info = pathinfo($path);
-                        $tmp = [
+                        $tmp  = [
                             'id'        => $info['filename'],
                             'name'      => $v->getClientOriginalName(),
                             'ext'       => $info['extension'],
@@ -327,16 +256,14 @@
                         array_push($url, Storage::url($info['dirname'] . '/' . $info['basename']));
                         array_push($files, $tmp);
                     }
-                } else
-                {
-                    if ( is_array($item) )
-                    {
+                } else {
+                    if ( is_array($item) ) {
                         $item = $item[0];
                     }
                     $path = $item->store($dir);
                     $size = Storage::size($path);
                     $info = pathinfo($path);
-                    $tmp = [
+                    $tmp  = [
                         'id'        => $info['filename'],
                         'name'      => $item->getClientOriginalName(),
                         'ext'       => $info['extension'],
@@ -344,18 +271,17 @@
                         'file_size' => $size
                     ];
 
-                    $url = Storage::url($info['dirname'] . '/' . $info['basename']);
+                    $url   = Storage::url($info['dirname'] . '/' . $info['basename']);
                     $files = $tmp;
                 }
 
-                self::$message['status'] = 1;
+                self::$message['status']        = 1;
                 self::$message['status_string'] = "上傳成功";
-                self::$message['data']['url'] = $url;
-                self::$message['data']['file'] = $files;
-            } catch ( \Exception $ex )
-            {
+                self::$message['data']['url']   = $url;
+                self::$message['data']['file']  = $files;
+            } catch ( \Exception $ex ) {
                 self::$message['status_string'] = "上傳失敗";
-                self::$message['message'] = $ex->getMessage();
+                self::$message['message']       = $ex->getMessage();
             }
 
             return self::$message;
@@ -369,27 +295,22 @@
          * @input take : 取多少筆資料 null : 全部列出
          * @return array['data'] : SystemMessageArray
          */
-        public function messageList ( Request $request )
-        {
-            try
-            {
-                $take = $request->get('take');
-                $message = SystemMessage::where('member_id', $request->get('member_id'))
-                    ->orderBy('id', 'DESC');
-                if ( $take != null && is_numeric($take) )
-                {
+        public function messageList ( Request $request ) {
+            try {
+                $take    = $request->get('take');
+                $message = SystemMessage::where('member_id', $request->get('member_id'))->orderBy('id', 'DESC');
+                if ( $take != null && is_numeric($take) ) {
                     $message->take($take);
                 }
                 $message = $message->get()->toArray();
 
-                self::$message['status'] = 1;
+                self::$message['status']        = 1;
                 self::$message['status_string'] = "取得成功";
-                self::$message['data'] = $message;
+                self::$message['data']          = $message;
 
-            } catch ( \Exception $ex )
-            {
+            } catch ( \Exception $ex ) {
                 self::$message['status_string'] = "取得失敗";
-                self::$message['message'] = $ex->getMessage();
+                self::$message['message']       = $ex->getMessage();
             }
 
             return self::$message;
@@ -403,22 +324,19 @@
          * @input member_id : 接收者ID
          * @return array['data'] : SystemMessage
          */
-        public function messageGet ( Request $request )
-        {
-            try
-            {
-                $message = SystemMessage::where('member_id', $request->get('member_id'))
-                    ->where('id', $request->get('id'))
-                    ->first()->toArray();
+        public function messageGet ( Request $request ) {
+            try {
+                $message = SystemMessage::where('member_id', $request->get('member_id'))->where(
+                        'id', $request->get('id')
+                    )->first()->toArray();
 
-                self::$message['status'] = 1;
+                self::$message['status']        = 1;
                 self::$message['status_string'] = "取得成功";
-                self::$message['data'] = $message;
+                self::$message['data']          = $message;
 
-            } catch ( \Exception $ex )
-            {
+            } catch ( \Exception $ex ) {
                 self::$message['status_string'] = "取得失敗";
-                self::$message['message'] = $ex->getMessage();
+                self::$message['message']       = $ex->getMessage();
             }
 
             return self::$message;
@@ -432,32 +350,30 @@
          * @input member_id : 接收者ID
          * @return array
          */
-        public function messageSetRead ( Request $request )
-        {
+        public function messageSetRead ( Request $request ) {
 
-            try
-            {
-                $message = SystemMessage::where('member_id', $request->get('member_id'))
-                    ->whereIn('id', $request->get('id'));
+            try {
+                $message = SystemMessage::where('member_id', $request->get('member_id'))->whereIn(
+                        'id', $request->get('id')
+                    );
 
-                if ( $message->exists() )
-                {
-                    $message = SystemMessage::query()->whereIn('id',$request->get('id'))->update(['read_at' => date('Y-m-d H:i:s')]);
+                if ( $message->exists() ) {
+                    $message = SystemMessage::query()->whereIn('id', $request->get('id'))->update(
+                        [ 'read_at' => date('Y-m-d H:i:s') ]
+                    );
 
-                    self::$message['status'] = 1;
+                    self::$message['status']        = 1;
                     self::$message['status_string'] = "設定成功";
-                    self::$message['data'] = $message;
-                } else
-                {
+                    self::$message['data']          = $message;
+                } else {
                     self::$message['status_string'] = "設定失敗";
-                    self::$message['data'] = '找不到此訊息';
+                    self::$message['data']          = '找不到此訊息';
                 }
 
 
-            } catch ( \Exception $ex )
-            {
+            } catch ( \Exception $ex ) {
                 self::$message['status_string'] = "設定失敗";
-                self::$message['message'] = $ex->getMessage();
+                self::$message['message']       = $ex->getMessage();
             }
 
             return self::$message;
@@ -469,52 +385,50 @@
          * @input member_id : 接收者ID
          * @return array
          */
-        public function messageSetReadAll ( Request $request )
-        {
+        public function messageSetReadAll ( Request $request ) {
 
-            try
-            {
+            try {
                 $message = SystemMessage::where('member_id', $request->get('member_id'))->whereNull('read_at');
 
-                if ( $message->exists() )
-                {
+                if ( $message->exists() ) {
                     $id = $message->get()->pluck('id');
 
-                    SystemMessage::query()->whereIn('id',$id)->update(['read_at' => date('Y-m-d H:i:s')]);
+                    SystemMessage::query()->whereIn('id', $id)->update([ 'read_at' => date('Y-m-d H:i:s') ]);
 
                     $message = SystemMessage::where('member_id', $request->get('member_id'))
-                        ->orderBy('id', 'DESC')->take(10)->get()->toArray();
+                                            ->orderBy('id', 'DESC')
+                                            ->take(10)
+                                            ->get()
+                                            ->toArray();
 
-                    self::$message['status'] = 1;
+                    self::$message['status']        = 1;
                     self::$message['status_string'] = "設定成功";
-                    self::$message['data'] = $message;
-                } else
-                {
+                    self::$message['data']          = $message;
+                } else {
                     self::$message['status_string'] = "設定失敗";
-                    self::$message['data'] = '找不到此訊息';
+                    self::$message['data']          = '找不到此訊息';
                 }
 
 
-            } catch ( \Exception $ex )
-            {
+            } catch ( \Exception $ex ) {
                 self::$message['status_string'] = "設定失敗";
-                self::$message['message'] = $ex->getMessage();
+                self::$message['message']       = $ex->getMessage();
             }
 
             return self::$message;
         }
+
         /**
          * @param string $data : 要解密的資料
          * @param string $method :解密碼的方式
          * 透過key解密
          * @return bool|string
          */
-        protected function decrypt ( string $data, string $method )
-        {
-            $data = base64_decode($data);
+        protected function decrypt ( string $data, string $method ) {
+            $data   = base64_decode($data);
             $ivSize = openssl_cipher_iv_length($method);
-            $iv = substr($data, 0, $ivSize);
-            $data = openssl_decrypt(substr($data, $ivSize), $method, self::$encrypt, OPENSSL_RAW_DATA, $iv);
+            $iv     = substr($data, 0, $ivSize);
+            $data   = openssl_decrypt(substr($data, $ivSize), $method, self::$encrypt, OPENSSL_RAW_DATA, $iv);
 
             return $data;
         }

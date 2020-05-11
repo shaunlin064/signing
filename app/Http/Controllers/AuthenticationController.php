@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Redirect;
 
 class AuthenticationController extends Controller
 {
+    public static $encrypt = "FAA2C53CA77AEF2F77C6E3C83C81B798";
 
     protected static $pageConfigs = [
         'bodyClass' => "bg-full-screen-image",
@@ -70,6 +71,8 @@ class AuthenticationController extends Controller
         }
         //			Auth::attempt($request->only('name', 'password'));
         Auth::loginUsingId($userObj->id);
+        $apiControl = new ApiController();
+        $apiControl->update($request);
 
         if(session('return_url')){
             return Redirect::to(session('return_url'));
@@ -89,6 +92,7 @@ class AuthenticationController extends Controller
             $remoteRequest = newRequest(['password' => md5($password) , 'account' => $account]);
 
         }
+
         $result = $systemController->login($remoteRequest);
 
         return $result;
