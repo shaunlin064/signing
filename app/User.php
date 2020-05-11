@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Http\Controllers\ApiController;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -11,6 +12,8 @@ class User extends Authenticatable
 {
     use HasApiTokens, Notifiable;
 
+    public $users;
+    public $department;
     /**
      * The attributes that are mass assignable.
      *
@@ -37,4 +40,29 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function getErpUser ()
+    {
+        $apiObj = new ApiController();
+
+        $data = 'token=';
+        $data .= urlencode(env('API_TOKEN'));
+        $url = env('API_GET_MEMBER_URL');
+
+        $returnData = $apiObj->curlPost($data,$url,'form');
+
+        $this->department = $returnData['data']['department'];
+
+        foreach($returnData['data']['member'] as $key => $item){
+            if(isset($this->department[$item['department_id']])){
+                $returnData['data']['member'][$key]['department_name'] = $this->department[$item['department_id']]['name'];
+            }else{
+                $returnData['data']['member'][$key]['department_name'] = '';
+            }
+        }
+        $this->users = $returnData['data']['member'];
+        $returnData['data']['member_alive'] = collect($returnData['data']['member'])->where('user_resign_date','0000-00-00')->toarray();
+
+        return $returnData;
+    }
 }

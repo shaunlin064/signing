@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Help\Crypt;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 
 class AuthenticationController extends Controller
@@ -57,6 +59,17 @@ class AuthenticationController extends Controller
                 'form_data' => [ $request->account, $request->password]
             ]);
         }
+        $userObj = User::where('name',$request->account)->first();
+
+        if(empty($userObj)){
+            $request->merge(['password'=>Hash::make($request->get('password'))]);
+            $request->merge(['erp_user_id'=>$result['login_user']['id']]);
+
+            $userObj = User::create($request->toArray());
+
+        }
+        //			Auth::attempt($request->only('name', 'password'));
+        Auth::loginUsingId($userObj->id);
 
         if(session('return_url')){
             return Redirect::to(session('return_url'));
