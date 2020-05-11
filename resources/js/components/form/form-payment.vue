@@ -58,6 +58,9 @@
             </div>
         </div>
         <div class="row">
+            <div class='row col-md-12 justify-content-end mb-2'>
+                <div>申請日期：{{form_submit_data[dom_id]['created_at']}}</div>
+            </div>
             <div class='row col-md-12'>
                 <div class="col-md-6">
                     <div class="form-label-group">
@@ -168,7 +171,7 @@
                 <div class='col-md-6 mt-2' v-if='transfer'>
                     <div class="form-label-group">
                         <input type="date" class="form-control" placeholder="指定匯款日期" id='transfer_date'
-                               v-model='form_submit_data[dom_id]["pay_type"]["transfer_date"]'
+                               v-model='form_submit_data[dom_id]["transfer_date"]'
                                :disabled='can_edit === false'
                                name="transfer_date" :required='transfer'>
                         <label for="transfer_date">指定匯款日期</label>

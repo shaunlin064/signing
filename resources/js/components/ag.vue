@@ -50,6 +50,7 @@
 
 <script>
     import {mapState} from 'vuex';
+    import {apiGetAllList, apiGetCheckList, apiGetUserCheckList} from '../src/apis/form.js';
 
     export default {
         name: "ag",
@@ -61,7 +62,7 @@
         },
         data() {
             return {
-                btn_csv:false,
+                btn_csv: false,
                 primary_key: '',
                 config_column: [
                     {
@@ -136,56 +137,73 @@
                     colResizeDefault: "shift",
                     animateRows: true,
                     enableSorting: true,
-                    suppressSizeToFit:true,
+                    suppressSizeToFit: true,
                     resizable: true,
                     suppressHorizontalScroll: true,
                 }
             }
         },
         computed: {
-            ...mapState(['login_user','member','department']),
+            ...mapState(['login_user', 'member', 'department']),
         },
         beforeMount: function () {
         },
         mounted: function () {
             this.init();
-        //    ag-root-wrapper ag-layout-normal ag-ltr
-        //    ag-root-wrapper-body ag-layout-normal
+            //    ag-root-wrapper ag-layout-normal ag-ltr
+            //    ag-root-wrapper-body ag-layout-normal
         },
         methods: {
             init() {
-                if($.inArray(this.dom_id, ['ag_pending','ag_action']) !== -1){
+                if ($.inArray(this.dom_id, ['ag_pending', 'ag_action']) !== -1) {
                     this.config_column[0]['field'] = 'form_apply_id';
                     this.primary_key = 'form_apply_id';
-                }else{
+                } else {
                     this.primary_key = 'id';
                 }
 
                 this.gridOptions.columnDefs = this.config_column;
                 this.getData();
             },
-            getLoginUser(){
+            getLoginUser() {
                 return this.login_user.id;
+            },
+            agSetting(response) {
+                var gridTable = document.getElementById(this.dom_id);
+                this.gridOptions.rowData = response.data.data;
+                /*** INIT TABLE ***/
+                new agGrid.Grid(gridTable, this.gridOptions);
+                this.gridOptions.api.sizeColumnsToFit();
             },
             getData() {
                 let userId = this.getLoginUser();
-                var gridTable = document.getElementById(this.dom_id);
+
 
                 let vue = this;
-                /*** GET TABLE DATA FROM URL ***/
-                axios.post(vue.api_urls[0], {
+                let params = {
                     member_id: userId,
                     role: vue.api_parmater_role,
-                })
-                .then(function (response) {
-                    vue.gridOptions.rowData = response.data.data;
-                    /*** INIT TABLE ***/
-                    new agGrid.Grid(gridTable, vue.gridOptions);
-                    vue.gridOptions.api.sizeColumnsToFit();
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
+                    in_site_token: vue.token,
+                };
+                /*** GET TABLE DATA FROM URL ***/
+                switch (vue.dom_id) {
+                    case 'ag_pending' || 'ag_action':
+                        apiGetCheckList(params).then(function (response) {
+                            vue.agSetting(response)
+                        });
+                        break;
+                    case 'ag_user_list':
+                        apiGetUserCheckList(params).then(function (response) {
+                            console.log(response);
+                            vue.agSetting(response)
+                        });
+                        break;
+                    case 'ag_all':
+                        apiGetAllList(params).then(function (response) {
+                            vue.agSetting(response)
+                        });
+                        break;
+                }
             },
             ageGetMember(params) {
                 return getMember(params.data.apply_member_id);

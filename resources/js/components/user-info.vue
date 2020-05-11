@@ -23,7 +23,7 @@
 
 <script>
     import {mapState} from 'vuex';
-
+    import {apiSessionRelease} from '../src/apis/system.js'
     export default {
         name: "user-info",
         props: {
@@ -58,18 +58,7 @@
                 targetDom.next().addClass('show');
             },
             logout(){
-                axios({
-                    url: 'session/release',
-                    method: 'post',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                }).then(
-                    (res)=>{
-                        console.log(res.data);
-                    }
-                ).catch(err => console.error(err));
-
+                apiSessionRelease();
                 javascript:location.href='/login';
             },
         },

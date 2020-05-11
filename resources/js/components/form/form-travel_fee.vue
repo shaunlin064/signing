@@ -57,6 +57,9 @@
             </div>
         </div>
         <div class="row">
+            <div class='row col-md-12 justify-content-end mb-2'>
+                <div>申請日期：{{form_submit_data[dom_id]['created_at']}}</div>
+            </div>
             <div class="col-md-6">
                 <div class="form-label-group">
                     <input type="text" id="department" class="form-control" placeholder="部門" :value='department_name'
@@ -137,7 +140,7 @@
 
 <script>
     import {mapState} from 'vuex';
-
+    import {apiGetDependList,apiGetForm} from '../../src/apis/form'
     Vue.component('form-travel_fee_plan', require('../../components/form/form-travel_fee_plan').default);
     export default {
         name: "form-travel_fee",
@@ -255,7 +258,7 @@
                 };
                 if(this.form_action == 'new'){
                     /*TODO:: 確認簽核流程完成 拉回來的資料還需要再做判斷處理*/
-                    axios.post('api/form/depend', data)
+                    apiGetDependList(data)
                         .then(function (response) {
                             let result = response.data;
                             if (result.status !== 1) {
@@ -269,7 +272,7 @@
                         });
                 }else{
                     let id = this.form_submit_data[this.dom_id]['form_pair_data_id'];
-                    axios.post('api/form/get', {id:id})
+                    apiGetForm({id:id})
                         .then(function (response) {
                             let result = response.data;
                             if (result.status !== 1) {

@@ -77,6 +77,7 @@ mix.js('resources/js/core/app-menu.js', 'public/js/core')
     .sass('resources/sass/components.scss', 'public/css')
     .sass('resources/sass/custom-rtl.scss', 'public/css')
     .sass('resources/sass/custom-laravel.scss', 'public/css')
+    .version()
     .options({processCssUrls: false});
 //
 // mix.then(() => {

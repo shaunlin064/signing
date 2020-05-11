@@ -8,11 +8,12 @@ require('bootstrap');
 
 window.Vue = require('vue');
 import Vuex from 'vuex';
-
+import auth from './modules/auth.js';
 Vue.use(Vuex);
 
 import storeData from './store';
 let customerStore =  new Vuex.Store(storeData);
+
 
 window.axios = require('axios');
 
@@ -73,3 +74,17 @@ const app = new Vue({
     el: '#app',
     store: customerStore
 });
+//
+// export default new Vuex.Store({
+//     modules:{
+//         auth,
+//     },
+//     plugins: [createPersistedState({
+//         storage: window.localStorage,
+//             reducer(val){
+//                 return{
+//                     auth: val.auth
+//                 }
+//             }
+//     })]
+// });

@@ -40,6 +40,8 @@
 <script>
     import {mapState} from 'vuex';
     import form from "../../mixins/form.js";
+    import {apiFormApply} from "../../src/apis/form";
+
     export default {
         name: "form_new",
         components: {
@@ -60,7 +62,7 @@
             }
         },
         computed: {
-            ...mapState(['form_submit_data', 'login_user', 'member', 'department','exPassCheckColumn']),
+            ...mapState(['form_submit_data', 'login_user', 'member', 'department', 'exPassCheckColumn']),
 
         },
         beforeMount: function () {
@@ -113,6 +115,10 @@
                     });
                     eval(`vue.form_submit_data['${vue.form_type}']['apply_member_id'] = '${vue.login_user.id}';`);
                     eval(`vue.form_submit_data['${vue.form_type}']['apply_department_id'] = '${vue.login_user.department_id}';`);
+
+                    let date = new Date();
+                    date = date.toLocaleDateString();
+                    eval(`vue.form_submit_data['${vue.form_type}']['created_at'] = '${date}';`);
                 }
             },
             submit() {
@@ -131,15 +137,15 @@
                 data = this.formToJson(data);
 
                 /*TODO::post 後續轉跳與錯誤動作*/
-                axios.post('api/form/apply', data)
+                apiFormApply(data)
                     .then(function (response) {
                         let result = response.data;
-                        if(result.status != 1 || result.status_string !== '申請成功'){
+                        if (result.status != 1 || result.status_string !== '申請成功') {
                             alert(result.message + result.status_string);
                             vue.lodding = false;
                             return false;
                         }
-                        javascript:location.href='/form-list';
+                        javascript:location.href = '/form-list';
 
                     })
                     .catch(function (error) {

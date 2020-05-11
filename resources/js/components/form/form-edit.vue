@@ -18,6 +18,7 @@
 <script>
     import {mapState} from 'vuex';
     import form from '../../mixins/form.js';
+    import {apiFormEdit, apiFormChecking, apiGetForm} from '../../src/apis/form'
     export default {
         name: "form-edit",
         components: {
@@ -77,8 +78,7 @@
                 data = this.formToJson(data);
 
                 // /*TODO::post 後續轉跳與錯誤動作*/
-                axios.post('api/form/edit', data)
-                    .then(function (response) {
+                apiFormEdit(data).then(function (response) {
                         let result = response.data;
                         if (result.status != 1 || result.status_string !== '編輯成功') {
                             alert(result.message + result.status_string);
@@ -99,7 +99,7 @@
                 /*ajax get data*/
                 let vue = this;
 
-                axios.post('api/form/get', {
+                apiGetForm({
                     id: vue.id,
                     member_id: vue.login_user.id,
                 }).then(function (response) {
@@ -140,6 +140,10 @@
                     vue.can_check = result.data.check_status.can_check == 0 ? false : true;
 
                     vue.check_id = result.data.check_status.form_check_point_id;
+
+                    let date = new Date(result.data.created_at);
+                    result.data.column.created_at = date.toLocaleDateString();
+
                     vue.jsonReverse(result.data.column);
                 }).then(() => {
 

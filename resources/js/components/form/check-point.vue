@@ -57,7 +57,7 @@
 
 <script>
     import {mapState} from 'vuex';
-
+    import {apiFormChecking} from '../../src/apis/form'
     export default {
         name: "check-point",
         props: {
@@ -202,7 +202,7 @@
                     swalConfig.showLoaderOnConfirm = true;
 
                     swalConfig.preConfirm= (result) => {
-                        return axios.post('api/form/check',this.postData )
+                        return apiFormChecking(this.postData )
                             .then(function (response) {
                                 return response.data;
                             })
@@ -243,7 +243,7 @@
                                 showLoaderOnConfirm: true,
                                 preConfirm: (remark) => {
                                     this.postData.remark = remark;
-                                    return axios.post('api/form/check', this.postData)
+                                    return apiFormChecking(this.postData)
                                         .then(function (response) {
                                             return response.data;
                                         })

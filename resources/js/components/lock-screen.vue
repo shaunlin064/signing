@@ -52,7 +52,8 @@
 
 <script>
     import {mapState, mapMutations, mapActions, mapGetters} from 'vuex';
-
+    import {apiSessionPut,apiSessionGet} from '../src/apis/system.js'
+    import {apiAuthLogin} from '../src/apis/auth'
         export default {
             name: "lock-screen",
             props: {
@@ -129,7 +130,7 @@
                     let account = this.account;
                     let vue = this;
 
-                    axios.post('api/system/login', {
+                    apiAuthLogin({
                         account,
                         password
                     })
@@ -152,32 +153,10 @@
 
                 },
                 putSession(loginResponse){
-                    axios({
-                        url: 'session/put',
-                        method: 'post',
-                        data: {value:loginResponse},
-                        headers: {
-                            'Content-Type': 'application/json',
-                        }
-                    }).then(
-                        (res)=>{
-                            console.log(res.data);
-                        }
-                    ).catch(err => console.error(err));
+                    apiSessionPut({value:loginResponse});
                 },
                 getsession(){
-                    axios({
-                        url: 'session/get',
-                        method: 'post',
-                        data: {key:'login_user'},
-                        headers: {
-                            'Content-Type': 'application/json',
-                        }
-                    }).then(
-                        (res)=>{
-                            console.log(res.data);
-                        }
-                    ).catch(err => console.error(err));
+                    apiSessionGet({key:'login_user'});
                 },
                 logout(){
                     $('body').css({'overflow':'hidden'});

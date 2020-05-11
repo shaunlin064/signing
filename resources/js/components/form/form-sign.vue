@@ -59,6 +59,9 @@
             </div>
         </div>
         <div class="row">
+            <div class='row col-md-12 justify-content-end mb-2'>
+                <div>申請日期：{{form_submit_data[dom_id]['created_at']}}</div>
+            </div>
             <div class="col-md-6">
                 <div class="form-label-group">
                     <input type="text" id="department" class="form-control" placeholder="部門" :value='department_name'

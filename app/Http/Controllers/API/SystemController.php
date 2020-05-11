@@ -6,6 +6,7 @@
     use App\Http\Controllers\Controller;
     use App\Http\Controllers\SessionController;
     use App\SystemMessage;
+    use Carbon\Carbon;
     use Illuminate\Http\Request;
     use Illuminate\Support\Facades\Cache;
     use Route;
@@ -254,6 +255,8 @@
          */
         public function login ( Request $request )
         {
+            $account = '';
+            $password = '';
             if ( $request->get('key') != null )
             {
                 //由key登入的狀況
@@ -265,21 +268,16 @@
 
                     return self::$message;
                 }
-
-                $message = self::remoteLogin($result[0], $result[1], self::$encrypt);
-
+                $account = $result[0];
+                $password = $result[1];
             } else
             {
                 //由帳號密碼登入的狀況
-                $message = self::remoteLogin($request->get('account'), $request->get('password'), self::$encrypt);
+                $account = $request->get('account');
+                $password = $request->get('password');
             }
-
+            $message = self::remoteLogin($account, $password, self::$encrypt);
             //將登入資訊儲存至session
-//            $request->replace([ 'value' => $message['data'] ]);
-//            $api_request = Request::create('session/put', 'POST');
-//            $api_request = $api_request->replace($request->input());
-//            $response = Route::dispatch($api_request)->getOriginalContent();
-
             if($message['status'] == 1){
                 SessionController::store($message['data']);
             }

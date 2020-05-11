@@ -77,6 +77,9 @@
             </div>
         </div>
         <div class="row">
+            <div class='row col-md-12 justify-content-end mb-2'>
+                <div>申請日期：{{form_submit_data[dom_id]['created_at']}}</div>
+            </div>
             <div class="col-md-6">
                 <div class="form-label-group">
                     <input type="text" id="department" class="form-control" placeholder="部門" :value='department_name'
@@ -97,13 +100,13 @@
                     <label for="apply_subject">名稱</label>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="form-label-group">
-                    <input type="date" id="date" class="form-control" placeholder="日期"
-                           name="date" v-model='form_submit_data[dom_id]["date"]' :disabled='can_edit === false' required>
-                    <label for="date">日期</label>
-                </div>
-            </div>
+<!--            <div class="col-md-6">-->
+<!--                <div class="form-label-group">-->
+<!--                    <input type="date" id="date" class="form-control" placeholder="日期"-->
+<!--                           name="date" v-model='form_submit_data[dom_id]["date"]' :disabled='can_edit === false' required>-->
+<!--                    <label for="date">日期</label>-->
+<!--                </div>-->
+<!--            </div>-->
             <div class="col-md-6">
                 <div class="form-group">
                     <label for="type">類型</label>
