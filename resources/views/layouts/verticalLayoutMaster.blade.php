@@ -24,6 +24,7 @@
             </div>
             <div class="{{ $configData['contentsidebarClass'] }}">
                 <div class="content-wrapper">
+
                     <div class="content-body">
                         {{-- Include Page Content --}}
                         @yield('content')

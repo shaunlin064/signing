@@ -211,6 +211,12 @@
                 $password = $request->get('password');
             }
             $message = self::remoteLogin($account, $password);
+
+//            $userObj = User::where('name',$request->account)->first();
+//            Auth::loginUsingId($userObj->id);
+//            $apiControl = new ApiController();
+//            $apiControl->update($request);
+//            $message['token']
             //將登入資訊儲存至session
             if ( $message['status'] == 1 ) {
                 SessionController::store($message['data']);

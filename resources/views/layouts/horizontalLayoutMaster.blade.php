@@ -2,21 +2,21 @@
     class="horizontal-layout horizontal-menu {{$configData['horizontalMenuType']}} {{ $configData['blankPageClass'] }} {{ $configData['bodyClass'] }}  {{($configData['theme'] === 'dark') ? 'dark-layout' : 'light' }} {{ $configData['footerType'] }}  footer-light"
     data-menu="horizontal-menu" data-col="2-columns" data-open="hover" data-layout="{{ $configData['theme'] }}">
 
-    {{-- Include Sidebar --}}
-    @include('panels.sidebar')
+{{-- Include Sidebar --}}
+@include('panels.sidebar')
 
-    <!-- BEGIN: Header-->
-    {{-- Include Navbar --}}
-    @include('panels.navbar')
+<!-- BEGIN: Header-->
+{{-- Include Navbar --}}
+@include('panels.navbar')
 
-    {{-- Include Sidebar --}}
-    @include('panels.horizontalMenu')
+{{-- Include Sidebar --}}
+@include('panels.horizontalMenu')
 
-    <!-- BEGIN: Content-->
-    <div class="app-content content">
-        <div class="content-overlay"></div>
-        <div class="header-navbar-shadow"></div>
-        @if(($configData['contentLayout']!=='default') && isset($configData['contentLayout']))
+<!-- BEGIN: Content-->
+<div class="app-content content">
+    <div class="content-overlay"></div>
+    <div class="header-navbar-shadow"></div>
+    @if(($configData['contentLayout']!=='default') && isset($configData['contentLayout']))
         <div class="content-area-wrapper">
             <div class="{{ $configData['sidebarPositionClass'] }}">
                 <div class="sidebar">
@@ -29,16 +29,15 @@
                     <div class="content-body">
                         {{-- Include Page Content --}}
                         @yield('content')
-
                     </div>
                 </div>
             </div>
         </div>
-        @else
+    @else
         <div class="content-wrapper">
             {{-- Include Breadcrumb --}}
             @if($configData['pageHeader'] == true)
-            @include('panels.breadcrumb')
+                @include('panels.breadcrumb')
             @endif
 
             <div class="content-body">
@@ -48,24 +47,24 @@
 
             </div>
         </div>
-        @endif
-
-    </div>
-    <!-- End: Content-->
-
-    @if($configData['blankPage'] == false && isset($configData['blankPage']))
-    @include('pages/customizer')
-
     @endif
 
-    <div class="sidenav-overlay"></div>
-    <div class="drag-target"></div>
+</div>
+<!-- End: Content-->
 
-    {{-- include footer --}}
-    @include('panels/footer')
+@if($configData['blankPage'] == false && isset($configData['blankPage']))
+    @include('pages/customizer')
 
-    {{-- include default scripts --}}
-    @include('panels/scripts')
+@endif
+
+<div class="sidenav-overlay"></div>
+<div class="drag-target"></div>
+
+{{-- include footer --}}
+@include('panels/footer')
+
+{{-- include default scripts --}}
+@include('panels/scripts')
 
 </body>
 

@@ -183,7 +183,6 @@
                 let params = {
                     member_id: userId,
                     role: vue.api_parmater_role,
-                    in_site_token: vue.token,
                 };
                 /*** GET TABLE DATA FROM URL ***/
                 switch (vue.dom_id) {
@@ -194,7 +193,6 @@
                         break;
                     case 'ag_user_list':
                         apiGetUserCheckList(params).then(function (response) {
-                            console.log(response);
                             vue.agSetting(response)
                         });
                         break;

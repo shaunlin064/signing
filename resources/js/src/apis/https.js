@@ -23,6 +23,19 @@ const errorHandle = (status, msg) => {
     }
 }
 
+const statusHandle = (status, msg) => {
+    switch (status) {
+        case 0:
+            alert(msg);
+            // javascript:location.href = '/404';
+            break;
+        case 1:
+            break;
+        default:
+            console.log('resp沒有攔截到的錯誤:' + msg);
+    }
+}
+
 var instance = axios.create({
     baseURL: '/api/'
 })
@@ -34,7 +47,12 @@ instance.interceptors.request.use((config)=>{
 });
 
 instance.interceptors.response.use((response) =>{
+
+    if(response.data){
+        statusHandle(response.data.status,response.data.message)
+    }
     return response;
+
 }, (error) => {
     const { response } = error;
 
@@ -48,6 +66,7 @@ instance.interceptors.response.use((response) =>{
             return Promise.reject(error);
         }
     }
+
 });
 
 export default function (method, url , data=null) {

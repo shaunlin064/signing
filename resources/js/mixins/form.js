@@ -55,7 +55,6 @@ export default {
             });
 
             return Object.keys(vue.validate_message).length !== 0;
-
         },
         formToJson(data) {
             /* other Array to Json*/

@@ -28,4 +28,11 @@ class FormFlow extends Model
     public function replaceMember(){
         return $this->hasMany('\App\FormFlowReplace','form_flow_id','id');
     }
+
+    public function flowDataDeleteByFormId ( $form_id ) {
+       $this->where('form_id',$form_id)->get()->map(function($v){
+           $v->replaceMember()->delete();
+       });
+        $this->where('form_id',$form_id)->delete();
+    }
 }

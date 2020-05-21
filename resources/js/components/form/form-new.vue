@@ -198,7 +198,6 @@
                             vue.form_submit_data[vue.form_type].apply_attachment.map((e, k) => {
                                 if (e.name === file.name) {
                                     vue.form_submit_data[vue.form_type].apply_attachment.splice(k, 1);
-                                    console.log(vue.form_submit_data[vue.form_type].apply_attachment);
                                 }
                             });
                             vue.lodding = false;

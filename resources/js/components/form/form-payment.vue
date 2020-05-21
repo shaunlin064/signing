@@ -116,7 +116,7 @@
                     <div class="form-label-group">
                         <input type="text" id="campaign_id" class="form-control" placeholder="案件編號" name="campaign_id"
                                v-model='form_submit_data[dom_id]["campaign_id"]' :disabled='can_edit === false'
-                        :required='campaign'>
+                               :required='campaign'>
                         <label for="campaign_id">案件編號</label>
                     </div>
                 </div>
@@ -220,7 +220,7 @@
             }
         },
         computed: {
-            ...mapState(['form_submit_data', 'login_user', 'member', 'department','exPassCheckColumn']),
+            ...mapState(['form_submit_data', 'login_user', 'member', 'department', 'exPassCheckColumn']),
         },
         beforeMount: function () {
         },
@@ -229,7 +229,7 @@
         },
         methods: {
             initial() {
-                this.$store.state.exPassCheckColumn = this.exPassCheckColumn.concat(['campaign_id','receipt_number','receipt_date','transfer_date']);
+                this.$store.state.exPassCheckColumn = this.exPassCheckColumn.concat(['campaign_id', 'receipt_number', 'receipt_date', 'transfer_date']);
                 if (this.form_action === 'new') {
                     this.department_name = this.login_user.department;
                     this.member_name = this.login_user.name;
@@ -245,21 +245,21 @@
                     this.transfer = e.target.value === 'transfer';
                 });
             },
-            setValidateColumn(add,columnNames){
-                if(add){
+            setValidateColumn(add, columnNames) {
+                if (add) {
                     /*remove*/
-                    columnNames.map((v,k)=>{
+                    columnNames.map((v, k) => {
                         let index = this.exPassCheckColumn.indexOf(v);
                         this.$store.state.exPassCheckColumn.splice(index, 1);
                     });
-                }else{
+                } else {
                     /*add*/
                     this.$store.state.exPassCheckColumn = this.exPassCheckColumn.concat(columnNames);
                     this.setEmptyData(columnNames);
                 }
             },
-            setEmptyData(columnNames){
-                columnNames.map((columnName)=> {
+            setEmptyData(columnNames) {
+                columnNames.map((columnName) => {
                     this.form_submit_data[this.dom_id][columnName] = null;
                 });
             }
@@ -267,14 +267,14 @@
         updated() {
         },
         watch: {
-            campaign: function(val) {
-                this.setValidateColumn(val,['campaign_id']);
+            campaign: function (val) {
+                this.setValidateColumn(val, ['campaign_id']);
             },
-            receipt: function(val) {
-                this.setValidateColumn(val,['receipt_number','receipt_date']);
+            receipt: function (val) {
+                this.setValidateColumn(val, ['receipt_number', 'receipt_date']);
             },
-            transfer: function(val) {
-                this.setValidateColumn(val,['transfer_date']);
+            transfer: function (val) {
+                this.setValidateColumn(val, ['transfer_date']);
             },
         }
     }

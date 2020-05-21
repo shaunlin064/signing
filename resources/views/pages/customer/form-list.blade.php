@@ -24,6 +24,9 @@
 @section('content')
   {{-- Start --}}
   <section id="form-list">
+{{--      <passport-clients></passport-clients>--}}
+{{--      <passport-authorized-clients></passport-authorized-clients>--}}
+{{--      <passport-personal-access-tokens></passport-personal-access-tokens>--}}
       <div class="card">
           <div class="card-content">
               <div class="card-body">

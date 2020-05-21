@@ -38,7 +38,7 @@ class FormFlowSeeder extends Seeder
                 'review_type' => 2,
                 'reviewer_id' => 1, //一階主管
                 'overwrite' => 1,
-                'replace' => 1,
+                'replace' => 0,
                 'role' => 1,
             ],
             [
@@ -46,7 +46,7 @@ class FormFlowSeeder extends Seeder
                 'review_type' => 2,
                 'reviewer_id' => 3, //最高主管
                 'overwrite' => 1,
-                'replace' => 1,
+                'replace' => 0,
                 'role' => 1,
             ],
             [
@@ -105,7 +105,7 @@ class FormFlowSeeder extends Seeder
                 'review_type' => 2,
                 'reviewer_id' => 1, //一階主管
                 'overwrite' => 1,
-                'replace' => 1,
+                'replace' => 0,
                 'role' => 1,
             ],
             [
@@ -113,7 +113,7 @@ class FormFlowSeeder extends Seeder
                 'review_type' => 2,
                 'reviewer_id' => 3, //最高主管
                 'overwrite' => 1,
-                'replace' => 1,
+                'replace' => 0,
                 'role' => 1,
             ],
             [
@@ -173,7 +173,7 @@ class FormFlowSeeder extends Seeder
                 'review_type' => 2,
                 'reviewer_id' => 1, //一階主管
                 'overwrite' => 1,
-                'replace' => 1,
+                'replace' => 0,
                 'role' => 1,
             ],
             [
@@ -181,7 +181,7 @@ class FormFlowSeeder extends Seeder
                 'review_type' => 2,
                 'reviewer_id' => 3, //最高主管
                 'overwrite' => 1,
-                'replace' => 1,
+                'replace' => 0,
                 'role' => 1,
             ],
             [
@@ -229,7 +229,7 @@ class FormFlowSeeder extends Seeder
                 'review_type' => 2,
                 'reviewer_id' => 1, //一階主管
                 'overwrite' => 1,
-                'replace' => 1,
+                'replace' => 0,
                 'role' => 1,
             ],
             [
@@ -237,7 +237,7 @@ class FormFlowSeeder extends Seeder
                 'review_type' => 2,
                 'reviewer_id' => 3, //最高主管
                 'overwrite' => 1,
-                'replace' => 1,
+                'replace' => 0,
                 'role' => 1,
             ],
             [
@@ -304,7 +304,7 @@ class FormFlowSeeder extends Seeder
                 'review_type' => 2,
                 'reviewer_id' => 1, //一階主管
                 'overwrite' => 1,
-                'replace' => 1,
+                'replace' => 0,
                 'role' => 1,
             ],
             [
@@ -312,7 +312,7 @@ class FormFlowSeeder extends Seeder
                 'review_type' => 2,
                 'reviewer_id' => 3, //最高主管
                 'overwrite' => 1,
-                'replace' => 1,
+                'replace' => 0,
                 'role' => 1,
             ],
             [
@@ -361,7 +361,7 @@ class FormFlowSeeder extends Seeder
                 'review_type' => 2,
                 'reviewer_id' => 1, //一階主管
                 'overwrite' => 1,
-                'replace' => 1,
+                'replace' => 0,
                 'role' => 1,
             ],
             [
@@ -369,7 +369,7 @@ class FormFlowSeeder extends Seeder
                 'review_type' => 2,
                 'reviewer_id' => 3, //最高主管
                 'overwrite' => 1,
-                'replace' => 1,
+                'replace' => 0,
                 'role' => 1,
             ],
             [

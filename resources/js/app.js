@@ -44,6 +44,10 @@ if (token) {
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
+/*tool*/
+Vue.component('loading',require('./components/loading').default);
+
+
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 Vue.component('form-new', require('./components/form/form-new.vue').default);
 Vue.component('form-edit', require('./components/form/form-edit.vue').default);
@@ -57,6 +61,13 @@ Vue.component('form-travel_grant', require('./components/form/form-travel_grant'
 Vue.component('check-point', require('./components/form/check-point').default);
 Vue.component('ag', require('./components/ag').default);
 
+
+/*system*/
+
+/*flow setting*/
+Vue.component('system-flow_setting-content-right', require('./components/system/flow_setting/content-right').default);
+Vue.component('signatory', require('./components/system/flow_setting/signatory').default);
+Vue.component('system-flow_setting-sidebar-left', require('./components/system/flow_setting/sidebar-left').default);
 /*nav User Head*/
 Vue.component('user-info',require('./components/user-info').default);
 Vue.component('user-notification',require('./components/user-notification').default);
@@ -69,11 +80,26 @@ Vue.component('lock-screen',require('./components/lock-screen').default);
  * the page. Then, you may begin adding components to this application
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
+Vue.component(
+    'passport-clients',
+    require('./components/passport/Clients.vue').default
+);
 
+Vue.component(
+    'passport-authorized-clients',
+    require('./components/passport/AuthorizedClients.vue').default
+);
+
+Vue.component(
+    'passport-personal-access-tokens',
+    require('./components/passport/PersonalAccessTokens.vue').default
+);
+window.bus=new Vue();
 const app = new Vue({
     el: '#app',
     store: customerStore
 });
+
 //
 // export default new Vuex.Store({
 //     modules:{

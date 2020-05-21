@@ -60,19 +60,19 @@ class AuthenticationController extends Controller
                 'form_data' => [ $request->account, $request->password]
             ]);
         }
+
         $userObj = User::where('name',$request->account)->first();
 
         if(empty($userObj)){
             $request->merge(['password'=>Hash::make($request->get('password'))]);
             $request->merge(['erp_user_id'=>$result['login_user']['id']]);
-
             $userObj = User::create($request->toArray());
-
         }
-        //			Auth::attempt($request->only('name', 'password'));
+//
+//     Auth::attempt($request->only('account', 'password'));
         Auth::loginUsingId($userObj->id);
-        $apiControl = new ApiController();
-        $apiControl->update($request);
+//        $apiControl = new ApiController();
+//        $apiControl->update($request);
 
         if(session('return_url')){
             return Redirect::to(session('return_url'));

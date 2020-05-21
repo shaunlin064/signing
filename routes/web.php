@@ -16,14 +16,13 @@
     Route::get(
         '/test', function () {
         //    api/form/depend
-        $api  = new FormController();
-        $data = newRequest(
-            [
-                'form_id'         => 5,
-                'apply_member_id' => 157
-            ]
-        );
-        $api->depend($data);
+        $obj  = new \App\Http\Controllers\API\FormFlowController();
+        $data =
+            json_decode(
+                '{"1":{"id":1,"name":"表單驗證","form_id":1,"review_order":1,"review_type":1,"reviewer_id":106,"overwrite":0,"replace":0,"role":1,"replace_id":[],"component":"signatory"},"2":{"id":2,"name":"部級主管","form_id":1,"review_order":2,"review_type":2,"reviewer_id":1,"overwrite":1,"replace":0,"role":1,"replace_id":[],"component":"signatory"},"3":{"id":3,"name":"單位最高主管","form_id":1,"review_order":3,"review_type":2,"reviewer_id":3,"overwrite":1,"replace":0,"role":1,"replace_id":[],"component":"signatory"},"4":{"id":4,"name":"財務長","form_id":1,"review_order":4,"review_type":1,"reviewer_id":17,"overwrite":1,"replace":0,"role":1,"replace_id":[],"component":"signatory"},"5":{"id":5,"name":"執行長","form_id":1,"review_order":5,"review_type":1,"reviewer_id":15,"overwrite":0,"replace":0,"role":1,"replace_id":[],"component":"signatory"},"6":{"id":6,"name":"財務","form_id":1,"review_order":6,"review_type":1,"reviewer_id":202,"overwrite":0,"replace":1,"role":2,"replace_id":[63,178,203],"component":"signatory"}}',true)
+        ;
+        sort($data);
+        dd($obj->saveAll(newRequest($data)));
     }
     );
     Route::get(
@@ -213,6 +212,24 @@
                                     'link' => "form-edit",
                                     'name' => "簽核檢視"
                                 ]
+                            ]
+                        ]
+        )->name('form-edit');
+
+        //    form Edit
+        Route::view(
+            '/system-form-flow-setting', 'pages.system.form-flow-setting', [
+                            'breadcrumbs' => [
+                                [ 'name' => "System" ],
+                                [
+                                    'link' => "system-form-flow-setting",
+                                    'name' => "簽核關卡設定"
+                                ]
+                            ],
+                            'pageConfigs' => [
+                                'pageHeader' => true,
+                                'contentLayout' => "content-left-sidebar",
+                                'bodyClass' => 'todo-application',
                             ]
                         ]
         )->name('form-edit');
