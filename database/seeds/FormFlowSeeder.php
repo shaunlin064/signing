@@ -26,7 +26,7 @@ class FormFlowSeeder extends Seeder
         $obj = new \App\Http\Controllers\API\FormFlowController();
         $data = [
             [
-                'name' => '表單驗證',
+                'name' => '執行長室',
                 'review_type' => 1,
                 'reviewer_id' => 106, //雨涵
                 'overwrite' => 0,

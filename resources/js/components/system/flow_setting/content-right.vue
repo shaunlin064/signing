@@ -12,7 +12,7 @@
                         </div>
                     </fieldset>
                 </div>
-                <form id='form'>
+                <form id='form' onsubmit="return false">
                     <div class="todo-task-list list-group" id="basic-list-group">
                         <loading></loading>
                         <components v-for="(item,key) in signatoryItems" v-bind:is="item.component" :key='key'

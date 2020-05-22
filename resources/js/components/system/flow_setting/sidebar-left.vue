@@ -79,7 +79,6 @@
                     }
                 },
                 addSignatory(){
-                    console.log('addSignatory');
                     bus.$emit('addSignatory');
                 },
                 getFlowData(form_id){
@@ -110,7 +109,6 @@
                     this.validateForm();
                     if(this.can_post){
                         this.swal();
-
                     }
                 },
                 swal(){
