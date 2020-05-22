@@ -60,6 +60,7 @@
         </div>
         <div class="row">
             <div class='row col-md-12 justify-content-end mb-2'>
+                <div class='mr-2' v-if='id'>id：{{id}}</div>
                 <div>申請日期：{{form_submit_data[dom_id]['created_at']}}</div>
             </div>
             <div class="col-md-6">
@@ -178,6 +179,7 @@
             dom_id: String,
             form_action: String,
             can_edit: Boolean,
+            id:Number,
         },
         data() {
             return {

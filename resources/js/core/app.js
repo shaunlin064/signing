@@ -474,13 +474,12 @@
   });
 
   // main menu internationalization
-
   // init i18n and load language file
   i18next.use(window.i18nextXHRBackend).init({
       debug: false,
       fallbackLng: "en",
       backend: {
-        loadPath: "data/locales/{{lng}}.json"
+        loadPath: _locales
       },
       returnObjects: true
     },

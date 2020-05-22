@@ -6,7 +6,12 @@
 {{-- Theme Scripts --}}
 <script src="{{ asset(mix('vendors/js/extensions/sweetalert2.all.min.js')) }}"></script>
 <script src="{{ asset(mix('js/core/app-menu.js')) }}"></script>
+
+<script type="text/javascript">
+    var _locales = "{{asset("data/locales/en.json")}}";
+</script>
 <script src="{{ asset(mix('js/core/app.js')) }}"></script>
+
 <script src="{{ asset(mix('js/app.js')).'?v='.time() }}"></script>
 <script src="{{ asset(mix('js/scripts/components.js')) }}"></script>
 

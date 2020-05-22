@@ -216,23 +216,25 @@
                         ]
         )->name('form-edit');
 
-        //    form Edit
-        Route::view(
-            '/system-form-flow-setting', 'pages.system.form-flow-setting', [
-                            'breadcrumbs' => [
-                                [ 'name' => "System" ],
-                                [
-                                    'link' => "system-form-flow-setting",
-                                    'name' => "簽核關卡設定"
-                                ]
-                            ],
-                            'pageConfigs' => [
-                                'pageHeader' => true,
-                                'contentLayout' => "content-left-sidebar",
-                                'bodyClass' => 'todo-application',
-                            ]
-                        ]
-        )->name('form-edit');
+        //    flow
+        Route::prefix('system')->group(function () {
+            Route::view(
+                '/form-flow-setting', 'pages.system.form-flow-setting', [
+                                               'breadcrumbs' => [
+                                                   [ 'name' => "System" ],
+                                                   [
+                                                       'link' => "system-form-flow-setting",
+                                                       'name' => "簽核關卡設定"
+                                                   ]
+                                               ],
+                                               'pageConfigs' => [
+                                                   'pageHeader'    => true,
+                                                   'contentLayout' => "content-left-sidebar",
+                                                   'bodyClass'     => 'todo-application',
+                                               ]
+                                           ]
+            )->name('system.form-flow-setting');
+        });
     }
     );
     /*error*/

@@ -1,7 +1,7 @@
 <template>
     <form onsubmit="return false" class="steps-validation wizard-circle" :id='dom_id'>
         <keep-alive>
-            <component v-bind:is="form_type" :dom_id='form_type' :form_action='"edit"' :can_edit='can_edit'/>
+            <component v-bind:is="form_type" :dom_id='form_type' :id='id' :form_action='"edit"' :can_edit='can_edit'/>
         </keep-alive>
         <check-point v-show='check_list' :form_id='id' :check_list_props='check_list' :can_check='can_check'
                      :check_id='check_id'></check-point>

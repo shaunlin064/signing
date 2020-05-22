@@ -145,7 +145,7 @@
                             vue.lodding = false;
                             return false;
                         }
-                        javascript:location.href = '/form-list';
+                        javascript:location.href = '/form-edit?id='+result.data.id;
 
                     })
                     .catch(function (error) {

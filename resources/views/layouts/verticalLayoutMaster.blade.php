@@ -48,7 +48,7 @@
 
     </div>
 {{--    @include('pages.auth-lock-screen')--}}
-    <lock-screen></lock-screen>
+    <lock-screen :img_url='"{{asset('images/pages/lock-screen.png')}}"'></lock-screen>
     <!-- End: Content-->
     </div>
 

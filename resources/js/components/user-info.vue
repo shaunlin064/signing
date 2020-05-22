@@ -8,7 +8,7 @@
                 <span class="user-status">{{login_user.department}}</span>
             </div>
             <span><img class="round"
-                       src="images/portrait/small/avatar-s-23.jpg"
+                       :src='img_url'
                        alt="avatar" height="40"
                        width="40"/></span>
         </a>
@@ -28,6 +28,7 @@
         name: "user-info",
         props: {
             session : Object,
+            img_url: String,
         },
         data() {
             return {
