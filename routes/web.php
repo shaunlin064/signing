@@ -25,24 +25,6 @@
             )
         )['data'];
         $config = config('form')[$signing['form_id']];
-        $html = $config['html_name'];
-            $pdf = PDF::loadView('pages.outPut.'.$html,['pdf' => true,'type'=>'payment','signing' => $signing,'config'=>$config]);
-            return $pdf->stream('test.pdf');
-
-    });
-    Route::get(
-        '/output1',function(){
-        $signing = New \App\Http\Controllers\API\FormController();
-//       8,10,12,17,18,23
-        $signing = $signing->get(
-            newRequest(
-                [
-                    'id'        => $_GET['id'],
-//                    'member_id' => 157
-                ]
-            )
-        )['data'];
-        $config = config('form')[$signing['form_id']];
         if($signing['form_id'] === 6){
             $signing['column']['items'] = collect($signing['column']['items'])->values();
             $signing['fee_items_total'] = $signing['column']['items']->pluck('fee_items')->map(function($v,$k) use(&$signing){
@@ -51,9 +33,13 @@
             })->flatten(1);
         }
         $html = $config['html_name'];
-        return view('pages.outPut.'.$html,['pdf' => false,'type'=>'payment','signing' => $signing,'config'=>$config]);
+        $pdf = PDF::loadView('pages.outPut.'.$html,['pdf' => true,'type'=>'payment','signing' => $signing,'config'=>$config]);
+        return $pdf->stream('test.pdf');
 
-});
+    });
+    Route::post('form/print','PrintController@print');
+    Route::post('pdf','PrintController@pdf');
+
     Route::view(
         '/', 'pages.customer.form-list', [
                'breadcrumbs' => [

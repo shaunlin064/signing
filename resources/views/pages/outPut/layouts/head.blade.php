@@ -16,8 +16,8 @@
             @endif
         </div>
     </div>
-    <div class='text-center'>
+    <div class='form-title text-center'>
         <h1 class='title'>{{$config['name']}}</h1>
+        <p class='date text-right'>申請日期：{{date('Y/m/d', strtotime($signing['created_at']))}}</p>
     </div>
-    <p class='text-right'>申請日期：{{date('Y/m/d', strtotime($signing['created_at']))}}</p>
 </div>

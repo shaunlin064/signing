@@ -34,7 +34,7 @@
                     </div>
                     <div class="card-content">
                         <div class="card-body">
-                            <form-edit :id='{{$_GET['id']}}'></form-edit>
+                            <form-edit :id='{{$_GET['id']}}' :csrf_token='"{{csrf_token()}}"'></form-edit>
                         </div>
                     </div>
                 </div>

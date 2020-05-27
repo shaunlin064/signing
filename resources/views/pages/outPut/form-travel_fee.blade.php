@@ -61,11 +61,11 @@
                         @include('pages.outPut.layouts.checkPoint')
                         </tbody>
                     </table>
-                    <div class='footer'>
-                        <p class='text-right'>page :
-                            1/{{collect($signing['column']['items'])->chunk(16)->count()+1}}</p>
-                    </div>
                 </div>
+            </div>
+            <div class='footer'>
+                <p class='text-right'>page :
+                    1/{{collect($signing['column']['items'])->chunk(16)->count()+1}}</p>
             </div>
         </div>
     </div>

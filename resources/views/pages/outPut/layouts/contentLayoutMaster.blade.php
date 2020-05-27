@@ -19,12 +19,16 @@
     @endif
 </head>
 <body>
+<div class='dist'></div>
 <div class="book" id="app">
     @yield('page')
 </div>
 
 </body>
 @yield('script')
+<script type='text/javascript'>
+    window.print();
+</script>
 {{--<script--}}
 {{--    src="https://code.jquery.com/jquery-3.5.1.min.js"--}}
 {{--    integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="--}}

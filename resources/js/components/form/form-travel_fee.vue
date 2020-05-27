@@ -6,6 +6,7 @@
             </div>
             <div class='card-body row justify-content-end'>
                 <div class="modal-info mr-1 mb-1 d-inline-block">
+                    <print-button></print-button>
                     <button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#info">
                         注意事項
                     </button>

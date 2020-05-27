@@ -1,4 +1,5 @@
 import {mapState} from "vuex";
+import { apiFormPrint } from '../src/apis/form'
 
 export default {
     data () {

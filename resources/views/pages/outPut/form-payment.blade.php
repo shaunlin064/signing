@@ -52,7 +52,7 @@
                                     @if($signing['column']['pay_type'] ==='transfer')
                                         <div class='box'>
                                             <input type='checkbox' checked='checked'><label>電匯</label>
-                                            <p class='content'>{{$signing['column']['transfer_date']}}</p>
+                                            <p class='content'>指定日期 ： {{$signing['column']['transfer_date']}}</p>
                                         </div>
                                     @endif
                                     @if($signing['column']['pay_type'] ==='other')

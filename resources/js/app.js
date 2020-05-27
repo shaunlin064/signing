@@ -46,7 +46,7 @@ if (token) {
 
 /*tool*/
 Vue.component('loading',require('./components/loading').default);
-
+Vue.component('print-button',require('./components/form/print-button').default);
 
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 Vue.component('form-new', require('./components/form/form-new.vue').default);

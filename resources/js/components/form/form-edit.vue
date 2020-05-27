@@ -1,7 +1,7 @@
 <template>
     <form onsubmit="return false" class="steps-validation wizard-circle" :id='dom_id'>
         <keep-alive>
-            <component v-bind:is="form_type" :dom_id='form_type' :id='id' :form_action='"edit"' :can_edit='can_edit'/>
+            <component v-bind:is="form_type" :dom_id='form_type' :csrf_token='csrf_token' :id='id' :form_action='"edit"' :can_edit='can_edit'/>
         </keep-alive>
         <check-point v-show='check_list' :form_id='id' :check_list_props='check_list' :can_check='can_check'
                      :check_id='check_id'></check-point>
@@ -25,7 +25,8 @@
             // Payment, Sign
         },
         props: {
-            id: Number
+            id: Number,
+            csrf_token:String,
         },
         mixins: [form],
         data() {
@@ -54,8 +55,16 @@
             });
         },
         created: function () {
+            bus.$on('formPrint',this.formPrint);
         },
         methods: {
+            formPrint(){
+                let data = {
+                    id:this.id,
+                    _token: this.csrf_token
+                }
+                urlPost('/form/print',data);
+            },
             initial() {
                 $(".select2").select2({
                     dropdownautowidth: true,

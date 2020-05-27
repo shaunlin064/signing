@@ -5,7 +5,8 @@ body {
     padding: 0;
     background-color: #FAFAFA;
     font-size: 12px;
-    font-family: "wt011"
+    font-family: "wt011";
+    position: relative;
 }
 h1,h2,h3,h4,h5,p,span{
     font-family: "wt011"
@@ -14,7 +15,12 @@ h1,h2,h3,h4,h5,p,span{
     box-sizing: border-box;
     -moz-box-sizing: border-box;
 }
-
+.dist{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 9999;
+}
 .page {
     width: 210mm; /*隨著紙張大小異動*/
     min-height: 297mm; /*隨著紙張大小異動*/
@@ -26,9 +32,10 @@ h1,h2,h3,h4,h5,p,span{
     /*box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);*/
     .subpage {
         //padding: 1cm;
-        //border: 1px #050505 solid;
-        height: 257mm; /*隨著紙張大小異動*/
-        /*outline: 2cm #ffffff solid;*/
+        border: 1px #050505 solid;
+        height: 297mm; /*隨著紙張大小異動*/
+        position: relative;
+        ///*outline: 2cm #ffffff solid;*/
         .img-container{
             width: 50%;
             margin: auto;
@@ -36,8 +43,15 @@ h1,h2,h3,h4,h5,p,span{
                 width: 100%;
             }
         }
-        .head{
-
+        .header{
+            .form-title{
+                position: relative;
+                .date{
+                    position: absolute;
+                    right: 0px;
+                    top: 0px;
+                }
+            }
         }
         .body{
             width: 100%;
@@ -48,21 +62,30 @@ h1,h2,h3,h4,h5,p,span{
                 font-family: "wt011";
                 tr{
                     height: 40px;
+                    min-height: 40px;
                     td{
                         text-align: center;
+                        min-height: 40px;
                     }
                     .title{
 
                     }
                 }
                 .breakLine{
-                    border: 2px black solid;
                 }
 
                 .box{
                     display: inline;
                 }
             }
+        }
+
+        .footer{
+            position: absolute;
+            float: right;
+            right: 0px;
+            bottom: 0px;
+            padding: 0 15px;
         }
     }
 }
