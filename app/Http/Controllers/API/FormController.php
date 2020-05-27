@@ -5,7 +5,6 @@
 
     use App\FormApply;
     use App\FormApplyCheckpoint;
-    use App\FormData;
     use App\FormDataSub;
     use App\FormFlow;
     use App\FormPairData;
@@ -104,8 +103,13 @@
                     /*TODO::代墊交際單勾選的時候要留意邏輯*/
                     $formPairDataId = $request->form_pair_data_id ?? null;
 
-                    if($formPairDataId){
-                        FormPairData::where( 'id' , $formPairDataId )->update(['status' => 1 ,'use_to_form_apply_id' => $FormApply->id]);
+                    if ( $formPairDataId ) {
+                        FormPairData::where('id', $formPairDataId)->update(
+                            [
+                                'status'               => 1,
+                                'use_to_form_apply_id' => $FormApply->id
+                            ]
+                        );
                     }
                     //寫入填單資料
                     $form = Config('form.' . $request->get('form_id'));
@@ -533,17 +537,11 @@
                 if ( $FormApplyCheckpointNext ) {
                     $FormApplyCheckpointNextNext = FormApplyCheckpoint::where(
                         'form_apply_id', $checkPoint->form_apply_id
-                    )
-                                                                      ->where(
-                                                                          'review_order', '>',
-                                                                          $FormApplyCheckpointNext->review_order
-                                                                      )
-                                                                      ->where('status', 1)
-                                                                      ->whereNull(
-                                                                          'signed_at'
-                                                                      )
-                                                                      ->orderBy('review_order', 'ASC')
-                                                                      ->first();
+                    )->where(
+                            'review_order', '>', $FormApplyCheckpointNext->review_order
+                        )->where('status', 1)->whereNull(
+                            'signed_at'
+                        )->orderBy('review_order', 'ASC')->first();
 
                     $checkPoint->apply->now = $FormApplyCheckpointNext->id;
                     $checkPoint->apply->next
@@ -933,40 +931,66 @@
 
             try {
                 //先找到form_grant_id已被用過的清單
-//                $used_form_apply_id = FormData::where('column', 'form_grant_id')->pluck('value');
-//
-//                $list = FormApply::whereNull('fail_at')->where('form_id', $request->get('form_id'))->where(
-//                    'apply_member_id', $request->get('apply_member_id')
-//                )->whereNotIn('id', $used_form_apply_id)->whereNull('now')->whereNull('next')->get();
-//                //取得session資料
-//                $member     = SessionController::getSession('member');
-//                $department = SessionController::getSession('department');
-//
-//                $status = Config('form_status.apply');
+                //                $used_form_apply_id = FormData::where('column', 'form_grant_id')->pluck('value');
+                //
+                //                $list = FormApply::whereNull('fail_at')->where('form_id', $request->get('form_id'))->where(
+                //                    'apply_member_id', $request->get('apply_member_id')
+                //                )->whereNotIn('id', $used_form_apply_id)->whereNull('now')->whereNull('next')->get();
+                //                //取得session資料
+                //                $member     = SessionController::getSession('member');
+                //                $department = SessionController::getSession('department');
+                //
+                //                $status = Config('form_status.apply');
 
-//                $list->map(
-//                    function ( $item ) use ( $member, $department, $status ) {
-//
-//                        $department_id
-//                            = ( isset($member[ $item->apply_member_id ]) ) ? $member[ $item->apply_member_id ]['department_id'] : null;
-//                        $dpartment
-//                            = ( isset($department[ $department_id ]) ) ? $department[ $department_id ]['name'] : '';
-//
-//                        $item->created_at_format = $item->created_at->format('Y-m-d');
-//                        $item->form_type         = Config('form')[ $item->form_id ]['name'];
-//                        $item->status_string     = $status[ $item->status ];
-//                        $item->department        = $dpartment;
-//                        $item->member
-//                                                 = ( isset($member[ $item->apply_member_id ]) ) ? $member[ $item->apply_member_id ]['name'] : '';
-//                        $item->apply_subject     = $item->data()->where('column', 'apply_subject')->pluck('value')->get(
-//                            0
-//                        );
-//
-//                        return $item;
-//                    }
-//                );
+                //                $list->map(
+                //                    function ( $item ) use ( $member, $department, $status ) {
+                //
+                //                        $department_id
+                //                            = ( isset($member[ $item->apply_member_id ]) ) ? $member[ $item->apply_member_id ]['department_id'] : null;
+                //                        $dpartment
+                //                            = ( isset($department[ $department_id ]) ) ? $department[ $department_id ]['name'] : '';
+                //
+                //                        $item->created_at_format = $item->created_at->format('Y-m-d');
+                //                        $item->form_type         = Config('form')[ $item->form_id ]['name'];
+                //                        $item->status_string     = $status[ $item->status ];
+                //                        $item->department        = $dpartment;
+                //                        $item->member
+                //                                                 = ( isset($member[ $item->apply_member_id ]) ) ? $member[ $item->apply_member_id ]['name'] : '';
+                //                        $item->apply_subject     = $item->data()->where('column', 'apply_subject')->pluck('value')->get(
+                //                            0
+                //                        );
+                //
+                //                        return $item;
+                //                    }
+                //                );
 
-                $list = FormPairData::where(['member_id' => $request->member_id , 'form_id' => $request->form_id , 'status'=>0 ] )->get();
+                $list = FormPairData::where(
+                    [
+                        'member_id' => $request->member_id,
+                        'form_id'   => $request->form_id,
+                        'status'    => 0
+                    ]
+                )->get();
+
+                self::$message['status']        = 1;
+                self::$message['status_string'] = '取得成功';
+                self::$message['message']       = '';
+                self::$message['data']          = $list;
+
+            } catch ( \Exception $ex ) {
+                DB::rollback();
+                self::$message['status_string'] = '取得失敗';
+                self::$message['message']       = '資料庫錯誤!' . $ex->getMessage();
+            }
+
+            return self::$message;
+        }
+
+        public function getPairData ( Request $request ) {
+
+            $id = $request->id;
+            try {
+                $list = FormPairData::where('id',$id)->first();
 
                 self::$message['status']        = 1;
                 self::$message['status_string'] = '取得成功';

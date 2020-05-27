@@ -42,7 +42,7 @@
         </div>
         <div class='col-md-2' v-else-if='type === "交際"'>
             <div class="form-label-group mt-2">
-                <input type="text" class="form-control" v-model='form_submit_data[dom_id]["items"][id]["form_grant_id"]' :disabled='can_edit === false'
+                <input type="text" class="form-control" v-model='form_submit_data[dom_id]["items"][id]["form_pair_data_id"]' :disabled='can_edit === false'
                        placeholder="交際送禮單號" required>
                 <label >交際送禮單號</label>
             </div>

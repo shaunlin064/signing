@@ -141,7 +141,7 @@
 
 <script>
     import {mapState} from 'vuex';
-    import {apiGetDependList,apiGetForm} from '../../src/apis/form'
+    import {apiGetDependList,apiGetForm,apiGetPairData} from '../../src/apis/form'
     Vue.component('form-travel_fee_plan', require('../../components/form/form-travel_fee_plan').default);
     export default {
         name: "form-travel_fee",
@@ -192,11 +192,13 @@
                 });
 
                 this.getTraveGrantData();
+
                 if (this.form_action === 'new') {
                     this.department_name = this.login_user.department;
                     this.member_name = this.login_user.name;
                     $('#' + this.dom_id + ' #form_pair_data_id').change((e, v) => {
                         this.getFromData(e.target.value);
+                        this.form_submit_data[this.dom_id]['apply_subject'] = $(e.target).find(':selected').html().trim();
                         this.form_submit_data[this.dom_id]["form_pair_data_id"] = e.target.value;
                     });
                 } else {
@@ -258,6 +260,7 @@
                     form_id: 5,
                     member_id: this.login_user.id
                 };
+
                 if(this.form_action == 'new'){
                     /*TODO:: 確認簽核流程完成 拉回來的資料還需要再做判斷處理*/
                     apiGetDependList(data)
@@ -274,14 +277,14 @@
                         });
                 }else{
                     let id = this.form_submit_data[this.dom_id]['form_pair_data_id'];
-                    apiGetForm({id:id})
+                    apiGetPairData({id:id})
                         .then(function (response) {
                             let result = response.data;
                             if (result.status !== 1) {
                                 alert(result.message);
                                 return false;
                             }
-                            vue.travel_grant_datas = [{id:result.data.id,apply_subject:result.data.column.apply_subject}];
+                            vue.travel_grant_datas = [{id:result.data.id,apply_subject:result.data.apply_subject}];
                         })
                         .catch(function (error) {
                             console.log(error);
@@ -289,9 +292,9 @@
                 }
 
             },
-            getFormTravelGrantPlans() {
+            getFormTravelGrantPlans(data) {
                 let vue = this;
-                let data = Object.assign([], vue.form_submit_data[vue.dom_id]['items']);
+                // let data = Object.assign([], vue.form_submit_data[vue.dom_id]['items']);
 
                 if (data !== '') {
                     data.map((e, v) => {
@@ -313,14 +316,16 @@
                     vue.form_submit_data[vue.dom_id]['items'] = {};
                 }else{
                     vue.items = [];
+                    let data;
                     vue.travel_grant_datas.map((v)=>{
                         if( parseInt(id) === parseInt(v['id'])){
-                            vue.form_submit_data[vue.dom_id]["items"] = JSON.parse(v['value']);
+                            // vue.form_submit_data[vue.dom_id]["items"] = JSON.parse(v['value']);
+                            data = JSON.parse(v['value']);
                         }
                     });
                     let wait = await vue.settime();
                     if (wait) {
-                        vue.getFormTravelGrantPlans();
+                        vue.getFormTravelGrantPlans(data);
                     }
                 }
             },

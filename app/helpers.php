@@ -32,13 +32,16 @@
         return true;
     }
 
-    function date_range ( $first, $last )
+    function date_range ( $first, $last,$interval_spec = 'P1D' )
     {
+        $firstDate = new DateTime($first);
+        $lastDate = new DateTime($last);
         $period = new \DatePeriod(
-            new DateTime($first),
-            new \DateInterval('P1M'),
-            new DateTime($last)
+            $firstDate,
+            new \DateInterval($interval_spec),
+            $lastDate
         );
+
         if ( $first == $last )
         {
             return [ $first ];
@@ -48,6 +51,7 @@
             $dates[] = $date->format('Y-m-d');
         }
 
+        $dates[] = $lastDate->format('Y-m-d');
         return $dates;
     }
 

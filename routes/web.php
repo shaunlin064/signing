@@ -13,6 +13,65 @@
     | contains the "web" middleware group. Now create something great!
     |
     */
+    Route::any(
+        '/output', function(){
+        $signing = New \App\Http\Controllers\API\FormController();
+        $signing = $signing->get(
+            newRequest(
+                [
+                    'id'        => $_GET['id'],
+//                    'member_id' => 157
+                ]
+            )
+        )['data'];
+        $config = config('form')[$signing['form_id']];
+        $html = $config['html_name'];
+            $pdf = PDF::loadView('pages.outPut.'.$html,['pdf' => true,'type'=>'payment','signing' => $signing,'config'=>$config]);
+            return $pdf->stream('test.pdf');
+
+    });
+    Route::get(
+        '/output1',function(){
+        $signing = New \App\Http\Controllers\API\FormController();
+//       8,10,12,17,18,23
+        $signing = $signing->get(
+            newRequest(
+                [
+                    'id'        => $_GET['id'],
+//                    'member_id' => 157
+                ]
+            )
+        )['data'];
+        $config = config('form')[$signing['form_id']];
+        if($signing['form_id'] === 6){
+            $signing['column']['items'] = collect($signing['column']['items'])->values();
+            $signing['fee_items_total'] = $signing['column']['items']->pluck('fee_items')->map(function($v,$k) use(&$signing){
+                $signing['column']['items'][$k]['fee_items'] = json_decode($v,true);
+                return json_decode($v,true);
+            })->flatten(1);
+        }
+        $html = $config['html_name'];
+        return view('pages.outPut.'.$html,['pdf' => false,'type'=>'payment','signing' => $signing,'config'=>$config]);
+
+});
+    Route::view(
+        '/', 'pages.customer.form-list', [
+               'breadcrumbs' => [
+                   [ 'name' => "User" ],
+                   [
+                       'link' => "form-list",
+                       'name' => "簽核狀態"
+                   ]
+               ]
+           ]
+    )->name('index');
+
+    Route::get('/test-formapply',function(){
+       $data = json_decode('{"form_id":"6","apply_member_id":"157","apply_department_id":"41","apply_subject":"1","form_pair_data_id":"4","items":[{"id":"3","date":"2020-05-27","customer_name":"111","customer_company":"111","meet_type":"11","agenda":"11","charge_user":"157","fee_items":"\"{\\\"0\\\":{\\\"id\\\":\\\"0\\\",\\\"type\\\":\\\"交通\\\",\\\"currency\\\":\\\"TWD\\\",\\\"fee\\\":\\\"1\\\"},\\\"1\\\":{\\\"id\\\":\\\"1\\\",\\\"type\\\":\\\"交際\\\",\\\"currency\\\":\\\"TWD\\\",\\\"fee\\\":\\\"1\\\"},\\\"2\\\":{\\\"id\\\":\\\"2\\\",\\\"type\\\":\\\"漫遊\\\",\\\"currency\\\":\\\"TWD\\\",\\\"fee\\\":\\\"10\\\"},\\\"3\\\":{\\\"id\\\":\\\"3\\\",\\\"type\\\":\\\"其他\\\",\\\"currency\\\":\\\"TWD\\\",\\\"fee\\\":\\\"1\\\"}}\""},null,null,{"id":"3","date":"2020-05-27","customer_name":"111","customer_company":"111","meet_type":"11","agenda":"11","charge_user":"157","fee_items":"\"{\\\"0\\\":{\\\"id\\\":\\\"0\\\",\\\"type\\\":\\\"交通\\\",\\\"currency\\\":\\\"TWD\\\",\\\"fee\\\":\\\"1\\\"},\\\"1\\\":{\\\"id\\\":\\\"1\\\",\\\"type\\\":\\\"交際\\\",\\\"currency\\\":\\\"TWD\\\",\\\"fee\\\":\\\"1\\\"},\\\"2\\\":{\\\"id\\\":\\\"2\\\",\\\"type\\\":\\\"漫遊\\\",\\\"currency\\\":\\\"TWD\\\",\\\"fee\\\":\\\"10\\\"},\\\"3\\\":{\\\"id\\\":\\\"3\\\",\\\"type\\\":\\\"其他\\\",\\\"currency\\\":\\\"TWD\\\",\\\"fee\\\":\\\"1\\\"}}\""}],"remark":"","apply_attachment":"[]","created_at":"2020/5/27"}',true);
+        $obj  = new \App\Http\Controllers\API\FormController();
+        dd($data);
+        $obj->apply(newRequest($data));
+    });
     Route::get(
         '/test', function () {
         //    api/form/depend

@@ -15,3 +15,4 @@ export const apiGetAllList = params => req('post', 'form/all',params)
 
 /*get depend List*/
 export const apiGetDependList = params => req('post', 'form/depend',params)
+export const apiGetPairData = params => req('post', 'form/getPairData',params)

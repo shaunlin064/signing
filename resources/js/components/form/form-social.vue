@@ -94,11 +94,18 @@
                     <label for="member">申請人</label>
                 </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-6 mt-2">
                 <div class="form-label-group">
                     <input type="text" id="apply_subject" class="form-control" placeholder="名稱" name="apply_subject"
                            v-model='form_submit_data[dom_id]["apply_subject"]' :disabled='can_edit === false' required>
                     <label for="apply_subject">名稱</label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-label-group">
+                    <input type="date" id="social_date" class="form-control" placeholder="送禮日期" name="social_date"
+                           v-model='form_submit_data[dom_id]["social_date"]' :disabled='can_edit === false' required>
+                    <label for="apply_subject">送禮日期</label>
                 </div>
             </div>
 <!--            <div class="col-md-6">-->

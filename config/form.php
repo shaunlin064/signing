@@ -1,9 +1,10 @@
 <?php
 
+
     return [
         1 => [
             'id'        => 1,
-            'name'      => '請款單',
+            'name'      => '請款申請單',
             'html_name' => 'form-payment',
             'column'    => [
                 'apply_member_id'     => [
@@ -33,7 +34,7 @@
                 'pay_type'            => [
                     'name' => '付款方式'
                 ],
-                'transfer_date' => [
+                'transfer_date'       => [
                     'name' => '指定匯款日期'
                 ],
                 'remark'              => [
@@ -46,7 +47,7 @@
         ],
         2 => [
             'id'        => 2,
-            'name'      => '用印申請',
+            'name'      => '用印申請單',
             'html_name' => 'form-sign',
             'column'    => [
                 'apply_member_id'     => [
@@ -59,10 +60,19 @@
                     'name' => '項目'
                 ],
                 'form_stamp_type'     => [
-                    'name' => '用印形式'
+                    'name'  => '用印形式',
+                    'value' => [
+                        'company'   => '公司大章',
+                        'principal' => '負責人章',
+                        'invoice'   => '發票章',
+                    ]
                 ],
                 'deployed'            => [
-                    'name' => '寄送方式'
+                    'name' => '寄送方式',
+                    'value' => [
+                        'company'   => '總務寄出',
+                        'self' => '自行寄出'
+                    ]
                 ],
                 'recipient_company'   => [
                     'name' => '收件人公司'
@@ -86,7 +96,7 @@
         ],
         3 => [
             'id'        => 3,
-            'name'      => '交際送禮',
+            'name'      => '交際送禮申請單',
             'html_name' => 'form-social',
             'column'    => [
                 'apply_member_id'     => [
@@ -96,10 +106,13 @@
                     'name' => '請款單位'
                 ],
                 'apply_subject'       => [
-                    'name' => '項目'
+                    'name' => '事由'
+                ],
+                'social_date' => [
+                    'name' => '送禮日期'
                 ],
                 'customer_company'    => [
-                    'name' => '客戶名稱'
+                    'name' => '客戶公司名稱'
                 ],
                 'customer_name'       => [
                     'name' => '客戶名稱'
@@ -108,11 +121,14 @@
                     'name' => '出席人員'
                 ],
                 'type'                => [
-                    'name' => '類型'
+                    'name' => '類型',
+                    'value' =>[
+                        'flower' => '送花',
+                        'meal' => '餐敘',
+                        'gift' => '送禮',
+                        'other' => '其他',
+                    ]
                 ],
-//                'date'                => [
-//                    'name' => '事由日期'
-//                ],
                 'cost'                => [
                     'name' => '預估費用'
                 ],
@@ -126,7 +142,7 @@
         ],
         4 => [
             'id'        => 4,
-            'name'      => '代墊',
+            'name'      => '代墊申請單',
             'html_name' => 'form-refund',
             'column'    => [
                 'apply_member_id'     => [
@@ -135,34 +151,34 @@
                 'apply_department_id' => [
                     'name' => '請款單位'
                 ],
-                'apply_subject'       => [
-                    'name' => '項目'
-                ],
+//                'apply_subject'       => [
+//                    'name' => '項目'
+//                ],
                 'items'               => [
                     'name'       => '代墊項目',
                     'sub_column' => [
-                        'id'=>[
+                        'id'                => [
                             'name' => 'id'
                         ],
-                        'type'         => [
+                        'type'              => [
                             'name' => '類型'
                         ],
-                        'date'         => [
+                        'date'              => [
                             'name' => '日期'
                         ],
-                        'name'         => [
+                        'name'              => [
                             'name' => '項目'
                         ],
-                        'get_on_start' => [
+                        'get_on_start'      => [
                             'name' => '乘車起始點'
                         ],
-                        'campaign_id'  => [
+                        'campaign_id'       => [
                             'name' => '委刊編號'
                         ],
-                        'form_pair_data_id'      => [
+                        'form_pair_data_id' => [
                             'name' => '交際送禮單號'
                         ],
-                        'price'        => [
+                        'price'             => [
                             'name' => '金額'
                         ],
                     ]
@@ -177,7 +193,7 @@
         ],
         5 => [
             'id'        => 5,
-            'name'      => '差旅申請',
+            'name'      => '差旅申請單',
             'html_name' => 'form-travel_grant',
             'column'    => [
                 'apply_member_id'      => [
@@ -187,7 +203,7 @@
                     'name' => '請款單位'
                 ],
                 'apply_subject'        => [
-                    'name' => '項目'
+                    'name' => '出差事由'
                 ],
                 'accompany_user_id'    => [
                     'name' => '出差人'
@@ -213,7 +229,7 @@
                 'items'                => [
                     'name'       => '出差計畫',
                     'sub_column' => [
-                        'id'=>[
+                        'id'               => [
                             'name' => 'id'
                         ],
                         'date'             => [
@@ -246,26 +262,26 @@
         ],
         6 => [
             'id'        => 6,
-            'name'      => '差旅費用核銷',
+            'name'      => '差旅費用核銷申請單',
             'html_name' => 'form-travel_fee',
             'column'    => [
-                'apply_member_id'      => [
+                'apply_member_id'     => [
                     'name' => '申請人'
                 ],
-                'apply_department_id'  => [
+                'apply_department_id' => [
                     'name' => '請款單位'
                 ],
-                'apply_subject'        => [
+                'apply_subject'       => [
                     'name' => '項目'
                 ],
-                'form_pair_data_id' => [
+                'form_pair_data_id'   => [
                     'name' => '差旅單'
                 ],
-                'items'                => [
+                'items'               => [
                     'name'       => '出差計畫',
                     'sub_column' => [
-                        'id'=>[
-                           'name' => 'id'
+                        'id'               => [
+                            'name' => 'id'
                         ],
                         'date'             => [
                             'name' => '日期'
@@ -287,13 +303,26 @@
                         ],
                         'fee_items'        => [
                             'name' => '費用明細',
+                            'sub_column' => [
+                                'type' => [
+                                    'name' => '類型',
+                                    'vale' => [
+                                        '交通' => '交通',
+                                        '交際' => '交際',
+                                        '漫遊' => '漫遊',
+                                        '其他' => '其他'
+                                    ]
+                                ],
+                                'currency' => ['name' =>'幣別'],
+                                'fee' => ['name' => '應付費用']
+                            ]
                         ],
                     ]
                 ],
-                'remark'               => [
+                'remark'              => [
                     'name' => '備註'
                 ],
-                'apply_attachment'     => [
+                'apply_attachment'    => [
                     'name' => '附件'
                 ],
             ]

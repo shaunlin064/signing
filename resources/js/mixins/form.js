@@ -25,6 +25,9 @@ export default {
                 case 'form-sign':
                     passCheckColumn.push('recipient_company', 'recipient_contact', 'recipient_phone', 'recipient_address');
                     break;
+                case 'form-refund':
+                    passCheckColumn.push('get_on_start', 'campaign_id', 'form_pair_data_id');
+                    break;
             }
 
             passCheckColumn = passCheckColumn.concat(this.exPassCheckColumn);

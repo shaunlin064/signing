@@ -158,6 +158,14 @@
                               'uses' => 'API\FormController@depend'
                           ]
         );
+
+        //取pairDatas 關係資料表單
+         Route::post(
+             '/form/getPairData', [
+                               'as'   => 'api.form.getPairData',
+                               'uses' => 'API\FormController@getPairData'
+                           ]
+         );
     });
     /**
      * ===================================================================

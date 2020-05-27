@@ -50,6 +50,7 @@
             $(document).ready(() => {
                 this.initial();
                 this.getAjaxFormData();
+
             });
         },
         created: function () {
@@ -109,6 +110,7 @@
                         alert(result.message);
                         return false;
                     }
+
                     switch (result.data.form_id) {
                         case 1:
                             vue.form_type = 'form-payment';
@@ -160,14 +162,23 @@
                     if ($.inArray(columnName, ['form_stamp_type', 'accompany_user_id', 'attend_member', 'items', 'apply_attachment']) != -1) {
                         if (columnName == 'items') {
                             vue.form_submit_data[vue.form_type][columnName] = {};
-                            data[columnName].map((e) => {
-                                vue.form_submit_data[vue.form_type][columnName][e.id] = e;
-                                ['fee_items'].map((k) => {
-                                    if (e[k] != undefined) {
-                                        vue.form_submit_data[vue.form_type][columnName][e.id][k] = JSON.parse(e[k]);
-                                    }
+                            let tmpData = [];
+                            if(!data[columnName].isArray){
+                                tmpData = Object.values(data[columnName]);
+                            }else{
+                                tmpData = data[columnName];
+                            }
+
+                            tmpData.map((e) => {
+                                    vue.form_submit_data[vue.form_type][columnName][e.id] = e;
+                                    ['fee_items'].map((k) => {
+                                        if (e[k] != undefined) {
+                                            vue.form_submit_data[vue.form_type][columnName][e.id][k] = JSON.parse(e[k]);
+                                        }
+                                    });
                                 });
-                            });
+
+
                         } else {
                             vue.form_submit_data[vue.form_type][columnName] = JSON.parse(data[columnName]);
                         }

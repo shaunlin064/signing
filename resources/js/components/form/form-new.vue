@@ -135,7 +135,6 @@
                 }
                 /* some Array need to Json*/
                 data = this.formToJson(data);
-
                 /*TODO::post 後續轉跳與錯誤動作*/
                 apiFormApply(data)
                     .then(function (response) {

@@ -78,13 +78,13 @@
                     <label for="member">申請人</label>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="form-label-group">
-                    <input type="text" id="apply_subject" class="form-control" placeholder="名稱" name="apply_subject"
-                           v-model='form_submit_data[dom_id]["apply_subject"]' :disabled='can_edit === false' required>
-                    <label for="apply_subject">名稱</label>
-                </div>
-            </div>
+<!--            <div class="col-md-6">-->
+<!--                <div class="form-label-group">-->
+<!--                    <input type="text" id="apply_subject" class="form-control" placeholder="名稱" name="apply_subject"-->
+<!--                           v-model='form_submit_data[dom_id]["apply_subject"]' :disabled='can_edit === false' required>-->
+<!--                    <label for="apply_subject">名稱</label>-->
+<!--                </div>-->
+<!--            </div>-->
         </div>
         <div class="row justify-content-center border-top-light mt-2">
             <div class="row col-md-12">
@@ -319,6 +319,29 @@
                     type: type,
                     id: this.count,
                 });
+
+                // let defaultColumn = {
+                //     id: this.count.toString(),
+                //     type: type,
+                //     date: '',
+                //     name: '',
+                //     price: '',
+                // };
+                // switch (type) {
+                //     case '乘車':
+                //         defaultColumn.get_on_start = '';
+                //         break;
+                //     case '案件':
+                //         defaultColumn.campaign_id = '';
+                //         break;
+                //     case '交際':
+                //         defaultColumn.form_pair_data_id = '';
+                //         break;
+                //     case '其他':
+                //         break;
+                // }
+                // this.form_submit_data[this.dom_id]["items"][this.count] = defaultColumn;
+
                 this.form_submit_data[this.dom_id]["items"][this.count] = {
                     id: this.count.toString(),
                     type: type,
@@ -326,9 +349,8 @@
                     name: '',
                     get_on_start: '',
                     campaign_id: '',
-                    form_grant_id: '',
+                    form_pair_data_id: '',
                     price: '',
-
                 };
             }
         },
