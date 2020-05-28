@@ -162,13 +162,19 @@
                                     $signed_member_id = $member[ $request->get('apply_member_id') ]['top_manage'];
                                 }
                             }
+                            /*如 部級主管與最高主管 找不到資料 或者為自己 直接跳過該格*/
+                            if($signed_member_id == $request->get('apply_member_id')){
+                                continue;
+                            }
+                            if($signed_member_id == 0){
+                                continue;
+                            }
                         } else if ( $v->review_type == 3 ) {
                             $signed_member_id = $request->get('apply_member_id');
                         }
 
                         //找到可代簽人員
                         $replace_signed_member_id = [];
-
                         foreach ( $v->replaceMember as $k1 => $v1 ) {
                             if ( $v1->review_type == 2 ) {
                                 //位階須先找出實際簽署者
@@ -512,9 +518,11 @@
                 $checkPoint->signature = $request->get('signature');
                 $checkPoint->remark    = $request->get('remark') ?? '';
                 /*是否為代簽 補上代簽者 id*/
-                if ( json_decode($checkPoint->replace_members, true) ) {
+                $replaceMembers = json_decode($checkPoint->replace_members, true);
+                if ( in_array($request->get('member_id'),$replaceMembers) ) {
                     $checkPoint->replace_signed_member_id = $request->get('member_id');
                 }
+
                 $checkPoint->status = $request->get('status');
 
                 //變更申請表now next 以及簽核狀態

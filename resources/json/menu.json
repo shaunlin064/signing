@@ -8,19 +8,19 @@
             "icon": "feather icon-user",
             "submenu": [
                 {
-                    "url": "/form-new",
+                    "url": "form-new",
                     "name": "申請簽核",
                     "icon": "feather icon-circle",
                     "i18n": "form.form-new"
                 },
                 {
-                    "url": "/form-list",
+                    "url": "form-list",
                     "name": "簽核狀態",
                     "icon": "feather icon-circle",
                     "i18n": "nav.dashboard_ecommerce"
                 },
                 {
-                    "url": "/signature",
+                    "url": "signature",
                     "name": "設定簽名檔",
                     "icon": "feather icon-circle",
                     "i18n": "nav.dashboard_ecommerce"
@@ -35,13 +35,13 @@
             "icon": "feather icon-edit",
             "submenu": [
                 {
-                    "url": "/form-pending",
+                    "url": "form-pending",
                     "name": "待審簽核",
                     "icon": "feather icon-circle",
                     "i18n": "nav.dashboard_analytics"
                 },
                 {
-                    "url": "/form-all",
+                    "url": "form-all",
                     "name": "已審簽核",
                     "icon": "feather icon-circle",
                     "i18n": "nav.dashboard_ecommerce"
@@ -56,13 +56,13 @@
             "icon": "feather icon-zap",
             "submenu": [
                 {
-                    "url": "/form-action",
+                    "url": "form-action",
                     "name": "待執行簽核",
                     "icon": "feather icon-circle",
                     "i18n": "nav.dashboard_analytics"
                 },
                 {
-                    "url": "/form-allAction",
+                    "url": "form-allAction",
                     "name": "所有已執行簽核",
                     "icon": "feather icon-circle",
                     "i18n": "nav.dashboard_ecommerce"
@@ -77,7 +77,7 @@
             "icon": "feather icon-settings",
             "submenu": [
                 {
-                    "url": "/system/form-flow-setting",
+                    "url": "system/form-flow-setting",
                     "name": "簽核關卡設定",
                     "icon": "feather icon-circle",
                     "i18n": "nav.dashboard_analytics"

@@ -178,15 +178,16 @@
             getData() {
                 let userId = this.getLoginUser();
 
-
                 let vue = this;
                 let params = {
                     member_id: userId,
                     role: vue.api_parmater_role,
                 };
                 /*** GET TABLE DATA FROM URL ***/
+
                 switch (vue.dom_id) {
-                    case 'ag_pending' || 'ag_action':
+                    case 'ag_pending' :
+                    case 'ag_action':
                         apiGetCheckList(params).then(function (response) {
                             vue.agSetting(response)
                         });

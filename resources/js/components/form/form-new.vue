@@ -151,7 +151,6 @@
                         console.log(error);
                         alert(error);
                     });
-
             },
         },
         updated() {

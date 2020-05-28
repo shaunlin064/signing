@@ -10,7 +10,6 @@
                     <button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#info">
                         注意事項
                     </button>
-
                     <div class="modal fade text-left" id="info" tabindex="-1" role="dialog"
                          aria-labelledby="myModalLabel130" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
@@ -95,7 +94,7 @@
                     <label for="member">申請人</label>
                 </div>
             </div>
-            <div class="col-md-6 mt-2">
+            <div class="col-md-6">
                 <div class="form-label-group">
                     <input type="text" id="apply_subject" class="form-control" placeholder="名稱" name="apply_subject"
                            v-model='form_submit_data[dom_id]["apply_subject"]' :disabled='can_edit === false' required>

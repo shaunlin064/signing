@@ -137,6 +137,7 @@
                 $('.todo-app-list').on('change', '[data-action="'+actionName+'"]', (e, v) => {
                     if(vue.id  == e.currentTarget.dataset.id){
                         vue.flow_submit_data[vue.form_type][vue.id][actionName] = $(e.currentTarget).val()
+
                         if(actionName === 'review_type'){
                             vue.review_type = $(e.currentTarget).val();
                             vue.flow_submit_data[vue.form_type][vue.id]['reviewer_id'] = 0;
@@ -182,7 +183,7 @@
                     if(!val){
                         this.flow_submit_data[this.form_type][this.id]['replace_id'] = [];
                     }
-                    this.flow_submit_data[this.form_type][this.id]['replace'] = this.replace;
+                    this.flow_submit_data[this.form_type][this.id]['replace'] = this.replace ? 1 : 0;
                 }
             }
 
