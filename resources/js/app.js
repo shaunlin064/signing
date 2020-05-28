@@ -61,7 +61,9 @@ Vue.component('form-travel_grant', require('./components/form/form-travel_grant'
 Vue.component('check-point', require('./components/form/check-point').default);
 Vue.component('ag', require('./components/ag').default);
 
-
+/*signature*/
+Vue.component('signature', require('./components/signature/signature').default);
+Vue.component('signature-item', require('./components/signature/signature-item').default);
 /*system*/
 
 /*flow setting*/
