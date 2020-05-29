@@ -13,6 +13,7 @@
     | contains the "web" middleware group. Now create something great!
     |
     */
+
     Route::any(
         '/output', function(){
         $signing = New \App\Http\Controllers\API\FormController();
@@ -53,9 +54,9 @@
     )->name('index');
 
     Route::get('/test-formapply',function(){
-       $data = json_decode('{"form_id":"6","apply_member_id":"157","apply_department_id":"41","apply_subject":"1","form_pair_data_id":"4","items":[{"id":"3","date":"2020-05-27","customer_name":"111","customer_company":"111","meet_type":"11","agenda":"11","charge_user":"157","fee_items":"\"{\\\"0\\\":{\\\"id\\\":\\\"0\\\",\\\"type\\\":\\\"交通\\\",\\\"currency\\\":\\\"TWD\\\",\\\"fee\\\":\\\"1\\\"},\\\"1\\\":{\\\"id\\\":\\\"1\\\",\\\"type\\\":\\\"交際\\\",\\\"currency\\\":\\\"TWD\\\",\\\"fee\\\":\\\"1\\\"},\\\"2\\\":{\\\"id\\\":\\\"2\\\",\\\"type\\\":\\\"漫遊\\\",\\\"currency\\\":\\\"TWD\\\",\\\"fee\\\":\\\"10\\\"},\\\"3\\\":{\\\"id\\\":\\\"3\\\",\\\"type\\\":\\\"其他\\\",\\\"currency\\\":\\\"TWD\\\",\\\"fee\\\":\\\"1\\\"}}\""},null,null,{"id":"3","date":"2020-05-27","customer_name":"111","customer_company":"111","meet_type":"11","agenda":"11","charge_user":"157","fee_items":"\"{\\\"0\\\":{\\\"id\\\":\\\"0\\\",\\\"type\\\":\\\"交通\\\",\\\"currency\\\":\\\"TWD\\\",\\\"fee\\\":\\\"1\\\"},\\\"1\\\":{\\\"id\\\":\\\"1\\\",\\\"type\\\":\\\"交際\\\",\\\"currency\\\":\\\"TWD\\\",\\\"fee\\\":\\\"1\\\"},\\\"2\\\":{\\\"id\\\":\\\"2\\\",\\\"type\\\":\\\"漫遊\\\",\\\"currency\\\":\\\"TWD\\\",\\\"fee\\\":\\\"10\\\"},\\\"3\\\":{\\\"id\\\":\\\"3\\\",\\\"type\\\":\\\"其他\\\",\\\"currency\\\":\\\"TWD\\\",\\\"fee\\\":\\\"1\\\"}}\""}],"remark":"","apply_attachment":"[]","created_at":"2020/5/27"}',true);
+       $data = json_decode('{"form_id":"1","apply_member_id":"187","apply_department_id":"12","apply_subject":"1","campaign_id":null,"beneficiary":"1","receipt_number":"","receipt_date":"","receipt_price":"1","pay_type":"cash","transfer_date":"","remark":"","apply_attachment":"[]","created_at":"2020/5/28"}',true);
         $obj  = new \App\Http\Controllers\API\FormController();
-        dd($data);
+
         $obj->apply(newRequest($data));
     });
     Route::get(
@@ -64,9 +65,8 @@
         $obj  = new \App\Http\Controllers\API\FormFlowController();
         $data =
             json_decode(
-                '{"1":{"id":1,"name":"表單驗證","form_id":1,"review_order":1,"review_type":1,"reviewer_id":106,"overwrite":0,"replace":0,"role":1,"replace_id":[],"component":"signatory"},"2":{"id":2,"name":"部級主管","form_id":1,"review_order":2,"review_type":2,"reviewer_id":1,"overwrite":1,"replace":0,"role":1,"replace_id":[],"component":"signatory"},"3":{"id":3,"name":"單位最高主管","form_id":1,"review_order":3,"review_type":2,"reviewer_id":3,"overwrite":1,"replace":0,"role":1,"replace_id":[],"component":"signatory"},"4":{"id":4,"name":"財務長","form_id":1,"review_order":4,"review_type":1,"reviewer_id":17,"overwrite":1,"replace":0,"role":1,"replace_id":[],"component":"signatory"},"5":{"id":5,"name":"執行長","form_id":1,"review_order":5,"review_type":1,"reviewer_id":15,"overwrite":0,"replace":0,"role":1,"replace_id":[],"component":"signatory"},"6":{"id":6,"name":"財務","form_id":1,"review_order":6,"review_type":1,"reviewer_id":202,"overwrite":0,"replace":1,"role":2,"replace_id":[63,178,203],"component":"signatory"}}',true)
+                '{"form_id":"1","form_flow_data":{"1":{"id":1,"name":"執行長室","form_id":1,"review_order":1,"review_type":1,"reviewer_id":106,"overwrite":0,"replace":true,"role":1,"replace_id":["157"],"component":"signatory"},"2":{"id":2,"name":"部級主管","form_id":1,"review_order":2,"review_type":2,"reviewer_id":1,"overwrite":1,"replace":0,"role":1,"replace_id":[],"component":"signatory"},"3":{"id":3,"name":"單位最高主管","form_id":1,"review_order":3,"review_type":2,"reviewer_id":3,"overwrite":1,"replace":0,"role":1,"replace_id":[],"component":"signatory"},"4":{"id":4,"name":"財務長","form_id":1,"review_order":4,"review_type":1,"reviewer_id":17,"overwrite":1,"replace":0,"role":1,"replace_id":[],"component":"signatory"},"5":{"id":5,"name":"執行長","form_id":1,"review_order":5,"review_type":1,"reviewer_id":15,"overwrite":0,"replace":0,"role":1,"replace_id":[],"component":"signatory"},"6":{"id":6,"name":"財務","form_id":1,"review_order":6,"review_type":1,"reviewer_id":202,"overwrite":0,"replace":1,"role":2,"replace_id":[63,178,203],"component":"signatory"}}}',true)
         ;
-        sort($data);
         dd($obj->saveAll(newRequest($data)));
     }
     );
@@ -77,7 +77,7 @@
         $data = newRequest(
             [
                 'member_id' => 157,
-                'id'        => 1,
+                'id'        => 96,
                 'status'    => 2
             ]
         );
@@ -109,6 +109,7 @@
         );
         dd($api->checkList($data));
     });
+
     Route::group([
                      'middleware' => ['apiCheck']
                  ], function() {
@@ -189,11 +190,11 @@
                         ]
         );
         Route::view(
-            '/signature', 'pages.customer.signatrue', [
+            '/signature', 'pages.signature.setting', [
                             'breadcrumbs' => [
                                 [ 'name' => "User" ],
                                 [
-                                    'link' => "form-list",
+                                    'link' => "signature",
                                     'name' => "設定簽名檔"
                                 ]
                             ]
