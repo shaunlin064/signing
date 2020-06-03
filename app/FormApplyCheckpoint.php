@@ -19,7 +19,7 @@ class FormApplyCheckpoint extends Model
         'replace_members',
         'status',
         'signed_at',
-        'signature',
+        'signatures_id',
         'remark'
     ];
 
@@ -35,5 +35,12 @@ class FormApplyCheckpoint extends Model
      */
     public function applyData(){
         return $this->hasMany('\App\FormData','form_apply_id','form_apply_id');
+    }
+
+    /*
+     * 簽名檔 一對一
+     * */
+    public function signature (  ) {
+        return $this->hasOne('\App\Signature','id','signatures_id');
     }
 }

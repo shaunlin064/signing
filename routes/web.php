@@ -13,7 +13,19 @@
     | contains the "web" middleware group. Now create something great!
     |
     */
-
+    Route::any(
+        '/getmodel', function(){
+        $obj = new \App\FormApplyCheckpoint();
+        $newData = $obj->find(1);
+        dd(\App\Signature::find(1)->formApplyCheckPoint->count() > 0 ? false : true);
+    });
+    Route::any(
+        '/testSignature', function(){
+            $obj = new \App\Http\Controllers\API\SignatureController();
+        $result = $obj->delete(newRequest([
+            'id' => 6 ]));
+        dd($result);
+    });
     Route::any(
         '/output', function(){
         $signing = New \App\Http\Controllers\API\FormController();

@@ -10,6 +10,7 @@
     use App\FormPairData;
     use App\Http\Controllers\Controller;
     use App\Http\Controllers\SessionController;
+    use App\Signature;
     use App\SuperUser;
     use App\SystemMessage;
     use DB;
@@ -316,9 +317,11 @@
 
                 //封裝簽核列表
                 $formflow = FormFlow::where('form_id', $FormApply->form_id)->get();
+                $signatureObj = new Signature();
 
-                $result['checkPoint'] = $FormApply->checkPoint->transform(
-                    function ( $item, $key ) use ( $formflow ) {
+                $result['checkPoint'] = $FormApply->checkPoint->map(
+                    function ( $item, $key ) use ( $formflow ,$signatureObj) {
+
                         $item['check_point_name'] = $formflow->where('review_order', $item->review_order)->max('name');
                         $item                     = collect($item)->forget(
                             [
@@ -421,7 +424,6 @@
                     return self::$message;
                 }
 
-
                 self::$message['status']        = 1;
                 self::$message['status_string'] = '編輯成功';
                 self::$message['message']       = '';
@@ -493,7 +495,7 @@
          * 檢查簽核關卡後寫入簽核資料，並更新表單目前狀態
          * @input id : 簽核ID
          * @input member_id : 簽核人員ID
-         * @input signature : 簽名檔
+         * @input signatures_id : 簽名檔ID
          * @input remark : 備註
          * @input status : 簽核狀態 0:駁回 2:通過
          * @return array
@@ -515,7 +517,7 @@
 
                 //沒有人卡關 人員在代簽名單中 人員為簽署者 則可簽
                 $checkPoint->signed_at = $now;
-                $checkPoint->signature = $request->get('signature');
+                $checkPoint->signatures_id = $request->get('signatures_id');
                 $checkPoint->remark    = $request->get('remark') ?? '';
                 /*是否為代簽 補上代簽者 id*/
                 $replaceMembers = json_decode($checkPoint->replace_members, true);
@@ -1106,7 +1108,7 @@
                 $FormApplyCheckBefore->each(
                     function ( $v ) use ( $now, $request ) {
                         $v->signed_at = $now;
-                        $v->signature = $request->get('signature');
+                        $v->signatures_id = $request->get('signatures_id');
                         $v->status    = $request->get('status');
                         if ( $request->get('member_id') != $v->signed_member_id ) {
                             $v->replace_signed_member_id = $request->get('member_id');

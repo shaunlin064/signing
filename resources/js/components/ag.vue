@@ -112,7 +112,7 @@
                     },
                     {
                         headerName: "申請日期",
-                        field: "created_at_format",
+                        field: "apply_at",
                         editable: false,
                         sortable: true,
                         filter: true,

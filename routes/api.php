@@ -11,6 +11,7 @@
     |
     */
 
+
     // Route::middleware('auth:api')->get('/user', function (Request $request) {
     //     return $request->user();
     // });
@@ -33,139 +34,163 @@
 
     }
     );
+    Route::group(
+        [
+            'middleware' => 'auth:api',
+            'prefix' => 'signature'
+        ], function () {
+        Route::post('/getUserSignatures', [
+            'as' => 'api.signature.getUserSignatures',
+            'uses' => 'API\SignatureController@getUserSignatures']);
+        Route::post('/add', [
+            'as' => 'api.signature.add',
+            'uses' => 'API\SignatureController@add']);
+        Route::post('/resetFavorite', [
+            'as' => 'api.signature.resetFavorite',
+            'uses' => 'API\SignatureController@resetFavorite']);
+        Route::post('/delete', [
+            'as' => 'api.signature.delete',
+            'uses' => 'API\SignatureController@delete']);
 
 
-    /**
-     * 表單流程設定相關 ========================================================
-     */
-    //流程列表
-    Route::group(['middleware' => 'auth:api'], function() {
-        Route::post(
-            '/form/flow/list', [
-                                 'as'   => 'api.form.flow.list',
-                                 'uses' => 'API\FormFlowController@listist'
-                             ]
-        );
-        //取得流程內容
-        Route::post(
-            '/form/flow/get', [
-                                'as'   => 'api.form.flow.get',
-                                'uses' => 'API\FormFlowController@get'
-                            ]
-        );
-        //新增流程
-        Route::post(
-            '/form/flow/add', [
-                                'as'   => 'api.form.flow.add',
-                                'uses' => 'API\FormFlowController@add'
-                            ]
-        );
-        //編輯流程
-        Route::post(
-            '/form/flow/edit', [
-                                 'as'   => 'api.form.flow.edit',
-                                 'uses' => 'API\FormFlowController@edit'
-                             ]
-        );
-
-        //批量儲存
-        Route::post(
-            '/form/flow/saveAll', [
-                                 'as'   => 'api.form.flow.saveAll',
-                                 'uses' => 'API\FormFlowController@saveAll'
-                             ]
-        );
-        //刪除流程
-        Route::post(
-            '/form/flow/delete', [
-                                   'as'   => 'api.form.flow.delete',
-                                   'uses' => 'API\FormFlowController@delete'
-                               ]
-        );
     });
-    /**
-     * ===================================================================
-     */
 
-
-    /**
-     * 表單申請 審核相關 =====================================================
-     */
-    //送出申請表單
-    Route::group(['middleware' => 'auth:api'], function() {
+    Route::group(
+        [
+            'middleware' => 'auth:api',
+            'prefix'     => '/form'
+        ], function () {
+        /**
+         * 表單申請 審核相關 =====================================================
+         */
+        //送出申請表單
         Route::post(
-            '/form/apply', [
-                             'as'   => 'api.form.apply',
-                             'uses' => 'API\FormController@apply'
-                         ]
+            '/apply', [
+                        'as'   => 'api.form.apply',
+                        'uses' => 'API\FormController@apply'
+                    ]
         );
         //申請表單內容
         Route::post(
-            '/form/get', [
-                           'as'   => 'api.form.get',
-                           'uses' => 'API\FormController@get'
-                       ]
+            '/get', [
+                      'as'   => 'api.form.get',
+                      'uses' => 'API\FormController@get'
+                  ]
         );
         //申請表單編輯
         Route::post(
-            '/form/edit', [
-                            'as'   => 'api.form.edit',
-                            'uses' => 'API\FormController@edit'
-                        ]
+            '/edit', [
+                       'as'   => 'api.form.edit',
+                       'uses' => 'API\FormController@edit'
+                   ]
         );
         //申請表單作廢
         Route::post(
-            '/form/fail', [
-                            'as'   => 'api.form.fail',
-                            'uses' => 'API\FormController@fail'
-                        ]
+            '/fail', [
+                       'as'   => 'api.form.fail',
+                       'uses' => 'API\FormController@fail'
+                   ]
         );
         //申請表單簽核
         Route::post(
-            '/form/check', [
-                             'as'   => 'api.form.check',
-                             'uses' => 'API\FormController@check'
-                         ]
+            '/check', [
+                        'as'   => 'api.form.check',
+                        'uses' => 'API\FormController@check'
+                    ]
         );
         //待簽核列表
 
         Route::post(
-            '/form/check/list', [
-                                  'as'   => 'api.form.check.list',
-                                  'uses' => 'API\FormController@checkList'
-                              ]
+            '/check/list', [
+                             'as'   => 'api.form.check.list',
+                             'uses' => 'API\FormController@checkList'
+                         ]
         );
         Route::any(
-            '/form/user/list', [
-                                 'as'   => 'api.form.user.list',
-                                 'uses' => 'API\FormController@userList'
-                             ]
+            '/user/list', [
+                            'as'   => 'api.form.user.list',
+                            'uses' => 'API\FormController@userList'
+                        ]
         );
         //送簽列表
 
         //已簽核/已執行列表
         Route::post(
-            '/form/all', [
-                           'as'   => 'api.form.all',
-                           'uses' => 'API\FormController@all'
-                       ]
+            '/all', [
+                      'as'   => 'api.form.all',
+                      'uses' => 'API\FormController@all'
+                  ]
         );
         //上層依賴表單
         Route::post(
-            '/form/depend', [
-                              'as'   => 'api.form.depend',
-                              'uses' => 'API\FormController@depend'
-                          ]
+            '/depend', [
+                         'as'   => 'api.form.depend',
+                         'uses' => 'API\FormController@depend'
+                     ]
         );
 
         //取pairDatas 關係資料表單
-         Route::post(
-             '/form/getPairData', [
-                               'as'   => 'api.form.getPairData',
-                               'uses' => 'API\FormController@getPairData'
-                           ]
-         );
-    });
+        Route::post(
+            '/getPairData', [
+                              'as'   => 'api.form.getPairData',
+                              'uses' => 'API\FormController@getPairData'
+                          ]
+        );
+
+    }
+    );
+    /**
+     * 表單流程設定相關 ========================================================
+     */
+    Route::group(
+        [
+            'middleware' => 'auth:api',
+            'prefix'     => '/form/flow'
+        ], function () {
+        //流程列表
+        Route::post(
+            '/list', [
+                       'as'   => 'api.form.flow.list',
+                       'uses' => 'API\FormFlowController@listist'
+                   ]
+        );
+        //取得流程內容
+        Route::post(
+            '/get', [
+                      'as'   => 'api.form.flow.get',
+                      'uses' => 'API\FormFlowController@get'
+                  ]
+        );
+        //新增流程
+        Route::post(
+            '/add', [
+                      'as'   => 'api.form.flow.add',
+                      'uses' => 'API\FormFlowController@add'
+                  ]
+        );
+        //編輯流程
+        Route::post(
+            '/edit', [
+                       'as'   => 'api.form.flow.edit',
+                       'uses' => 'API\FormFlowController@edit'
+                   ]
+        );
+        //批量儲存
+        Route::post(
+            '/saveAll', [
+                          'as'   => 'api.form.flow.saveAll',
+                          'uses' => 'API\FormFlowController@saveAll'
+                      ]
+        );
+        //刪除流程
+        Route::post(
+            '/delete', [
+                         'as'   => 'api.form.flow.delete',
+                         'uses' => 'API\FormFlowController@delete'
+                     ]
+        );
+    }
+    );
     /**
      * ===================================================================
      */
@@ -173,14 +198,9 @@
     /**
      * 系統處理相關 =====================================================
      */
-    //系統登入
-    Route::post(
-        '/system/login', [
-                           'as'   => 'api.system.login',
-                           'uses' => 'API\SystemController@login'
-                       ]
-    );
-    Route::group(['middleware' => 'auth:api'], function() {
+
+    Route::group(
+        [ 'middleware' => 'auth:api' ], function () {
         //系統登出
         Route::post(
             '/system/logout', [
@@ -223,7 +243,8 @@
                                             'uses' => 'API\SystemController@messageSetReadAll'
                                         ]
         );
-    });
+    }
+    );
 
     /**
      * ===================================================================

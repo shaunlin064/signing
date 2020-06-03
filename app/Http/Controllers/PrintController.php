@@ -8,6 +8,7 @@
 
     namespace App\Http\Controllers;
 
+    use App\FormApply;
     use Barryvdh\DomPDF\Facade as PDF;
     use Illuminate\Http\Request;
 
@@ -60,6 +61,7 @@
                 newRequest(
                     [
                         'id' => $request->id,
+
                     ]
                 )
             )['data'];

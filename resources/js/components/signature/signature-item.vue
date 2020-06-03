@@ -1,13 +1,24 @@
 <template>
     <div class="col-xl-4 col-md-6 col-sm-12">
         <div class="card">
-            <div class="card-content" :id='dom_id'>
-                <img class='card-img-top img-fluid mb1' src="../../../images/pages/content-img-2.jpg">
+            <div class="fonticon-wrap" v-if='favorite'>
+                <i class="feather icon-star"></i>
+            </div>
+<!--            <div class="card-header">-->
+<!--                <a class="heading-elements-toggle"><i class="fa fa-ellipsis-v font-medium-3"></i></a>-->
+<!--                <div class="heading-elements">-->
+<!--                    <ul class="list-inline mb-0">-->
+<!--                        <li><a data-action="reload"><i class="feather icon-rotate-cw"></i></a></li>-->
+<!--                    </ul>-->
+<!--                </div>-->
+<!--            </div>-->
+            <div class="card-content" :id='"signature"+id'>
+                <img class='card-img-top img-fluid mb1' :src="image_base64">
                 <div class="card-body">
-                    <h5>{{title}}</h5>
+                    <h5>signature{{id}}</h5>
                     <div class="card-btns d-flex justify-content-between mt-2">
-                        <a href="#" class="btn gradient-light-primary text-white">使用</a>
-                        <a href="#" class="btn btn-outline-primary" @click='newAdd'>新增</a>
+                        <a class="btn btn-outline-danger mr-1 mb-1 waves-effect waves-light" @click='deleteSignature'>刪除</a>
+                        <a class="btn btn btn-outline-primary mr-1 mb-1 waves-effect waves-light" @click='setFavorite'>預設</a>
                     </div>
                 </div>
             </div>
@@ -21,23 +32,29 @@
         export default {
             name: "signature-item",
             props: {
-                dom_id: String,
-                title: String,
+                id: Number,
+                image_base64 : String,
+                favorite:Number,
             },
             data() {
-                return {}
+                return {
+                    title : '',
+                }
             },
             computed: {
                     ...mapState([]),
             },
             beforeMount: function () {
-            },
-            mounted: function () {
 
             },
+            mounted: function () {
+            },
             methods: {
-                newAdd(){
-                    bus.$emit('setNewSignture',this.dom_id);
+                deleteSignature(){
+                    bus.$emit('deleteSignature',this.id);
+                },
+                setFavorite(){
+                    bus.$emit('setFavorite',this.id);
                 }
             },
             updated() {
@@ -49,5 +66,12 @@
 </script>
 
 <style scoped>
-
+    .card-img-top.img-fluid{
+        border: 2px dotted white;
+    }
+    .feather.icon-star{
+        font-size: 30px;
+        color: white;
+        position: absolute;
+    }
 </style>

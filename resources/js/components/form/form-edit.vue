@@ -1,10 +1,15 @@
 <template>
+
     <form onsubmit="return false" class="steps-validation wizard-circle" :id='dom_id'>
+
         <keep-alive>
             <component v-bind:is="form_type" :dom_id='form_type' :csrf_token='csrf_token' :id='id' :form_action='"edit"' :can_edit='can_edit'/>
         </keep-alive>
         <check-point v-show='check_list' :form_id='id' :check_list_props='check_list' :can_check='can_check'
                      :check_id='check_id'></check-point>
+
+<!--        -->
+
         <div class='row border-top-light mt-2 justify-content-end' v-show='form_type && can_edit'>
             <button type="submit" class="btn btn-primary mr-1 mb-1 waves-effect waves-light text-right mt-2"
                     @click='submit' :disabled='lodding'>
