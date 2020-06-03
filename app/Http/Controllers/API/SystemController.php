@@ -9,6 +9,7 @@
     use App\SystemMessage;
     use App\User;
     use Illuminate\Http\Request;
+    use Illuminate\Support\Facades\Auth;
     use Route;
     use Storage;
 
@@ -212,8 +213,8 @@
             }
             $message = self::remoteLogin($account, $password);
 
-//            $userObj = User::where('name',$request->account)->first();
-//            Auth::loginUsingId($userObj->id);
+            $userObj = User::where('name',$account)->first();
+            Auth::loginUsingId($userObj->id);
 //            $apiControl = new ApiController();
 //            $apiControl->update($request);
 //            $message['token']
