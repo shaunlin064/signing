@@ -26,7 +26,7 @@
      * 簽核 一對多
      * */
         public function formApplyCheckPoint (  ) {
-            return $this->hasMany('\App\FormApplyCheckPoint','signatures_id','id');
+            return $this->hasMany('App\FormApplyCheckpoint','signatures_id','id');
         }
 
 	}
