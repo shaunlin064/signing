@@ -1,10 +1,5 @@
 <?
     use App\Helpers\Helper;
-    $pageConfigs = [
-        'bodyClass' => "bg-full-screen-image",
-        'blankPage' => true
-    ];
-
     ?>
 @isset($pageConfigs)
 {!! Helper::updatePageConfig($pageConfigs) !!}

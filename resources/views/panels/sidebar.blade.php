@@ -1,5 +1,6 @@
 @php
     $configData = Helper::applClasses();
+    $canPass = true;
 @endphp
 <div
     class="main-menu menu-fixed {{($configData['theme'] === 'light') ? "menu-light" : "menu-dark"}} menu-accordion menu-shadow"
@@ -45,7 +46,6 @@
                             $translation = $menu->i18n;
                             }
                         @endphp
-                        <? $canPass = true;?>
                         @if($menu->name === 'System' && !in_array(session('js_signing')['login_user']['id'], ['157','106','17','15','172']))
                            <? $canPass = false;?>
                         @endif
