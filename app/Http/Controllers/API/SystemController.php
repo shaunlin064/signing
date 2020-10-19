@@ -10,8 +10,8 @@
     use App\User;
     use Illuminate\Http\Request;
     use Illuminate\Support\Facades\Auth;
+    use Illuminate\Support\Facades\Storage;
     use Route;
-    use Storage;
 
     /**
      * Class SystemController
@@ -194,7 +194,6 @@
         public function login ( Request $request ) {
             $account  = '';
             $password = '';
-
             if ( $request->get('key') != null ) {
                 //由key登入的狀況
                 $result = explode('_', self::decrypt($request->get('key'), 'AES-256-CBC'));
@@ -211,13 +210,28 @@
                 $account  = $request->get('account');
                 $password = $request->get('password');
             }
-            $message = self::remoteLogin($account, $password);
-
-            $userObj = User::where('name',$account)->first();
-            Auth::loginUsingId($userObj->id);
-//            $apiControl = new ApiController();
-//            $apiControl->update($request);
-//            $message['token']
+	        if(env('APP_DEMO')){
+		        $credentials = [
+		        	'name' => $request->account,
+			        'password' => $request->password,
+		        ];
+		        if (Auth::attempt($credentials)) {
+			        $disturbDataService = new \App\Service\DisturbDataService();
+			        $message = $disturbDataService->getFakeSession();
+		        }else{
+			        $message = [
+				        "status"        => 2,
+				        "status_string" => "登入失敗",
+				        "message"       => "帳號密碼錯誤",
+				        "data"          => [
+				        ]
+			        ];
+		        }
+	        }else{
+		        $message = self::remoteLogin($account, $password);
+		        $userObj = User::where('name',$account)->first();
+		        Auth::loginUsingId($userObj->id);
+	        }
             //將登入資訊儲存至session
             if ( $message['status'] == 1 ) {
                 SessionController::store($message['data']);

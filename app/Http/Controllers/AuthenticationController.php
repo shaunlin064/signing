@@ -50,9 +50,9 @@ class AuthenticationController extends Controller
             'account' => 'required',
             'password' => 'required',
         ]);
-
+		
         $result = $this->doRemoteLogin($request->account, $request->password);
-
+	    
         if($result['status'] != 1){
             return view('/pages/auth-login', [
                 'pageConfigs' => self::$pageConfigs,
@@ -62,17 +62,14 @@ class AuthenticationController extends Controller
         }
 
         $userObj = User::where('name',$request->account)->first();
-
+		
         if(empty($userObj)){
             $request->merge(['password'=>Hash::make($request->get('password'))]);
             $request->merge(['erp_user_id'=>$result['login_user']['id']]);
             $userObj = User::create($request->toArray());
         }
-//
-//     Auth::attempt($request->only('account', 'password'));
+
         Auth::loginUsingId($userObj->id);
-//        $apiControl = new ApiController();
-//        $apiControl->update($request);
 
         if(session('return_url')){
             return Redirect::to(session('return_url'));
@@ -87,10 +84,11 @@ class AuthenticationController extends Controller
         $systemController = New \App\Http\Controllers\API\SystemController();
         if($accessKey){
             $remoteRequest = newRequest(['key' => $accessKey]);
-
         }else{
             $remoteRequest = newRequest(['password' => md5($password) , 'account' => $account]);
-
+        }
+        if(env('APP_ENV')){
+	        $remoteRequest = newRequest(['password' => $password , 'account' => $account]);
         }
 
         $result = $systemController->login($remoteRequest);

@@ -3,7 +3,11 @@
 
     use App\Http\Controllers\API\FormController;
 	use App\Http\Controllers\API\SystemController;
+	use App\User;
+	use Faker\Factory;
 	use Illuminate\Http\Client\Request;
+	use Illuminate\Support\Facades\Hash;
+	use Illuminate\Support\Facades\Storage;
 	
 	/*
 	|--------------------------------------------------------------------------
@@ -174,12 +178,7 @@
         abort(500);
     }
     );
-
-
-    //    Auth::routes();
-
-    //    Route::post('/login/validate', 'Auth\LoginController@validate_api');
-
+    
     //Session Handle
     Route::post(
         '/session/put', [
