@@ -16,7 +16,7 @@ class CheckLogin
      */
     public function handle($request, Closure $next)
     {
-        if(session('js_signing') == null)
+        if(auth()->user() === null)
         {
             session(['return_url' => $request->fullUrl()]);
             return Redirect::to('login');
