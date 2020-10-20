@@ -32,7 +32,7 @@
                         </div>
                         <div class="card-content">
                             <div class="card-body">
-                                <form-new :form_config='{{ json_encode(config('form')) }}'></form-new>
+                                <form-new :form_config='{{ json_encode(config('form')) }}' :csrf_token='"{{csrf_token()}}"'></form-new>
                             </div>
                         </div>
                     </div>
