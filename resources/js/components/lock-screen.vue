@@ -135,7 +135,7 @@
                     this.password_error = '';
                 }
                 this.lodding = true;
-                let password = MD5(this.password);
+                let password = this.password;
                 let account = this.account;
                 let vue = this;
 
@@ -146,8 +146,6 @@
                     .then(function (response) {
                         vue.response = response;
                         if (vue.validate()) {
-                            //重新存入新session
-                            vue.putSession(response.data.data);
                             vue.over_time = false;
                             vue.lodding = false;
                             //重新計時
@@ -169,21 +167,9 @@
             },
             logout() {
                 $('body').css({'overflow': 'hidden'});
-                // axios({
-                //     url: 'session/release',
-                //     method: 'post',
-                //     headers: {
-                //         'Content-Type': 'application/json',
-                //     }
-                // }).then(
-                //     (res)=>{
-                //         $('body').css({'overflow':'hidden'});
-                //     }
-                // ).catch(err => console.error(err));
             },
         },
         updated() {
-            // console.log('view updated')
         },
         watch: {
             // change_date: {

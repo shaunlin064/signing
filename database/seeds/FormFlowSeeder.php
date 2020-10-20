@@ -28,7 +28,7 @@ class FormFlowSeeder extends Seeder
             [
                 'name' => '執行長室',
                 'review_type' => 1,
-                'reviewer_id' => 106, //雨涵
+                'reviewer_id' => 106,
                 'overwrite' => 0,
                 'replace' => 0,
                 'role' => 1,
@@ -52,7 +52,7 @@ class FormFlowSeeder extends Seeder
             [
                 'name' => '財務長',
                 'review_type' => 1,
-                'reviewer_id' => 17, //van
+                'reviewer_id' => 17,
                 'overwrite' => 1,
                 'replace' => 0,
                 'role' => 1,
@@ -60,7 +60,7 @@ class FormFlowSeeder extends Seeder
             [
                 'name' => '執行長',
                 'review_type' => 1,
-                'reviewer_id' => 15, //老大
+                'reviewer_id' => 15,
                 'overwrite' => 0,
                 'replace' => 0,
                 'role' => 1,
@@ -68,7 +68,7 @@ class FormFlowSeeder extends Seeder
             [
                 'name' => '財務',
                 'review_type' => 1,
-                'reviewer_id' => 202, //Parin
+                'reviewer_id' => 202,
                 'overwrite' => 0,
                 'replace' => 1,
                 'role' => 2,
@@ -95,7 +95,7 @@ class FormFlowSeeder extends Seeder
             [
                 'name' => '執行長室',
                 'review_type' => 1,
-                'reviewer_id' => 106, //雨涵
+                'reviewer_id' => 106,
                 'overwrite' => 0,
                 'replace' => 0,
                 'role' => 1,
@@ -119,7 +119,7 @@ class FormFlowSeeder extends Seeder
             [
                 'name' => '財務長',
                 'review_type' => 1,
-                'reviewer_id' => 17, //van
+                'reviewer_id' => 17,
                 'overwrite' => 1,
                 'replace' => 0,
                 'role' => 1,
@@ -127,7 +127,7 @@ class FormFlowSeeder extends Seeder
             [
                 'name' => '執行長',
                 'review_type' => 1,
-                'reviewer_id' => 15, //老大
+                'reviewer_id' => 15,
                 'overwrite' => 0,
                 'replace' => 0,
                 'role' => 1,
@@ -163,7 +163,7 @@ class FormFlowSeeder extends Seeder
             [
                 'name' => '執行長室',
                 'review_type' => 1,
-                'reviewer_id' => 106, //雨涵
+                'reviewer_id' => 106,
                 'overwrite' => 0,
                 'replace' => 0,
                 'role' => 1,
@@ -187,7 +187,7 @@ class FormFlowSeeder extends Seeder
             [
                 'name' => '財務長',
                 'review_type' => 1,
-                'reviewer_id' => 17, //van
+                'reviewer_id' => 17,
                 'overwrite' => 1,
                 'replace' => 0,
                 'role' => 1,
@@ -195,7 +195,7 @@ class FormFlowSeeder extends Seeder
             [
                 'name' => '執行長',
                 'review_type' => 1,
-                'reviewer_id' => 15, //老大
+                'reviewer_id' => 15,
                 'overwrite' => 0,
                 'replace' => 0,
                 'role' => 1,
@@ -219,7 +219,7 @@ class FormFlowSeeder extends Seeder
             [
                 'name' => '執行長室',
                 'review_type' => 1,
-                'reviewer_id' => 106, //雨涵
+                'reviewer_id' => 106,
                 'overwrite' => 0,
                 'replace' => 0,
                 'role' => 1,
@@ -243,7 +243,7 @@ class FormFlowSeeder extends Seeder
             [
                 'name' => '財務長',
                 'review_type' => 1,
-                'reviewer_id' => 17, //van
+                'reviewer_id' => 17,
                 'overwrite' => 1,
                 'replace' => 0,
                 'role' => 1,
@@ -251,7 +251,7 @@ class FormFlowSeeder extends Seeder
             [
                 'name' => '執行長',
                 'review_type' => 1,
-                'reviewer_id' => 15, //老大
+                'reviewer_id' => 15,
                 'overwrite' => 0,
                 'replace' => 0,
                 'role' => 1,
@@ -259,7 +259,7 @@ class FormFlowSeeder extends Seeder
             [
                 'name' => '財務',
                 'review_type' => 1,
-                'reviewer_id' => 202, //Parin
+                'reviewer_id' => 202,
                 'overwrite' => 0,
                 'replace' => 1,
                 'role' => 2,
@@ -269,7 +269,7 @@ class FormFlowSeeder extends Seeder
             [
                 'name' => '請款人',
                 'review_type' => 3,
-                'reviewer_id' => 1, //Parin
+                'reviewer_id' => 1,
                 'overwrite' => 0,
                 'replace' => 0,
                 'role' => 2,
@@ -294,7 +294,7 @@ class FormFlowSeeder extends Seeder
             [
                 'name' => '執行長室',
                 'review_type' => 1,
-                'reviewer_id' => 106, //雨涵
+                'reviewer_id' => 106,
                 'overwrite' => 0,
                 'replace' => 0,
                 'role' => 1,
@@ -318,7 +318,7 @@ class FormFlowSeeder extends Seeder
             [
                 'name' => '財務長',
                 'review_type' => 1,
-                'reviewer_id' => 17, //van
+                'reviewer_id' => 17,
                 'overwrite' => 1,
                 'replace' => 0,
                 'role' => 1,
@@ -326,7 +326,7 @@ class FormFlowSeeder extends Seeder
             [
                 'name' => '執行長',
                 'review_type' => 1,
-                'reviewer_id' => 15, //老大
+                'reviewer_id' => 15,
                 'overwrite' => 0,
                 'replace' => 0,
                 'role' => 1,
@@ -351,7 +351,7 @@ class FormFlowSeeder extends Seeder
             [
                 'name' => '執行長室',
                 'review_type' => 1,
-                'reviewer_id' => 106, //雨涵
+                'reviewer_id' => 106,
                 'overwrite' => 0,
                 'replace' => 0,
                 'role' => 1,
@@ -375,7 +375,7 @@ class FormFlowSeeder extends Seeder
             [
                 'name' => '財務長',
                 'review_type' => 1,
-                'reviewer_id' => 17, //van
+                'reviewer_id' => 17,
                 'overwrite' => 1,
                 'replace' => 0,
                 'role' => 1,
@@ -383,7 +383,7 @@ class FormFlowSeeder extends Seeder
             [
                 'name' => '執行長',
                 'review_type' => 1,
-                'reviewer_id' => 15, //老大
+                'reviewer_id' => 15,
                 'overwrite' => 0,
                 'replace' => 0,
                 'role' => 1,
@@ -391,7 +391,7 @@ class FormFlowSeeder extends Seeder
             [
                 'name' => '財務',
                 'review_type' => 1,
-                'reviewer_id' => 202, //Parin
+                'reviewer_id' => 202,
                 'overwrite' => 0,
                 'replace' => 1,
                 'role' => 2,

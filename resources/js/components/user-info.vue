@@ -23,7 +23,6 @@
 
 <script>
     import {mapState} from 'vuex';
-    import {apiSessionRelease} from '../src/apis/system.js'
     export default {
         name: "user-info",
         props: {
@@ -59,16 +58,14 @@
                 targetDom.next().addClass('show');
             },
             logout(){
-                apiSessionRelease();
-                javascript:location.href='/login';
+                javascript:location.href='/logout';
             },
         },
         updated() {
-            // console.log('view updated')
         },
         watch: {
             // change_date: {
-            //     immediate: true,    // 这句重要
+            //     immediate: true,
             //     handler(val, oldVal) {
             //         if (oldVal !== undefined) {
             //             this.getCampaignData(this.user_ids, val);

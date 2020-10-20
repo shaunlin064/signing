@@ -6,7 +6,9 @@ use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Help\Crypt;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
 
 class AuthenticationController extends Controller
 {
@@ -50,7 +52,7 @@ class AuthenticationController extends Controller
             'account' => 'required',
             'password' => 'required',
         ]);
-		
+	
         $result = $this->doRemoteLogin($request->account, $request->password);
 	    
         if($result['status'] != 1){
@@ -62,7 +64,7 @@ class AuthenticationController extends Controller
         }
 
         $userObj = User::where('name',$request->account)->first();
-		
+	    
         if(empty($userObj)){
             $request->merge(['password'=>Hash::make($request->get('password'))]);
             $request->merge(['erp_user_id'=>$result['login_user']['id']]);
@@ -70,7 +72,7 @@ class AuthenticationController extends Controller
         }
 
         Auth::loginUsingId($userObj->id);
-
+	  
         if(session('return_url')){
             return Redirect::to(session('return_url'));
         }
@@ -79,7 +81,23 @@ class AuthenticationController extends Controller
         }
         return Redirect::route('index');
     }
-
+	
+    public function logout(){
+	
+	    Auth::logout();
+	    
+	    return Redirect::route('login');
+    }
+    
+	public function lockScreenLogin ( Request $request ) {
+		$request->validate([
+			'account' => 'required',
+			'password' => 'required',
+		]);
+		
+		return $this->doRemoteLogin($request->account, $request->password);
+    }
+    
     public function doRemoteLogin ($account,$password,$accessKey = null) {
         $systemController = New \App\Http\Controllers\API\SystemController();
         if($accessKey){
@@ -92,7 +110,7 @@ class AuthenticationController extends Controller
         }
 
         $result = $systemController->login($remoteRequest);
-
+			
         return $result;
     }
 

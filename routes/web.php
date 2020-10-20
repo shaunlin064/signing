@@ -3,6 +3,7 @@
 
     use App\Http\Controllers\API\FormController;
 	use App\Http\Controllers\API\SystemController;
+	use App\Http\Controllers\AuthenticationController;
 	use App\User;
 	use Faker\Factory;
 	use Illuminate\Http\Client\Request;
@@ -34,6 +35,7 @@
     )->name('index');
     // Route Authentication Pages
     Route::get('/login', 'AuthenticationController@view')->name('login');
+	Route::any('/logout', 'AuthenticationController@logout');
     Route::post('/remoteLogin', 'AuthenticationController@login')->name('remoteLogin');
     Route::get('/keyAccessLogin', 'AuthenticationController@keyAccessLogin')->name('keyAccessLogin');
 
