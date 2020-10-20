@@ -37,8 +37,7 @@
     33 => 'App\\Providers\\EventServiceProvider',
     34 => 'App\\Providers\\RouteServiceProvider',
     35 => 'App\\Providers\\MenuServiceProvider',
-    36 => 'Laravel\\Passport\\PassportServiceProvider',
-    37 => 'Barryvdh\\DomPDF\\ServiceProvider',
+    36 => 'Barryvdh\\DomPDF\\ServiceProvider',
   ),
   'eager' => 
   array (
@@ -65,8 +64,7 @@
     20 => 'App\\Providers\\EventServiceProvider',
     21 => 'App\\Providers\\RouteServiceProvider',
     22 => 'App\\Providers\\MenuServiceProvider',
-    23 => 'Laravel\\Passport\\PassportServiceProvider',
-    24 => 'Barryvdh\\DomPDF\\ServiceProvider',
+    23 => 'Barryvdh\\DomPDF\\ServiceProvider',
   ),
   'deferred' => 
   array (
