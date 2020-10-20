@@ -1,3 +1,9 @@
+<?php
+  $pageConfigs = [
+          'bodyClass' => "bg-full-screen-image",
+          'blankPage' => true
+  ];
+        ?>
 @extends('layouts/fullLayoutMaster')
 
 @section('title', 'Error 500')
