@@ -44,9 +44,6 @@
 			$userAll = User::all();
 			$sessionData = json_decode(Storage::get('fakeSession.text'),true);
 			
-			$sessionData['message'] = '歡迎 '.$user->name;
-			$sessionData['data']['login_user']['name'] = $user->name;
-			$sessionData['data']['login_user']['email'] = $user->email;
 			
 			$sessionData['data']['member'] = collect($sessionData['data']['member'])->map(function($item,$erpuserId) use($userAll){
 				$user = $userAll->where('erp_user_id',$erpuserId)->first();
@@ -67,9 +64,20 @@
 				$item["code"] = "";
 				return $item;
 			})->toArray();
-			$sessionDataMember = $sessionData['data']['member'];
+			$sessionDataMember = collect($sessionData['data']['member'])->map(function($item){
+				if($item['department_id'] == 27){
+					$item['department_name'] = '總經理室';
+				}
+				return $item;
+			});
 			
-			$sessionData['data']['department'] = collect($sessionData['data']['department'])->map(function($items) use($sessionDataMember){
+			$sessionData['data']['department'] = collect($sessionData['data']['department'])->map(function($items,$depId) use($sessionDataMember){
+				
+				switch($depId){
+					case '27':
+						$items['name'] = '總經理室';
+						break;
+				}
 				if(!isset($items['members'])){
 					$items['members'] = [];
 					return $items;
@@ -83,6 +91,13 @@
 			foreach( $sessionData['data']['member_alive'] as $erpUserId => &$item) {
 				$item = $sessionDataMember[$erpUserId];
 			}
+			
+			$sessionData['message'] = '歡迎 '.$user->name;
+			$sessionData['data']['login_user']['name'] = $user->name;
+			$sessionData['data']['login_user']['email'] = $user->email;
+			$sessionData['data']['login_user']['id'] = $user->erp_user_id;
+			$sessionData['data']['login_user']['department_id'] = $sessionDataMember[$user->erp_user_id]['department_id'];
+			$sessionData['data']['login_user']['department'] = $sessionDataMember[$user->erp_user_id]['department_name'];
 			Storage::put('fakeSession.text',json_encode($sessionData));
 			return 	$sessionData;
 		}
