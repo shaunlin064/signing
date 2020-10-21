@@ -70,12 +70,7 @@ class AuthenticationController extends Controller
             $request->merge(['erp_user_id'=>$result['login_user']['id']]);
             $userObj = User::create($request->toArray());
         }
-
-        Auth::loginUsingId($userObj->id);
-	  
-        if(session('return_url')){
-            return Redirect::to(session('return_url'));
-        }
+        
         if($request->return_url){
             return Redirect::to($request->return_url);
         }
