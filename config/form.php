@@ -151,9 +151,9 @@
                 'apply_department_id' => [
                     'name' => '請款單位'
                 ],
-//                'apply_subject'       => [
-//                    'name' => '項目'
-//                ],
+                'apply_subject'       => [
+                    'name' => '項目'
+                ],
                 'items'               => [
                     'name'       => '代墊項目',
                     'sub_column' => [

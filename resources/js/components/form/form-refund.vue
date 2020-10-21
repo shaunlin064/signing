@@ -79,13 +79,13 @@
                     <label for="member">申請人</label>
                 </div>
             </div>
-<!--            <div class="col-md-6">-->
-<!--                <div class="form-label-group">-->
-<!--                    <input type="text" id="apply_subject" class="form-control" placeholder="名稱" name="apply_subject"-->
-<!--                           v-model='form_submit_data[dom_id]["apply_subject"]' :disabled='can_edit === false' required>-->
-<!--                    <label for="apply_subject">名稱</label>-->
-<!--                </div>-->
-<!--            </div>-->
+            <div class="col-md-6">
+                <div class="form-label-group">
+                    <input type="text" id="apply_subject" class="form-control" placeholder="名稱" name="apply_subject"
+                           v-model='form_submit_data[dom_id]["apply_subject"]' :disabled='can_edit === false' required>
+                    <label for="apply_subject">名稱</label>
+                </div>
+            </div>
         </div>
         <div class="row justify-content-center border-top-light mt-2">
             <div class="row col-md-12">
