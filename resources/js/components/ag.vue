@@ -112,7 +112,7 @@
                     },
                     {
                         headerName: "申請日期",
-                        field: "apply_at",
+                        field: "created_at_format",
                         editable: false,
                         sortable: true,
                         filter: true,
@@ -171,6 +171,7 @@
             agSetting(response) {
                 var gridTable = document.getElementById(this.dom_id);
                 this.gridOptions.rowData = response.data.data;
+
                 /*** INIT TABLE ***/
                 new agGrid.Grid(gridTable, this.gridOptions);
                 this.gridOptions.api.sizeColumnsToFit();
