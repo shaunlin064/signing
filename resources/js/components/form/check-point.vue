@@ -302,6 +302,7 @@ export default {
                 /* 如果都沒有favorite 設定第一個當作default*/
                 this.image_base64 = data[0].image_base64;
                 this.postData.signatures_id = data[0].id;
+                this.show = true;
                 if (v.favorite === 1) {
                   this.image_base64 = v.image_base64;
                   this.postData.signatures_id = v.id;

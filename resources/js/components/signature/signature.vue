@@ -91,7 +91,6 @@
             save() {
                 let datapair = this.sigdiv.jSignature("getData", "image");
                 let image_base64 = "data:" + datapair[0] + "," + datapair[1];
-
                 let parameter = {
                     erp_user_id: this.login_user.id,
                     api_token: this.login_user.api_token,
@@ -99,7 +98,6 @@
                     favorite: 1,
                 };
                 this.addNewSignature(parameter);
-
             },
         },
         updated() {
