@@ -22,17 +22,17 @@
 	*/
     Route::post('form/print','PrintController@print');
     Route::post('pdf','PrintController@pdf');
-    Route::view(
-        '/', 'pages.customer.form-list', [
-               'breadcrumbs' => [
-                   [ 'name' => "User" ],
-                   [
-                       'link' => "form-list",
-                       'name' => "簽核狀態"
-                   ]
-               ]
-           ]
-    )->name('index');
+//    Route::view(
+//        '/', 'pages.customer.form-list', [
+//               'breadcrumbs' => [
+//                   [ 'name' => "User" ],
+//                   [
+//                       'link' => "form-list",
+//                       'name' => "簽核狀態"
+//                   ]
+//               ]
+//           ]
+//    )->name('index');
     // Route Authentication Pages
     Route::get('/login', 'AuthenticationController@view')->name('login');
 	Route::any('/logout', 'AuthenticationController@logout');

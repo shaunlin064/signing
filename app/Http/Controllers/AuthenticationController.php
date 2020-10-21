@@ -64,23 +64,27 @@ class AuthenticationController extends Controller
         }
 
         $userObj = User::where('name',$request->account)->first();
-	    
+
         if(empty($userObj)){
             $request->merge(['password'=>Hash::make($request->get('password'))]);
             $request->merge(['erp_user_id'=>$result['login_user']['id']]);
             $userObj = User::create($request->toArray());
         }
+	    Auth::loginUsingId($userObj->id);
         
         if($request->return_url){
             return Redirect::to($request->return_url);
         }
-        return Redirect::route('index');
+        
+        return Redirect::to('/form-list');
     }
 	
-    public function logout(){
-	    Auth::user()->setApiToken();
-	    Auth::logout();
-	    return Redirect::route('login');
+    public function logout(Request $request){
+    	$user = User::where('api_token',$request->api_token)->get()->first();
+	    $user->api_token = null;
+	    $user->update([
+		    'api_token' => null
+	    ]);
     }
     
 	public function lockScreenLogin ( Request $request ) {

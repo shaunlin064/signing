@@ -219,6 +219,7 @@
 		       
 		        if (Auth::attempt($credentials)) {
 			        Auth::user()->setApiToken($token = Str::random(60));
+			        Auth::loginUsingId(auth()->user()->id);
 			        $disturbDataService = new \App\Service\DisturbDataService();
 			        $message = $disturbDataService->getFakeSession();
 		        }else{

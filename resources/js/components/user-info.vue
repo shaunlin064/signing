@@ -23,6 +23,7 @@
 
 <script>
     import {mapState} from 'vuex';
+    import { apiAuthLogout } from '../src/apis/auth';
     export default {
         name: "user-info",
         props: {
@@ -58,7 +59,10 @@
                 targetDom.next().addClass('show');
             },
             logout(){
-                javascript:location.href='/logout';
+              apiAuthLogout({api_token: this.login_user.api_token}).then(()=>{
+                javascript:location.href='/login';
+              });
+
             },
         },
         updated() {

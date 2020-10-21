@@ -18,6 +18,7 @@
             'prefix' => 'auth'
         ], function () {
         Route::post('login', 'AuthenticationController@lockScreenLogin');
+	    Route::post('logout', 'AuthenticationController@logout');
     });
     
     
