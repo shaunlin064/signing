@@ -21,6 +21,11 @@ class CheckLogin
             session(['return_url' => $request->fullUrl()]);
             return Redirect::to('login');
         }
+        
+        if(auth()->user()->api_token === null){
+	        session(['return_url' => $request->fullUrl()]);
+	        return Redirect::to('login');
+        }
         return $next($request);
     }
 }
