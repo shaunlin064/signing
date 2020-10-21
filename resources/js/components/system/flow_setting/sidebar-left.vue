@@ -32,11 +32,11 @@
 <script>
     import {mapState, mapMutations, mapActions, mapGetters} from 'vuex';
     import {apiGetFlow,apiSaveAllFlow} from '../../../src/apis/flow'
-    import {apiFormChecking} from "../../../src/apis/form";
         export default {
             name: "sidebar-left",
             props: {
-                form_config : Object
+                form_config : Object,
+                api_token : String
             },
             data() {
                 return {
@@ -48,7 +48,7 @@
                 }
             },
             computed: {
-                    ...mapState(['flow_submit_data']),
+                    ...mapState(['login_user','flow_submit_data']),
             },
             beforeMount: function () {
             },
@@ -63,6 +63,7 @@
                 },
                 classList(key) {
                     if(key == 1 ){
+
                         this.getFlowData(this.form_id);
                         return {
                             active: this.isActive,
@@ -76,6 +77,7 @@
                         bus.$emit('loadingStart');
                         bus.$emit('listScroll');
                         this.getFlowData(this.form_id);
+
                     }
                 },
                 addSignatory(){
@@ -85,9 +87,13 @@
                     let vue = this;
                     let now = +new Date();
                     bus.$emit('clean');
+                    let parameter = {
+                      form_id:form_id,
+                      api_token:vue.api_token
+                    };
                     if (now - this.evTimeStamp > 100) {
                         this.evTimeStamp = now;
-                        apiGetFlow({form_id}).then(function (response) {
+                        apiGetFlow(parameter).then(function (response) {
                             let result = response.data;
                             if(vue.flow_submit_data[vue.form_type] === undefined){
                                 vue.flow_submit_data[vue.form_type] = {};
@@ -128,6 +134,7 @@
                         let postData = {
                             form_id : this.form_id,
                             form_flow_data : this.flow_submit_data[this.form_type],
+                            api_token : this.api_token,
                         };
 
                         return apiSaveAllFlow(postData )

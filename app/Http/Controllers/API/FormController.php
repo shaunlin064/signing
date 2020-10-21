@@ -750,7 +750,7 @@
          * @return array['data'][0]['apply_subject'] : 表單主旨
          */
         public function userList ( Request $request ) {
-
+	        
             try {
                 $_GET['page'] = $request->get('page');
                 $list         = FormApply::where('apply_member_id', $request->get('member_id'))->orderBy('id', 'DESC');

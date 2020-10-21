@@ -78,6 +78,8 @@ export default {
                 });
                 data['items'] = itemsData;
             }
+            /*add api_token*/
+            data['api_token'] = this.login_user.api_token;
             return data;
         },
         formGetPostData() {

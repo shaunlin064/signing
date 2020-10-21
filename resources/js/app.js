@@ -82,37 +82,9 @@ Vue.component('lock-screen',require('./components/lock-screen').default);
  * the page. Then, you may begin adding components to this application
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
-Vue.component(
-    'passport-clients',
-    require('./components/passport/Clients.vue').default
-);
-
-Vue.component(
-    'passport-authorized-clients',
-    require('./components/passport/AuthorizedClients.vue').default
-);
-
-Vue.component(
-    'passport-personal-access-tokens',
-    require('./components/passport/PersonalAccessTokens.vue').default
-);
 window.bus=new Vue();
 const app = new Vue({
     el: '#app',
     store: customerStore
 });
 
-//
-// export default new Vuex.Store({
-//     modules:{
-//         auth,
-//     },
-//     plugins: [createPersistedState({
-//         storage: window.localStorage,
-//             reducer(val){
-//                 return{
-//                     auth: val.auth
-//                 }
-//             }
-//     })]
-// });

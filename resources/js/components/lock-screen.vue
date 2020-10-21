@@ -60,7 +60,6 @@
 
 <script>
     import {mapState} from 'vuex';
-    import {apiSessionGet, apiSessionPut} from '../src/apis/system.js'
     import {apiAuthLogin} from '../src/apis/auth'
 
     export default {
@@ -158,12 +157,6 @@
                         console.log(error);
                     });
 
-            },
-            putSession(loginResponse) {
-                apiSessionPut({value: loginResponse});
-            },
-            getsession() {
-                apiSessionGet({key: 'login_user'});
             },
             logout() {
                 $('body').css({'overflow': 'hidden'});

@@ -3,13 +3,12 @@
 namespace App;
 
 use App\Http\Controllers\ApiController;
-use Laravel\Passport\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
-    use HasApiTokens,Notifiable;
+    use Notifiable;
 
     public $users;
     public $department;
@@ -67,4 +66,21 @@ class User extends Authenticatable
         $returnData['data']['department'] = $this->department;
         return $returnData;
     }
+	
+	public function getApiToken()
+	{
+		// 不使用 remember token，回傳空字串
+		return $this->api_token;
+	}
+	
+	public function setApiToken($value = null)
+	{
+		$this->api_token = $value;
+		$this->update();
+	}
+	
+	public function getApiTokenName()
+	{
+		return 'api_token';
+	}
 }

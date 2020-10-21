@@ -167,7 +167,7 @@ export default {
         url: "/api/system/upload",
         acceptedFiles: "image/*,application/pdf",
         maxThumbnailFilesize: "2",
-        maxFiles : "5",
+        maxFiles: "5",
         headers: {
           'X-CSRF-TOKEN': vue.csrf_token,
           'X-Requested-With': 'XMLHttpRequest'
@@ -176,6 +176,7 @@ export default {
           let formPostAttachment = vue.form_submit_data[vue.form_type].apply_attachment;
           this.on("sending", function (file, xhr, formData) {
             formData.append("dir", vue.form_type);
+            formData.append("api_token", vue.login_user.api_token);
             vue.lodding = true;
           });
           this.on("success", function (file, responseText) {

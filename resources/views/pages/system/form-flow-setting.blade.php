@@ -6,7 +6,6 @@
      * Time: 12:21
      */
 
-
 ?>
 @extends('layouts/contentLayoutMaster')
 
@@ -26,7 +25,7 @@
 @endsection
 
 @section('content-sidebar')
-    <system-flow_setting-sidebar-left :form_config='{{json_encode(Config('form'))}}'></system-flow_setting-sidebar-left>
+    <system-flow_setting-sidebar-left :form_config='{{json_encode(Config('form'))}}' :api_token='"{{auth()->user()->api_token}}"'></system-flow_setting-sidebar-left>
 @endsection
 
 @section('content')

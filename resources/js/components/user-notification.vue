@@ -184,7 +184,11 @@
             },
             getMessage() {
                 let vue = this;
-                let params = {member_id: vue.login_user.id, take: 10};
+                let params = {
+                  member_id: vue.login_user.id,
+                  take: 10,
+                  api_token:vue.login_user.api_token
+                };
                 apiGetNotificationList(params).then(
                     (res) => {
                         vue.message = res.data.data;
@@ -213,7 +217,8 @@
                 if (vue.message[index].read_at === null) {
                     let params = {
                         id: [id],
-                        member_id: vue.login_user.id
+                        member_id: vue.login_user.id,
+                        api_token: vue.login_user.api_token,
                     };
                     apiPostNotificationSetRead(params).then(
                         (res) => {
@@ -231,7 +236,8 @@
             messageReadAll() {
                 let vue = this;
                 let params = {
-                    member_id: vue.login_user.id
+                    member_id: vue.login_user.id,
+                    api_token: vue.login_user.api_token,
                 };
                 apiPostNotificationSetReadAll(params).then(
                     (res) => {

@@ -11,6 +11,7 @@
     use Illuminate\Http\Request;
     use Illuminate\Support\Facades\Auth;
     use Illuminate\Support\Facades\Storage;
+    use Illuminate\Support\Str;
     use Route;
 
     /**
@@ -215,7 +216,9 @@
 		        	'name' => $request->account,
 			        'password' => $request->password,
 		        ];
+		       
 		        if (Auth::attempt($credentials)) {
+			        Auth::user()->setApiToken($token = Str::random(60));
 			        $disturbDataService = new \App\Service\DisturbDataService();
 			        $message = $disturbDataService->getFakeSession();
 		        }else{
@@ -231,12 +234,14 @@
 		        $message = self::remoteLogin($account, $password);
 		        $userObj = User::where('name',$account)->first();
 		        Auth::loginUsingId($userObj->id);
+		        Auth::user()->setApiToken($token = Str::random(60));
 	        }
             //將登入資訊儲存至session
             if ( $message['status'] == 1 ) {
+	            $message['data']['login_user']['api_token'] = Auth::user()->getApiToken();
                 SessionController::store($message['data']);
             }
-
+            
             return $message;
         }
 

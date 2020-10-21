@@ -26,7 +26,7 @@
 	 */
     Route::group(
         [
-            'middleware' => 'auth:api',
+            'middleware' => 'checkToken',
             'prefix' => 'signature'
         ], function () {
         Route::post('/getUserSignatures', [
@@ -45,7 +45,7 @@
 
     Route::group(
         [
-            'middleware' => 'auth:api',
+            'middleware' => 'checkToken',
             'prefix'     => '/form'
         ], function () {
         /**
@@ -132,7 +132,7 @@
      */
     Route::group(
         [
-            'middleware' => 'auth:api',
+            'middleware' => 'checkToken',
             'prefix'     => '/form/flow'
         ], function () {
         //流程列表
@@ -188,7 +188,7 @@
      */
 
     Route::group(
-        [ 'middleware' => 'auth:api' ], function () {
+        [ 'middleware' => 'checkToken' ], function () {
         //系統登出
         Route::post(
             '/system/logout', [

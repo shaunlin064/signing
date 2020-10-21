@@ -29,7 +29,11 @@ import {
         mounted: function () {
             bus.$on('deleteSignature', this.deleteSignature);
             bus.$on('setFavorite', this.setFavorite);
-            apiGetUserSignatures({erp_user_id: this.login_user.id}).then((response) => {
+            let parameter = {
+                erp_user_id: this.login_user.id,
+                api_token:this.login_user.api_token
+            }
+            apiGetUserSignatures(parameter).then((response) => {
                 this.signature_items = response.data.data;
             });
         },
@@ -43,7 +47,7 @@ import {
                 this.asyncSetting();
             },
             addNewSignature(item) {
-
+                item.api_token = this.login_user.api_token;
                 apiAddSignatures(item).then((response) => {
                     this.reset();
                     item.id = response.data.data.id;
@@ -54,9 +58,10 @@ import {
                 });
             },
             deleteSignature(id) {
+                let parameter = {id:id,api_token:this.login_user.api_token};
                 this.signature_items.map((v, k) => {
                     if (v.id == id) {
-                        apiDeleteSignatures({id}).then(() => {
+                        apiDeleteSignatures(parameter).then(() => {
                             this.signature_items.splice(k, 1);
                         }).then(() => {
                             this.setItemDefault();
@@ -80,7 +85,8 @@ import {
                 this.signature_items.map((v, k) => {
                     this.signature_items[k]['favorite'] = v.id == id ? 1 : 0;
                 });
-                apiResetFavoriteSignatures({id});
+                let parameter = {id:id,api_token:this.login_user.api_token};
+                apiResetFavoriteSignatures(parameter);
             }
         },
         updated() {

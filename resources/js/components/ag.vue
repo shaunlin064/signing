@@ -182,6 +182,7 @@
                 let params = {
                     member_id: userId,
                     role: vue.api_parmater_role,
+                    api_token:vue.login_user.api_token
                 };
                 /*** GET TABLE DATA FROM URL ***/
 

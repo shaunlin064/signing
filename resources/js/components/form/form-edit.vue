@@ -115,11 +115,12 @@ export default {
       // console.log(this.id);
       /*ajax get data*/
       let vue = this;
-
-      apiGetForm({
+      let parameter = {
         id: vue.id,
         member_id: vue.login_user.id,
-      }).then(function (response) {
+        api_token: vue.login_user.api_token
+      };
+      apiGetForm(parameter).then(function (response) {
         let result = response.data;
         if (result.status !== 1) {
           javascript:location.href = '/404';
@@ -244,7 +245,7 @@ export default {
 
           this.on("sending", function (file, xhr, formData) {
             formData.append("dir", vue.form_type);
-
+            formData.append("api_token", vue.login_user.api_token);
             vue.lodding = true;
           });
           this.on("success", function (file, responseText) {
