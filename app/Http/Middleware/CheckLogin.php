@@ -16,6 +16,7 @@ class CheckLogin
      */
     public function handle($request, Closure $next)
     {
+    	
         if(auth()->user() === null)
         {
             session(['return_url' => $request->fullUrl()]);
@@ -26,6 +27,10 @@ class CheckLogin
 	        session(['return_url' => $request->fullUrl()]);
 	        return Redirect::to('login');
         }
+        
+        /*update session token*/
+	    session(['js_signing.login_user.api_token' => auth()->user()->api_token]);
+	    
         return $next($request);
     }
 }
