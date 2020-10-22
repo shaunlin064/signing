@@ -22,23 +22,23 @@
 				$html
 			] = $this->getFormData($request);
 			
-			switch ( $request->id ) {
-				case '3':
+			switch ( $html ) {
+				case 'form-social':
 					$attend_member = [];
 					foreach ( json_decode($signing['column']['attend_member']) as $item ) {
 						$attend_member[] = session('js_signing.member')[ $item ]['name'];
 					}
 					$signing['column']['attend_member'] = implode(',', $attend_member);
 					break;
-				case '4':
+				case 'form-travel_grant':
 					$accompany_user_id = [];
 					foreach ( json_decode($signing['column']['accompany_user_id']) as $item ) {
 						$accompany_user_id[] = session('js_signing.member')[ $item ]['name'];
 					};
 					$signing['column']['accompany_user_id'] = implode(',', $accompany_user_id);
 					break;
-				
 			}
+			
 			return view('pages.outPut.' . $html, [
 				'pdf'     => false,
 				'signing' => $signing,
