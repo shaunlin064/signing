@@ -1,11 +1,11 @@
 <?php
-    /**
-     * Created by PhpStorm.
-     * User: shaun
-     * Date: 2020/5/26
-     * Time: 15:05
-     */
-?>
+	/**
+	 * Created by PhpStorm.
+	 * User: shaun
+	 * Date: 2020/5/26
+	 * Time: 15:05
+	 */
+	?>
 @extends('pages.outPut.layouts.contentLayoutMaster')
 @section('page')
     @if(count($signing['column']['items']) <=9)
@@ -77,8 +77,10 @@
                                             <th>Total</th>
                                         </tr>
                                         <tr>
-                                            @foreach(collect($signing['column']['items'])->groupBy('type') as $item)
-                                                <td>{{$item->sum('price')}}</td>
+                                            @foreach(['乘車','案件','交際','其他'] as $typeName)
+                                                <td>
+                                                    {{collect($signing['column']['items'])->where('type',$typeName)->sum('price')}}
+                                                </td>
                                             @endforeach
                                             <td>{{collect($signing['column']['items'])->sum('price')}}</td>
                                         </tr>
@@ -154,61 +156,63 @@
                         </table>
                     </div>
                     <div class='footer'>
-                        <p class='text-right'>page : 1/{{collect($signing['column']['items'])->chunk(18)->count()+1}}</p>
+                        <p class='text-right'>page :
+                            1/{{collect($signing['column']['items'])->chunk(18)->count()+1}}</p>
                     </div>
                 </div>
             </div>
         </div>
         @foreach(collect($signing['column']['items'])->chunk(18) as $pageKey =>  $itemPage)
-        <div class='page'>
-            <div class='subpage'>
-                <div class='row'>
-                    @include('pages.outPut.layouts.head')
-                    <div class='body'>
-                        <table class='table' border='1' cellpadding="3" cellspacing="1">
-                            <tbody>
-                            {{--form content--}}
-                            <tr>
-                                <td colspan='5'>代墊明細</td>
-                            </tr>
-                            <tr>
-                                <th class='w2'>日期</th>
-                                <th>類型</th>
-                                <th>名稱</th>
-                                <th>編號/起始點</th>
-                                <th>金額</th>
-                            </tr>
-                            @foreach($itemPage as $key => $item)
+            <div class='page'>
+                <div class='subpage'>
+                    <div class='row'>
+                        @include('pages.outPut.layouts.head')
+                        <div class='body'>
+                            <table class='table' border='1' cellpadding="3" cellspacing="1">
+                                <tbody>
+                                {{--form content--}}
                                 <tr>
-                                    <td class='w2'>{{$item['date']}}</td>
-                                    <td>{{$item['type']}}</td>
-                                    <td class='w3'>{{$item['name']}}</td>
-                                    @switch($item['type'])
-                                        @case('乘車')
-                                        <td>{{$item['get_on_start']}}</td>
-                                        @break
-                                        @case('案件')
-                                        <td>{{$item['campaign_id']}}</td>
-                                        @break
-                                        @case('交際')
-                                        <td>{{$item['form_pair_data_id']}}</td>
-                                        @break
-                                        @default
-                                        <td></td>
-                                    @endswitch
-                                    <td>{{$item['price']}}</td>
+                                    <td colspan='5'>代墊明細</td>
                                 </tr>
-                            @endforeach
+                                <tr>
+                                    <th class='w2'>日期</th>
+                                    <th>類型</th>
+                                    <th>名稱</th>
+                                    <th>編號/起始點</th>
+                                    <th>金額</th>
+                                </tr>
+                                @foreach($itemPage as $key => $item)
+                                    <tr>
+                                        <td class='w2'>{{$item['date']}}</td>
+                                        <td>{{$item['type']}}</td>
+                                        <td class='w3'>{{$item['name']}}</td>
+                                        @switch($item['type'])
+                                            @case('乘車')
+                                            <td>{{$item['get_on_start']}}</td>
+                                            @break
+                                            @case('案件')
+                                            <td>{{$item['campaign_id']}}</td>
+                                            @break
+                                            @case('交際')
+                                            <td>{{$item['form_pair_data_id']}}</td>
+                                            @break
+                                            @default
+                                            <td></td>
+                                        @endswitch
+                                        <td>{{$item['price']}}</td>
+                                    </tr>
+                                @endforeach
 
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class='footer'>
-                        <p class='text-right'>page : {{$pageKey+2}}/{{collect($signing['column']['items'])->chunk(18)->count()+1}}</p>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class='footer'>
+                            <p class='text-right'>page : {{$pageKey+2}}
+                                /{{collect($signing['column']['items'])->chunk(18)->count()+1}}</p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
         @endforeach
     @endif
 @endsection
