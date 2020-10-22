@@ -28,15 +28,7 @@
                             <tr>
                                 <td class='title w2'>{{$config['column']['accompany_user_id']['name']}}</td>
                                 <td class='w3' colspan="3">
-                                    <?
-                                    $accompany_user_id = [];
-                                    ?>
-                                    @foreach(json_decode($signing['column']['accompany_user_id']) as $item)
-                                        <?
-                                        $accompany_user_id[] = session('js_signing.member')[$item]['name'];
-                                        ?>
-                                    @endforeach
-                                    {{implode(',',$accompany_user_id)}}
+                                    {{$signing['column']['accompany_user_id']}}
                                 </td>
                             </tr>
                             <tr>
