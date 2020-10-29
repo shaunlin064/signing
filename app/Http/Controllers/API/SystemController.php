@@ -10,6 +10,7 @@
     use App\User;
     use Illuminate\Http\Request;
     use Illuminate\Support\Facades\Auth;
+    use Illuminate\Support\Facades\Http;
     use Illuminate\Support\Facades\Storage;
     use Illuminate\Support\Str;
     use Route;
@@ -54,10 +55,13 @@
             try {
                 //後台管理員登入
                 //API取得後台系統登入者資訊與人員相關資訊
-                $apiObj = new ApiController();
-                $data   = 'username=' . $username . '&password=' . $password . '&apikey=' . self::$encrypt;
-                $url    = env('API_LOGIN_URL');
-                $result = $apiObj->curlPost($data, $url, 'form');
+	            $data = [
+		            'username'=> $username,
+		            'password'=> $password,
+		            'apikey'=> self::$encrypt
+	            ];
+	
+	            $result =  Http::asForm()->post(env('API_LOGIN_URL'),$data)->json();
 
                 if ( $result['status'] !== 1 ) {//登入失敗
                     ( new SystemController )->loginFail($result);
@@ -91,94 +95,8 @@
 
             return self::$message;
         }
-
-        /**
-         * @param $username : 帳號
-         * @param $password : md5密碼
-         * 檢查帳號是否為預設manager帳號
-         * 如果是則取得全站可用權限，並且向選端取得所有部門資料
-         * 暫時不支援本地端部門資料取得
-         * @return array
-         */
-        protected static function checkDefaultAdmin ( $username, $password ) {
-
-            try {
-
-                if ( md5(
-                        $username
-                    ) == '1d0258c2440a8d19e716292b231e3190' && $password == 'ac886a5225dc159479c53eb978072dab' ) {
-                    $adminUser = [
-                        "id"            => 0,
-                        "department_id" => 0,
-                        "name"          => "Admin",
-                        "org_name"      => "Admin",
-                        "org_name_ch"   => "管理員",
-                        "email"         => "it@js-adways.com.tw",
-                        "account"       => "Admin",
-                        "code"          => "",
-                        "status"        => 1,
-                        'created_at'    => date('Y-m-d')
-                    ];
-
-                    //取得人員部門資料
-                    $post = 'token=' . urlencode('\/g5CClHztT2PeHYkSHwMMDFhzPN1KGv4Aotmzt39YzE=');
-                    $ch   = curl_init();
-                    curl_setopt($ch, CURLOPT_URL, env('API_GETMEMBER_URL'));
-                    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-                    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-                    curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
-                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                    $resultMember = curl_exec($ch);
-                    curl_close($ch);
-
-                    $resultMember = json_decode($resultMember, true);
-                    if ( $resultMember['status'] == 1 ) {//取得成功
-                        $department = $resultMember['data']['department'];
-                        $member     = $resultMember['data']['member'];
-                        //增加一個預設管理人員
-                        $member[0] = [
-                            "id"            => 0,
-                            "department_id" => 0,
-                            "name"          => "Admin",
-                            "org_name"      => "Admin",
-                            "org_name_ch"   => "管理員",
-                            "email"         => "it@js-adways.com.tw",
-                            "account"       => "Admin",
-                            "code"          => "",
-                            "status"        => 1
-                        ];
-
-                        //整理部門與人員資訊陣列
-                        foreach ( $department as $k => $v ) {
-                            $department[ $k ]['members'] = [];
-                            foreach ( $member as $k1 => $v1 ) {
-                                if ( $v1['department_id'] == $v['id'] ) {
-                                    array_push($department[ $k ]['members'], $v1);
-                                }
-                            }
-                        }
-                    }
-
-                    $dataResult = [
-                        'login_user' => $adminUser,
-                        'member'     => $member,
-                        'department' => $department
-                    ];
-
-                    self::$message['status']        = 1;
-                    self::$message['status_string'] = '登入成功';
-                    self::$message['message']       = '歡迎 ' . $adminUser['name'];
-                    self::$message['data']          = $dataResult;
-                }
-            } catch ( \Exception $ex ) {
-                self::$message['status_string'] = '登入失敗';
-            }
-
-            return self::$message;
-
-        }
-
-        public function loginFail ( $result ) {
+	
+	    public function loginFail ( $result ) {
             self::$message['status_string'] = '登入失敗';
             self::$message['message']       = $result['message'];
         }

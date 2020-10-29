@@ -5,6 +5,7 @@ namespace App;
 use App\Http\Controllers\ApiController;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\Http;
 
 class User extends Authenticatable
 {
@@ -41,14 +42,7 @@ class User extends Authenticatable
 
     public function getErpUser ()
     {
-        $apiObj = new ApiController();
-
-        $data = 'token=';
-        $data .= urlencode(env('API_TOKEN'));
-        $url = env('API_GET_MEMBER_URL');
-
-        $returnData = $apiObj->curlPost($data,$url,'form');
-
+	    $returnData = Http::asForm()->post(env('API_GET_MEMBER_URL'),[ 'token' => env('API_TOKEN') ])->json();
         $this->department = $returnData['data']['department'];
 
         foreach($returnData['data']['member'] as $key => $item){
