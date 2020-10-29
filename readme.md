@@ -29,7 +29,7 @@
 ### show case
 
  
-![GITHUB](https://raw.githubusercontent.com/shaunlin064/signing/master/storage/app/public/showcase/head.png "head")
+![GITHUB](https://raw.githubusercontent.com/shaunlin064/signing/master/storage/app/public/showcase/head-2.png "head")
 ![GITHUB](https://raw.githubusercontent.com/shaunlin064/signing/master/storage/app/public/showcase/login.png "login")
 ![GITHUB](https://raw.githubusercontent.com/shaunlin064/signing/master/storage/app/public/showcase/lockscreen.png "lockscreen")
 ![GITHUB](https://raw.githubusercontent.com/shaunlin064/signing/master/storage/app/public/showcase/showcase-1.png "showcase-1")
