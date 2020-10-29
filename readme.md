@@ -5,8 +5,7 @@
 * backEnd
     * Laravel
     * PHP
-    * Mysql 
-    * Memcached
+    * Mysql
 * frontEnd
     * vue.js
     * vuex
